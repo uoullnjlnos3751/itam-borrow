@@ -27,7 +27,7 @@ export const msalConfig: Configuration = {
   },
 };
 
-export const msalInstance = new PublicClientApplication(msalConfig);
+export const msalInstance = typeof window !== 'undefined' ? new PublicClientApplication(msalConfig) : null;
 
 export const loginRequest = {
   scopes: ['openid', 'profile', 'email'],

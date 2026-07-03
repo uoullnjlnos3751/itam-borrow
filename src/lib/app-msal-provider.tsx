@@ -1,12 +1,29 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { MsalProvider } from '@azure/msal-react';
 import { msalInstance } from './msal-config';
+import { PublicClientApplication } from '@azure/msal-browser';
 
 export function AppMsalProvider({ children }: { children: ReactNode }) {
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (msalInstance) {
+      msalInstance.initialize().then(() => {
+        setIsInitialized(true);
+      }).catch(e => {
+        console.error("MSAL init error:", e);
+      });
+    }
+  }, []);
+
+  if (!msalInstance || !isInitialized) {
+    return <>{children}</>; // Render without provider on server or during init
+  }
+
   return (
-    <MsalProvider instance={msalInstance}>
+    <MsalProvider instance={msalInstance as PublicClientApplication}>
       {children}
     </MsalProvider>
   );
