@@ -57,7 +57,7 @@ export function SideNav() {
                   : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
               }`}
             >
-              <MaterialIcon icon={item.icon} size={24} style={active ? { fontVariationSettings: "'FILL' 1" } : undefined} />
+              <MaterialIcon icon={item.icon} size={24} filled={active} />
               <span className="font-body text-body-md">{item.label}</span>
             </Link>
           );
