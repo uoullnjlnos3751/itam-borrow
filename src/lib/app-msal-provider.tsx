@@ -11,7 +11,7 @@ export function AppMsalProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (msalInstance) {
       msalInstance.initialize()
-        .then(() => msalInstance.handleRedirectPromise())
+        .then(() => msalInstance?.handleRedirectPromise())
         .then(() => {
           setIsInitialized(true);
         })
