@@ -13,12 +13,14 @@ interface NavItem {
 const userNavItems: NavItem[] = [
   { href: '/assets', icon: 'inventory_2', label: 'ยืมอุปกรณ์' },
   { href: '/history', icon: 'history', label: 'ประวัติของฉัน' },
+  { href: '/profile', icon: 'account_circle', label: 'โปรไฟล์' },
 ];
 
 const adminNavItems: NavItem[] = [
   { href: '/admin', icon: 'space_dashboard', label: 'แดชบอร์ด' },
   { href: '/admin/assets', icon: 'inventory_2', label: 'อุปกรณ์' },
   { href: '/admin/history', icon: 'history', label: 'ประวัติทั้งหมด' },
+  { href: '/profile', icon: 'account_circle', label: 'โปรไฟล์' },
 ];
 
 interface BottomNavProps {
