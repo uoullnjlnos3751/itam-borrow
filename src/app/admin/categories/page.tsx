@@ -55,7 +55,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="pb-28">
-      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center gap-stack-md px-margin-mobile h-16 max-w-2xl mx-auto left-0 right-0">
+      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center gap-stack-md px-margin-mobile h-16 max-w-2xl mx-auto lg:max-w-none lg:px-8 left-0 right-0 lg:max-w-none lg:left-64">
         <button onClick={() => router.back()} className="text-on-surface p-1">
           <MaterialIcon icon="arrow_back" />
         </button>
@@ -64,7 +64,7 @@ export default function CategoriesPage() {
         </h1>
       </header>
 
-      <main className="pt-20 px-margin-mobile max-w-2xl mx-auto space-y-stack-lg">
+      <main className="pt-20 px-margin-mobile max-w-2xl mx-auto lg:max-w-none lg:px-8 space-y-stack-lg">
         {/* Add category */}
         <div className="rounded-xl border border-outline-variant bg-surface-container-lowest p-stack-md">
           <p className="text-label-md font-label-md text-on-surface-variant uppercase mb-stack-sm">

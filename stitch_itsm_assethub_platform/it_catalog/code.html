@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html class="light" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ศูนย์ยืมอุปกรณ์ IT | IT Asset Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e6e8f1",
+                    "secondary-container": "#b6d0ff",
+                    "on-tertiary-fixed": "#321200",
+                    "on-primary": "#ffffff",
+                    "background": "#f9f9ff",
+                    "on-surface": "#181c22",
+                    "on-tertiary-container": "#fffbff",
+                    "surface-container-low": "#f1f3fc",
+                    "outline-variant": "#c1c6d5",
+                    "inverse-surface": "#2d3037",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#fefcff",
+                    "tertiary": "#964400",
+                    "tertiary-fixed": "#ffdbc9",
+                    "on-tertiary-fixed-variant": "#763400",
+                    "on-primary-fixed": "#001b3e",
+                    "primary-fixed-dim": "#aac7ff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e0e2eb",
+                    "on-error-container": "#93000a",
+                    "primary": "#005ab4",
+                    "on-secondary-fixed-variant": "#2d476f",
+                    "inverse-primary": "#aac7ff",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#717785",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e0e2eb",
+                    "on-secondary-fixed": "#001b3d",
+                    "tertiary-container": "#bd5700",
+                    "inverse-on-surface": "#eef0fa",
+                    "surface": "#f9f9ff",
+                    "on-secondary-container": "#3f5881",
+                    "primary-container": "#0a73e0",
+                    "tertiary-fixed-dim": "#ffb68c",
+                    "secondary": "#465f88",
+                    "surface-bright": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#aec7f7",
+                    "surface-tint": "#005db8",
+                    "secondary-fixed": "#d6e3ff",
+                    "on-primary-fixed-variant": "#00458d",
+                    "surface-container": "#ebedf7",
+                    "surface-dim": "#d7dae3",
+                    "on-background": "#181c22",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface-variant": "#414753",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "display": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex justify-between items-center w-full px-6 py-3 max-w-full mx-auto bg-surface-container-low dark:bg-surface-dim shadow-sm">
+<div class="flex items-center gap-8">
+<h1 class="text-headline-md font-headline-lg font-semibold text-primary dark:text-primary-fixed-dim">IT Asset Portal</h1>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-semibold font-body text-body-md transition-colors" href="#">Catalog</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-body text-body-md" href="#">My Requests</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-body text-body-md" href="#">Knowledge Base</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-lowest border-none rounded-lg text-body-md focus:ring-2 focus:ring-primary-container w-64" placeholder="ค้นหาอุปกรณ์..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center ml-2 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a smiling IT support specialist in a bright, modern office setting. The person is wearing a clean navy polo shirt. The background features soft bokeh of a high-tech corporate environment with blue and white tones, matching the professional blue color palette of the portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCujhu64WcERGwbmXdPs0bHh-qbQWEW0RyLJNfKzi-QQxWy7gF9EEvTf3mz1pYt97vsLsV_sO9o7rJ-8d1J2Si6mbH4ugvwbcGhnw4PBVVE_2VK_ddS_zlQtKXoS5awf-FtfMttSYyRKSYaka93WsRBfqQ8Ack1n9uuzz7hlUnzGMskbjQxZWfGO6U44qMME1HvpXJz9jEk-JoUXgC1HQHPrvC0FztKWGMmZm_7zb-7M2m8fL3kmnQJ0hoO7re8vw9KRCfTAioFpns"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 p-4 flex flex-col hidden lg:flex bg-surface dark:bg-on-background">
+<div class="mb-8 px-4">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">devices</span>
+</div>
+<div>
+<h2 class="text-body-md font-semibold text-on-surface">หมวดหมู่สินค้า</h2>
+<p class="text-label-md text-on-surface-variant">เลือกประเภทอุปกรณ์</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg px-4 py-3 font-medium transition-all duration-200" href="#">
+<span class="material-symbols-outlined">laptop_mac</span>
+<span class="font-body text-body-md">แล็ปท็อป</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">monitor</span>
+<span class="font-body text-body-md">หน้าจอ</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">mouse</span>
+<span class="font-body text-body-md">อุปกรณ์เสริม</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">terminal</span>
+<span class="font-body text-body-md">ซอฟต์แวร์</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body text-body-md">ช่วยเหลือ</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-surface-container-high">
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200 mb-4" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body text-body-md">การตั้งค่า</span>
+</a>
+<button class="w-full py-3 px-4 bg-primary text-on-primary rounded-lg font-semibold text-body-md active:scale-95 transition-transform">
+                    ติดต่อฝ่ายไอที
+                </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-64 p-4 md:p-8">
+<!-- Header Section -->
+<div class="mb-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+<div>
+<h2 class="text-headline-lg font-semibold text-on-surface mb-2">ศูนย์ยืมอุปกรณ์ IT</h2>
+<p class="text-body-md text-on-surface-variant">ค้นหาและเบิกอุปกรณ์ที่จำเป็นสำหรับการทำงานของคุณได้ที่นี่</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md text-on-surface-variant uppercase font-semibold">แสดงผล:</span>
+<span class="text-body-md font-semibold text-primary">24 รายการ</span>
+</div>
+</div>
+<!-- Filters & Search Mobile -->
+<div class="flex flex-col gap-4">
+<div class="relative block sm:hidden">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container border-none rounded-xl text-body-md" placeholder="ค้นหาอุปกรณ์..." type="text"/>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-2">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary text-body-md font-medium whitespace-nowrap">ทั้งหมด</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-container transition-colors text-body-md font-medium whitespace-nowrap">Laptops</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-container transition-colors text-body-md font-medium whitespace-nowrap">Monitors</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-container transition-colors text-body-md font-medium whitespace-nowrap">Keyboards</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-secondary-container transition-colors text-body-md font-medium whitespace-nowrap">Adapters</button>
+</div>
+</div>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A sleek, modern space gray Apple MacBook Pro 16 inch displayed on a minimalist white desk. The laptop is open, showing a vibrant abstract wallpaper in blues and purples. Professional studio lighting highlights the metallic texture of the chassis. The background is a clean, blurred office environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvxqW00AAXw8gaKwCd3ogt9pmjD7ZB7iyjPwF6eGaq0r5ML_vis3pHNJJ-euKlfws6j9lF1NXQ6lc7qvPaRBpBwpEbOUsFRkl_-kQ5ELZ6RzSmKNg6nf0hablMWWCIk-IilcEgebv_E5d10lnNPBXY6M_QT-BBEkiNDAV7-SfjGf97WEBtF-QOKBs9Nc8tUvAxgqhTDQ29jJ0iF526AELsJC4mJ7yGmTeL4HpOzv59L3h3F6FpIVBncvHw-JmWVMAUNsvxwIGoNfQ"/>
+<span class="absolute top-2 right-2 px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full uppercase">พร้อมให้ยืม</span>
+</div>
+<h3 class="text-body-lg font-semibold text-on-surface mb-1">MacBook Pro 16"</h3>
+<p class="text-label-md text-on-surface-variant mb-4 flex-grow">M2 Pro, 16GB RAM, 512GB SSD - High Performance for Creators</p>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg text-body-md font-semibold flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+                        เพิ่มลงรายการ
+                    </button>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col opacity-75">
+<div class="relative aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A large 27-inch Dell UltraSharp monitor with thin bezels and a silver stand. The screen shows a detailed coding environment with dark theme colors. The lighting is soft and neutral, casting a clean professional vibe. Minimalist setup on a light wood desk in a modern corporate setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKZgCVloXYWpcBxGIJXSTXiKU4vauBH7KEyonhZ20ph3ETZXQVaUQ1OQUwKPQz_JgQk8Z9GKSCMa2H4TPfHdH-vooSPx_hMJiyHK5bF342JwW5-sdAgojNCaqBJnfAjqFusi_TMc1w8JsJ6kFEExNB41OCZa6YohULu1DLI1elmHEpxb4MWIYKQOuCPJNJjsejCxoDHklDRZ8IStHDPk4jSj8ZftUlDpkguQneiQqfODbZ3x_90P5zHALiBu07-sZ9sHmIMvgTyxk"/>
+<span class="absolute top-2 right-2 px-3 py-1 bg-surface-dim text-on-surface-variant text-[10px] font-bold rounded-full uppercase">ถูกยืมแล้ว</span>
+</div>
+<h3 class="text-body-lg font-semibold text-on-surface mb-1">Dell UltraSharp 27"</h3>
+<p class="text-label-md text-on-surface-variant mb-4 flex-grow">4K UHD Resolution, USB-C Hub, 99% sRGB - Excellent for Analytics</p>
+<button class="w-full py-2 bg-surface-container-high text-outline rounded-lg text-body-md font-semibold flex items-center justify-center gap-2 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[20px]">block</span>
+                        ไม่ว่างขณะนี้
+                    </button>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Logitech MX Master 3S wireless mouse in graphite gray, showing its ergonomic shape and precision scroll wheels. Close-up macro photography with sharp focus on the textures and metallic accents. Set against a clean, professional desk pad. Bright, even studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgWz4hAFj0sKYfnnaJuQNyQIUJhuBtxlgRZBYpQ9UIJA3j1ZCHALjUf6S4BS1nKQIv-PyBs47Rre22oP4I-X_6dLRkK2M6Pw_624hAfPBvP_HtUY9YG9DCWjheOuo4csP05xtXSilFD1szCZ0BeEYoLCYQsQVKzJnklaZjPRqtb3svFbZIMmImPct4pLH_UiE-XIUdO8jTzWjclGl9wKtUF3Y8zv_-3iQ99HPhJDnjDzFmqDhahvtUcxbdJFOlNoIe6GzA2ThX4_0"/>
+<span class="absolute top-2 right-2 px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full uppercase">พร้อมให้ยืม</span>
+</div>
+<h3 class="text-body-lg font-semibold text-on-surface mb-1">Logitech MX Master 3S</h3>
+<p class="text-label-md text-on-surface-variant mb-4 flex-grow">Ergonomic Mouse, 8K DPI Tracking, Quiet Clicks - Perfect for Productivity</p>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg text-body-md font-semibold flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+                        เพิ่มลงรายการ
+                    </button>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="An Apple Magic Keyboard with Numeric Keypad in white. The keyboard is sleek, slim, and perfectly clean. High-key lighting highlights the silver aluminum base and white keys. Background is a pristine white marble surface, giving it a premium professional look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKmUhseymclbYuk5Qxsw9t0PQ99N3oMiFhABnC3nD02rFteklqD5exkyC2kwDB1iqVCwEJao1tEmZI8l-YRRauVRKpSMp6KUC65ap8yPBcfLdmBtbK4kg5lAO_3ZBQSwA3W3t2eK5Nh4EJ2WD1da_Xe8h8nVn06orvq1AqUw9mDLCz3VLRkwcNP-cNAOKevtc8LWXAQmA9EUjVRc00spHjmd2k-b6iaZqGktrFvv6XrmPa_WYcSfLQ5rHQtfemt9t7o6V8-oCvmmw"/>
+<span class="absolute top-2 right-2 px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full uppercase">พร้อมให้ยืม</span>
+</div>
+<h3 class="text-body-lg font-semibold text-on-surface mb-1">Magic Keyboard</h3>
+<p class="text-label-md text-on-surface-variant mb-4 flex-grow">Wireless, Rechargeable, Ultra-thin Design - Ideal for Mac users</p>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg text-body-md font-semibold flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+                        เพิ่มลงรายการ
+                    </button>
+</div>
+<!-- Product Card 5 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A modern USB-C Multiport Adapter Hub showing various ports like HDMI, USB 3.0, and SD card slots. The finish is metallic space gray. The cable is reinforced and flexible. Set on a clean minimalist desk with a professional vibe. Bright overhead lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlkH2eUdPhMY-i6DH1v04oZxke_jMsPq_fKE5VfZUfvoT6aex_YC8UZO0228hfkQ1CfpkVMcywC-H7RaRVVRMV-ikDlf4dC0Li7vl-7DiDywqUP9Vfdf-ltvwmxHAkLcEDmP8124TwTOC5GFKtLQ9AMsV-XgRem-Uk_LTRWNlx23ybCJhXE1m1no9MPaDUAMnlYVKeTyUFCNuNHtnX_KT5h37orUVdWBXXjcExmaBFmc0_jSiEUxlKgia1TP-WsoS9Wsv1H1_UWRI"/>
+<span class="absolute top-2 right-2 px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full uppercase">พร้อมให้ยืม</span>
+</div>
+<h3 class="text-body-lg font-semibold text-on-surface mb-1">USB-C Hub Adapter</h3>
+<p class="text-label-md text-on-surface-variant mb-4 flex-grow">7-in-1 Dual HDMI, PD Charging, High-speed Data - Essentials for Desk Setup</p>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg text-body-md font-semibold flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+                        เพิ่มลงรายการ
+                    </button>
+</div>
+<!-- Product Card 6 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col">
+<div class="relative aspect-[4/3] rounded-lg overflow-hidden mb-4 bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="An iPad Pro 12.9 inch with Apple Pencil attached to the side. The screen shows a sophisticated digital illustration. The aesthetic is extremely modern and professional, with cool blue lighting accents. Placed in a professional creative studio background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtOvrl1qBImDJNILQhkW8R2MT8Tp-pKACq0CHcTZY7QITT66WLNRb6ql-UdSfanZewk5fF-I5qrXbj_TsRzJzOrjS34ETGl4c6AQkueukPq0oL3CTf6IPWgHPQaBrFXteOplcKpB9ww5T5AhnoGY267My_wE13oSJN-AFjxJ1VNJN2JrQ5rM2IGfNDW4lmMEFfbtnhEu6nHrS7Nm1dFeNXW_Brh82GpkI6BFIYa7q4GX8LGNnAvqF18GSevzuVyFeqdK0dQhn8l74"/>
+<span class="absolute top-2 right-2 px-3 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full uppercase">พร้อมให้ยืม</span>
+</div>
+<h3 class="text-body-lg font-semibold text-on-surface mb-1">iPad Pro 12.9"</h3>
+<p class="text-label-md text-on-surface-variant mb-4 flex-grow">Liquid Retina XDR, M2 Chip, Apple Pencil Support - For mobile designers</p>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg text-body-md font-semibold flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+                        เพิ่มลงรายการ
+                    </button>
+</div>
+</div>
+</main>
+<!-- Floating Cart Summary (Desktop Sidebar) -->
+<aside class="hidden xl:flex flex-col w-80 p-6 bg-surface-container-low h-[calc(100vh-64px)] sticky top-16 border-l border-outline-variant">
+<h2 class="text-body-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined">list_alt</span>
+                รายการยืมอุปกรณ์
+            </h2>
+<div class="flex-1 overflow-y-auto space-y-4 pr-2 -mr-2 hide-scrollbar">
+<!-- Cart Item 1 -->
+<div class="flex gap-3 p-3 bg-white rounded-lg shadow-sm">
+<div class="w-12 h-12 rounded bg-surface-container overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close up of a MacBook Pro chassis showing the logo and sleek silver finish, minimalist product shot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZNgtJBvVfv_u4r-d8duM9m23aktkp8gmZBU2fdyCmgXs4RLbCve0Yho5azn2TmJN35dyccDF_Grs0bQ7se7XJGVcm-UQlWMErJm4UqEUNaDelTXj12xw9DwIifyjt2eBV7HT-HeW3mns_t3tjFaogPPvT_dPeD-fQH5l6_5HciFTY1H9-nii2LSkOYCJeijUH_DmWGlmlYgBivRivVf6plOa-_20itejbKgqdlucOowWR55SJC-SRdHrK49shDeS7jHicQk2ewwg"/>
+</div>
+<div class="flex-1">
+<p class="text-label-md font-bold text-on-surface">MacBook Pro 16"</p>
+<p class="text-[10px] text-on-surface-variant">Serial: Apple-2024-X1</p>
+</div>
+<button class="text-error hover:bg-error-container p-1 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-auto pt-6">
+<div class="flex justify-between items-center mb-4">
+<span class="text-body-md text-on-surface-variant">รวมทั้งหมด:</span>
+<span class="text-body-lg font-bold text-primary">1 รายการ</span>
+</div>
+<button class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold text-body-md shadow-lg shadow-primary/20 active:scale-95 transition-transform">
+                    ดำเนินการขอเบิก
+                </button>
+<p class="text-[10px] text-center mt-3 text-outline">ระยะเวลาการยืมสูงสุด 30 วันตามนโยบายบริษัท</p>
+</div>
+</aside>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 lg:hidden bg-surface-container dark:bg-surface-dim shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-5 py-1 transition-transform scale-95 duration-100" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label text-label-md">หน้าแรก</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 active:bg-surface-variant transition-transform duration-100" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label text-label-md">คำขอของฉัน</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 active:bg-surface-variant transition-transform duration-100 relative" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute top-0 right-3 w-4 h-4 bg-error text-on-error text-[10px] flex items-center justify-center rounded-full">1</span>
+<span class="font-label text-label-md">รถเข็น</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 active:bg-surface-variant transition-transform duration-100" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label text-label-md">บัญชี</span>
+</a>
+</nav>
+<!-- FAB (Mobile Only Cart) -->
+<button class="fixed right-6 bottom-20 lg:hidden w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl flex items-center justify-center z-40 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[28px]">receipt_long</span>
+</button>
+<script>
+        // Simple interactivity for the search bar focus effect
+        const searchInputs = document.querySelectorAll('input[type="text"]');
+        searchInputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('ring-2', 'ring-primary-container');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('ring-2', 'ring-primary-container');
+            });
+        });
+
+        // Add to list animation simulation
+        const addButtons = document.querySelectorAll('button:not([disabled])');
+        addButtons.forEach(btn => {
+            if (btn.innerText.includes('เพิ่มลงรายการ')) {
+                btn.addEventListener('click', () => {
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> เพิ่มแล้ว';
+                    btn.classList.replace('bg-primary', 'bg-green-600');
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.classList.replace('bg-green-600', 'bg-primary');
+                    }, 2000);
+                });
+            }
+        });
+    </script>
+</body></html>

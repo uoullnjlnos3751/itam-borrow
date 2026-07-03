@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="light" lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IT Asset Portal - My Requests</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e6e8f1",
+                    "secondary-container": "#b6d0ff",
+                    "on-tertiary-fixed": "#321200",
+                    "on-primary": "#ffffff",
+                    "background": "#f9f9ff",
+                    "on-surface": "#181c22",
+                    "on-tertiary-container": "#fffbff",
+                    "surface-container-low": "#f1f3fc",
+                    "outline-variant": "#c1c6d5",
+                    "inverse-surface": "#2d3037",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#fefcff",
+                    "tertiary": "#964400",
+                    "tertiary-fixed": "#ffdbc9",
+                    "on-tertiary-fixed-variant": "#763400",
+                    "on-primary-fixed": "#001b3e",
+                    "primary-fixed-dim": "#aac7ff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e0e2eb",
+                    "on-error-container": "#93000a",
+                    "primary": "#005ab4",
+                    "on-secondary-fixed-variant": "#2d476f",
+                    "inverse-primary": "#aac7ff",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#717785",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e0e2eb",
+                    "on-secondary-fixed": "#001b3d",
+                    "tertiary-container": "#bd5700",
+                    "inverse-on-surface": "#eef0fa",
+                    "surface": "#f9f9ff",
+                    "on-secondary-container": "#3f5881",
+                    "primary-container": "#0a73e0",
+                    "tertiary-fixed-dim": "#ffb68c",
+                    "secondary": "#465f88",
+                    "surface-bright": "#f9f9ff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#aec7f7",
+                    "surface-tint": "#005db8",
+                    "secondary-fixed": "#d6e3ff",
+                    "on-primary-fixed-variant": "#00458d",
+                    "surface-container": "#ebedf7",
+                    "surface-dim": "#d7dae3",
+                    "on-background": "#181c22",
+                    "primary-fixed": "#d6e3ff",
+                    "on-surface-variant": "#414753",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "display": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .status-badge {
+            @apply px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c6d5;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- TopNavBar -->
+<nav class="sticky top-0 z-50 flex justify-between items-center w-full px-6 py-3 max-w-full mx-auto bg-surface-container-low dark:bg-surface-dim shadow-sm">
+<div class="flex items-center gap-8">
+<span class="text-headline-md font-headline-lg font-semibold text-primary dark:text-primary-fixed-dim">IT Asset Portal</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-body text-body-md" href="#">Catalog</a>
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-semibold font-body text-body-md" href="#">My Requests</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-body text-body-md" href="#">Knowledge Base</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="bg-surface-container-highest border-none rounded-full pl-10 pr-4 py-2 text-body-md focus:ring-2 focus:ring-primary w-64 transition-all" placeholder="ค้นหารายการ..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-fixed overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female IT professional with a warm smile, wearing a clean white shirt, against a soft-focus office background with cool blue tones, representing a high-trust digital service environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJGSz_vtGr9Th78iZP_D8pTSPpUF2_X-k_91Yy1FwGUl7_ZZwtz6B6xTid-5wWmDUkV1WGq5rMw3vNr5OFsHWbNX8OzYa3CZJvUbTv5chxGadNAZv6dQf-2qgdlvvwS4QwCcYqv0xuZxZBwKOPIEdOvdM9NiPJXcvHT0PYAKSDHTdaFhiEl8uJWomfZybbTPGWPOfiX19edKDazFVhhgUCBu19TypBXDOaJrm9qTzhoFIBb4EsZ17KOYgSyDrk08lrBG_UFXHiaXw"/>
+</div>
+</div>
+</nav>
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 p-4 flex flex-col hidden lg:flex bg-surface dark:bg-on-background">
+<div class="mb-8 px-4">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">support_agent</span>
+</div>
+<div>
+<h3 class="text-body-md font-semibold text-on-surface">หมวดหมู่สินค้า</h3>
+<p class="text-xs text-on-surface-variant">เลือกประเภทอุปกรณ์</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">laptop_mac</span>
+<span class="font-body text-body-md">แล็ปท็อป</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">monitor</span>
+<span class="font-body text-body-md">หน้าจอ</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">mouse</span>
+<span class="font-body text-body-md">อุปกรณ์เสริม</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">terminal</span>
+<span class="font-body text-body-md">ซอฟต์แวร์</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body text-body-md">ช่วยเหลือ</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant space-y-2">
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline-variant px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body text-body-md">การตั้งค่า</span>
+</a>
+<button class="w-full py-3 bg-secondary-container text-on-secondary-container rounded-xl font-semibold text-body-md hover:bg-secondary-fixed transition-colors active:scale-95 duration-150">
+                    ติดต่อฝ่ายไอที
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-64 p-6 md:p-8 pb-24 lg:pb-8">
+<header class="mb-8">
+<h1 class="text-headline-lg font-bold text-on-surface">คำขอของฉัน</h1>
+<p class="text-body-md text-on-surface-variant">ติดตามสถานะการขอยืมและคืนอุปกรณ์ไอทีของคุณ</p>
+</header>
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-surface-container-high shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="p-3 bg-primary-fixed rounded-lg text-primary">
+<span class="material-symbols-outlined">hourglass_empty</span>
+</div>
+<span class="text-label-md text-on-surface-variant">Active</span>
+</div>
+<div class="text-headline-md font-bold text-on-surface">4</div>
+<div class="text-body-md text-on-surface-variant">กำลังดำเนินการ</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-surface-container-high shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="p-3 bg-secondary-container rounded-lg text-secondary">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<span class="text-label-md text-on-surface-variant">Successful</span>
+</div>
+<div class="text-headline-md font-bold text-on-surface">12</div>
+<div class="text-body-md text-on-surface-variant">ได้รับอนุมัติ</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-surface-container-high shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="p-3 bg-surface-container-highest rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined">assignment_returned</span>
+</div>
+<span class="text-label-md text-on-surface-variant">Completed</span>
+</div>
+<div class="text-headline-md font-bold text-on-surface">8</div>
+<div class="text-body-md text-on-surface-variant">คืนแล้ว</div>
+</div>
+</div>
+<!-- Requests Content Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
+<!-- Table View -->
+<div class="xl:col-span-2 bg-surface-container-lowest rounded-xl border border-surface-container-high overflow-hidden shadow-sm">
+<div class="p-4 border-b border-surface-container-high flex justify-between items-center">
+<h2 class="font-semibold text-body-lg">รายการคำขอทั้งหมด</h2>
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-label-md uppercase text-on-surface-variant border-b border-surface-container-high">
+<th class="px-6 py-4 font-semibold">ID คำขอ</th>
+<th class="px-6 py-4 font-semibold">ชื่อรายการ</th>
+<th class="px-6 py-4 font-semibold">วันที่ขอ</th>
+<th class="px-6 py-4 font-semibold">กำหนดคืน</th>
+<th class="px-6 py-4 font-semibold">สถานะ</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high">
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="showDetails('REQ-0021')">
+<td class="px-6 py-4 text-body-md font-medium text-primary">REQ-0021</td>
+<td class="px-6 py-4 text-body-md">MacBook Pro 14" M3</td>
+<td class="px-6 py-4 text-body-md">12 มิ.ย. 2567</td>
+<td class="px-6 py-4 text-body-md">12 มิ.ย. 2568</td>
+<td class="px-6 py-4">
+<span class="status-badge bg-secondary-container text-on-secondary-container">
+<span class="material-symbols-outlined text-[14px]">laptop</span>
+                                            กำลังใช้งาน
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="showDetails('REQ-0025')">
+<td class="px-6 py-4 text-body-md font-medium text-primary">REQ-0025</td>
+<td class="px-6 py-4 text-body-md">Dell UltraSharp 27"</td>
+<td class="px-6 py-4 text-body-md">15 มิ.ย. 2567</td>
+<td class="px-6 py-4 text-body-md">15 มิ.ย. 2568</td>
+<td class="px-6 py-4">
+<span class="status-badge bg-primary-fixed text-on-primary-fixed-variant">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">schedule</span>
+                                            รออนุมัติ
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="showDetails('REQ-0018')">
+<td class="px-6 py-4 text-body-md font-medium text-primary">REQ-0018</td>
+<td class="px-6 py-4 text-body-md">Logitech MX Master 3S</td>
+<td class="px-6 py-4 text-body-md">01 พ.ค. 2567</td>
+<td class="px-6 py-4 text-body-md">01 พ.ค. 2568</td>
+<td class="px-6 py-4">
+<span class="status-badge bg-error-container text-on-error-container">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                            เกินกำหนด
+                                        </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="showDetails('REQ-0012')">
+<td class="px-6 py-4 text-body-md font-medium text-primary">REQ-0012</td>
+<td class="px-6 py-4 text-body-md">iPad Pro 11"</td>
+<td class="px-6 py-4 text-body-md">10 ม.ค. 2567</td>
+<td class="px-6 py-4 text-body-md">10 ม.ค. 2568</td>
+<td class="px-6 py-4">
+<span class="status-badge bg-surface-container-highest text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">history</span>
+                                            คืนแล้ว
+                                        </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Details Panel -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container-high p-6 shadow-md xl:sticky xl:top-24 transform transition-all duration-300" id="details-panel">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="text-headline-md font-bold text-primary" id="detail-id">REQ-0021</h2>
+<p class="text-body-lg font-medium text-on-surface" id="detail-name">MacBook Pro 14" M3</p>
+</div>
+<div class="status-badge bg-secondary-container text-on-secondary-container" id="detail-status">กำลังใช้งาน</div>
+</div>
+<div class="space-y-6">
+<div class="p-4 bg-surface-container rounded-lg">
+<h3 class="text-label-md font-semibold text-on-surface-variant mb-3 uppercase tracking-wider">Approval Flow</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container text-xs font-bold">SM</div>
+<div>
+<p class="text-body-md font-semibold">สมชาย ใจดี</p>
+<p class="text-xs text-on-surface-variant">Direct Manager (อนุมัติแล้ว)</p>
+</div>
+<span class="material-symbols-outlined text-primary ml-auto">check_circle</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container text-xs font-bold">IT</div>
+<div>
+<p class="text-body-md font-semibold">สมศรี ไอที</p>
+<p class="text-xs text-on-surface-variant">IT Administrator (อนุมัติแล้ว)</p>
+</div>
+<span class="material-symbols-outlined text-primary ml-auto">check_circle</span>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">วันที่เริ่มต้น</span>
+<span class="font-medium">12 มิ.ย. 2567</span>
+</div>
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">กำหนดส่งคืน</span>
+<span class="font-medium">12 มิ.ย. 2568</span>
+</div>
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">สถานที่ใช้งาน</span>
+<span class="font-medium">Head Office, BKK</span>
+</div>
+</div>
+<div class="pt-4" id="action-area">
+<button class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-95 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">replay</span>
+                                คืนอุปกรณ์
+                            </button>
+<p class="text-center text-xs text-on-surface-variant mt-4">การคืนอุปกรณ์ต้องได้รับการตรวจสอบจากฝ่ายไอทีภายใน 24 ชม.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 lg:hidden bg-surface-container dark:bg-surface-dim shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 transition-all active:bg-surface-variant duration-100" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label text-label-md">หน้าแรก</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-5 py-1 transition-all active:bg-surface-variant duration-100" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="font-label text-label-md">คำขอของฉัน</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 transition-all active:bg-surface-variant duration-100" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label text-label-md">รถเข็น</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 transition-all active:bg-surface-variant duration-100" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label text-label-md">บัญชี</span>
+</a>
+</nav>
+<script>
+        function showDetails(id) {
+            const panel = document.getElementById('details-panel');
+            const detailId = document.getElementById('detail-id');
+            const detailName = document.getElementById('detail-name');
+            const detailStatus = document.getElementById('detail-status');
+            const actionArea = document.getElementById('action-area');
+
+            // Add highlight/animation effect
+            panel.classList.add('scale-105');
+            setTimeout(() => panel.classList.remove('scale-105'), 200);
+
+            if (id === 'REQ-0021') {
+                detailId.innerText = 'REQ-0021';
+                detailName.innerText = 'MacBook Pro 14" M3';
+                detailStatus.innerText = 'กำลังใช้งาน';
+                detailStatus.className = 'status-badge bg-secondary-container text-on-secondary-container';
+                actionArea.classList.remove('hidden');
+            } else if (id === 'REQ-0025') {
+                detailId.innerText = 'REQ-0025';
+                detailName.innerText = 'Dell UltraSharp 27"';
+                detailStatus.innerText = 'รออนุมัติ';
+                detailStatus.className = 'status-badge bg-primary-fixed text-on-primary-fixed-variant';
+                actionArea.classList.add('hidden');
+            } else if (id === 'REQ-0018') {
+                detailId.innerText = 'REQ-0018';
+                detailName.innerText = 'Logitech MX Master 3S';
+                detailStatus.innerText = 'เกินกำหนด';
+                detailStatus.className = 'status-badge bg-error-container text-on-error-container';
+                actionArea.classList.remove('hidden');
+            } else {
+                detailId.innerText = 'REQ-0012';
+                detailName.innerText = 'iPad Pro 11"';
+                detailStatus.innerText = 'คืนแล้ว';
+                detailStatus.className = 'status-badge bg-surface-container-highest text-on-surface-variant';
+                actionArea.classList.add('hidden');
+            }
+        }
+    </script>
+</body></html>

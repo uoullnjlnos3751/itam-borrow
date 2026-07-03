@@ -60,7 +60,7 @@ export default function AdminAssetsPage() {
 
   return (
     <div className="pb-24">
-      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center justify-between px-margin-mobile h-16 max-w-2xl mx-auto left-0 right-0">
+      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center justify-between px-margin-mobile h-16 max-w-2xl mx-auto lg:max-w-none lg:px-8 left-0 right-0 lg:max-w-none lg:left-64">
         <div className="flex items-center gap-stack-md">
           <Link href="/admin" className="text-on-surface p-1">
             <MaterialIcon icon="arrow_back" />
@@ -72,7 +72,7 @@ export default function AdminAssetsPage() {
         </Link>
       </header>
 
-      <main className="pt-16 px-margin-mobile max-w-2xl mx-auto">
+      <main className="pt-16 px-margin-mobile max-w-2xl mx-auto lg:max-w-none lg:px-8">
         <section className="py-stack-lg sticky top-16 bg-background z-40">
           <SearchInput
             placeholder="ค้นหาชื่อ, Tag ID, Serial..."

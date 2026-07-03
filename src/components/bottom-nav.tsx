@@ -32,7 +32,7 @@ export function BottomNav({ variant = 'user' }: BottomNavProps) {
   const items = variant === 'admin' ? adminNavItems : userNavItems;
 
   return (
-    <nav className="fixed bottom-0 w-full max-w-2xl mx-auto left-0 right-0 bg-surface-container-lowest border-t border-outline-variant flex justify-around items-center h-16 z-50">
+    <nav className="fixed bottom-0 w-full max-w-2xl mx-auto left-0 right-0 bg-surface-container-lowest border-t border-outline-variant flex justify-around items-center h-16 z-50 lg:hidden">
       {items.map((item) => {
         const isActive = pathname === item.href || 
           (item.href !== '/' && item.href !== '/admin' && pathname.startsWith(item.href));

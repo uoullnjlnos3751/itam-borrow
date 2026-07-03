@@ -29,13 +29,13 @@ export default function AdminHistoryPage() {
 
   return (
     <div className="pb-24">
-      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center px-margin-mobile h-16 max-w-2xl mx-auto left-0 right-0">
+      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center px-margin-mobile h-16 max-w-2xl mx-auto lg:max-w-none lg:px-8 left-0 right-0 lg:max-w-none lg:left-64">
         <h1 className="font-headline-md text-title-lg font-bold text-on-surface">
           ประวัติการยืม-คืนทั้งหมด
         </h1>
       </header>
 
-      <main className="pt-16 px-margin-mobile max-w-2xl mx-auto">
+      <main className="pt-16 px-margin-mobile max-w-2xl mx-auto lg:max-w-none lg:px-8">
         <section className="py-stack-lg sticky top-16 bg-background z-40">
           <FilterPills options={filterOptions} selected={selectedFilter} onSelect={setSelectedFilter} />
         </section>

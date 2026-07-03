@@ -1,0 +1,314 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ITSM AssetHub - Inventory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Outfit:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"secondary-fixed-dim": "#ffb0a5", "surface-tint": "#0058bc", "secondary-container": "#ffc3bb", "on-tertiary-container": "#563e00", "on-primary-container": "#00214f", "inverse-primary": "#4d8efe", "surface-container": "#e3eae5", "tertiary-container": "#febf0d", outline: "#727875", tertiary: "#765600", "on-surface": "#2a302d", background: "#f3f8f4", "on-primary-fixed": "#000000", "surface-variant": "#d7dfda", "outline-variant": "#a9aeab", error: "#b31b25", surface: "#f3f8f4", "on-primary-fixed-variant": "#002a61", "inverse-on-surface": "#999e9b", primary: "#0058bc", "on-tertiary": "#fff1db", "tertiary-fixed": "#febf0d", "surface-container-highest": "#d7dfda", "surface-bright": "#f3f8f4", "on-error": "#ffefee", "on-secondary-fixed": "#700002", "on-primary": "#f0f2ff", "surface-container-low": "#ecf2ee", "surface-container-lowest": "#ffffff", "surface-container-high": "#dde4e0", "tertiary-fixed-dim": "#eeb200", "on-background": "#2a302d", "inverse-surface": "#0a0f0d", "on-secondary-container": "#940004", "error-container": "#fb5151", "primary-fixed": "#6d9fff", "primary-container": "#6d9fff", "surface-dim": "#ced6d1", secondary: "#b41a14", "on-tertiary-fixed-variant": "#614700", "primary-fixed-dim": "#5291ff", "on-error-container": "#570008", "on-secondary": "#ffefed", "on-tertiary-fixed": "#3d2b00", "on-secondary-fixed-variant": "#a4090a", "secondary-fixed": "#ffc3bb", "on-surface-variant": "#575d5a", "secondary-dim": "#a30709", "tertiary-dim": "#674b00", "primary-dim": "#004ca5", "error-dim": "#9f0519"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"stack-xs": "0.25rem", "stack-lg": "1.5rem", "margin-desktop": "2rem", "stack-sm": "0.5rem", "stack-md": "1rem", "margin-mobile": "1rem", gutter: "1.5rem", "container-max": "1440px"}, fontFamily: {"title-lg": ["Inter"], "headline-md": ["Outfit"], "display-lg": ["Outfit"], "headline-lg-mobile": ["Outfit"], "headline-lg": ["Outfit"], "body-md": ["Inter"], code: ["JetBrains Mono"], "body-sm": ["Inter"], "body-lg": ["Inter"], "label-md": ["Inter"], headline: ["Roboto"], display: ["Roboto"], body: ["Roboto"], label: ["Roboto"]}, fontSize: {"title-lg": ["20px", {lineHeight: "28px", fontWeight: "600"}], "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "600"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "600"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], code: ["13px", {lineHeight: "20px", fontWeight: "400"}], "body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "label-md": ["12px", {lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600"}]}}}};</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .swipe-action {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .swipe-reveal-left {
+            transform: translateX(100px);
+        }
+        .swipe-reveal-right {
+            transform: translateX(-100px);
+        }
+        .active-filter {
+            background-color: #6063ee !important;
+            color: #ffffff !important;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-20">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-stack-md">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full active:scale-95">menu</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">ITSM AssetHub</h1>
+</div>
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full active:scale-95">account_circle</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-16 px-margin-mobile">
+<!-- Search and Filter Section -->
+<section class="py-stack-lg sticky top-16 bg-background z-40">
+<div class="relative mb-stack-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-body-md" placeholder="Search asset name or tag ID..." type="text">
+</div>
+<div class="flex gap-stack-sm overflow-x-auto hide-scrollbar pb-2">
+<button class="active-filter px-4 py-2 rounded-full bg-surface-container border border-outline-variant text-label-md font-label-md whitespace-nowrap transition-colors">All</button>
+<button class="px-4 py-2 rounded-full bg-surface-container border border-outline-variant text-on-surface-variant text-label-md font-label-md whitespace-nowrap transition-colors hover:bg-surface-container-high">Laptops</button>
+<button class="px-4 py-2 rounded-full bg-surface-container border border-outline-variant text-on-surface-variant text-label-md font-label-md whitespace-nowrap transition-colors hover:bg-surface-container-high">Peripherals</button>
+<button class="px-4 py-2 rounded-full bg-surface-container border border-outline-variant text-on-surface-variant text-label-md font-label-md whitespace-nowrap transition-colors hover:bg-surface-container-high">Infrastructure</button>
+<button class="px-4 py-2 rounded-full bg-surface-container border border-outline-variant text-on-surface-variant text-label-md font-label-md whitespace-nowrap transition-colors hover:bg-surface-container-high">Mobile</button>
+</div>
+</section>
+<!-- Inventory List -->
+<section class="space-y-stack-sm">
+<!-- Asset Item 1 -->
+<div class="relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest group touch-pan-y">
+<!-- Action Layer (Under) -->
+<div class="absolute inset-0 flex justify-between items-center px-6">
+<div class="bg-tertiary-container text-on-tertiary px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">how_to_reg</span>
+<span class="text-[10px] font-bold">CHECK OUT</span>
+</div>
+<div class="bg-error text-on-error px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="text-[10px] font-bold">REPORT</span>
+</div>
+</div>
+<!-- Content Layer (Top) -->
+<div class="swipe-action relative bg-surface-container-lowest p-stack-md flex items-center gap-stack-md z-10 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer" onclick="toggleSwipe(this)">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">laptop_mac</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-on-surface">MacBook Pro 16"</h3>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary text-label-md font-label-md">Available</span>
+</div>
+<p class="text-body-sm text-on-surface-variant font-code mt-1">TAG-88291-LX</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+<!-- Asset Item 2 -->
+<div class="relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest group">
+<div class="absolute inset-0 flex justify-between items-center px-6">
+<div class="bg-tertiary-container text-on-tertiary px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">how_to_reg</span>
+<span class="text-[10px] font-bold">CHECK OUT</span>
+</div>
+<div class="bg-error text-on-error px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="text-[10px] font-bold">REPORT</span>
+</div>
+</div>
+<div class="swipe-action relative bg-surface-container-lowest p-stack-md flex items-center gap-stack-md z-10 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer" onclick="toggleSwipe(this)">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">keyboard</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-on-surface">Magic Keyboard</h3>
+<span class="px-2 py-0.5 rounded-full bg-on-secondary-container/10 text-on-secondary-container text-label-md font-label-md">Assigned</span>
+</div>
+<p class="text-body-sm text-on-surface-variant font-code mt-1">TAG-10022-PK</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+<!-- Asset Item 3 -->
+<div class="relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest group">
+<div class="absolute inset-0 flex justify-between items-center px-6">
+<div class="bg-tertiary-container text-on-tertiary px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">how_to_reg</span>
+<span class="text-[10px] font-bold">CHECK OUT</span>
+</div>
+<div class="bg-error text-on-error px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="text-[10px] font-bold">REPORT</span>
+</div>
+</div>
+<div class="swipe-action relative bg-surface-container-lowest p-stack-md flex items-center gap-stack-md z-10 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer" onclick="toggleSwipe(this)">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">router</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-on-surface">Edge Gateway</h3>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-error text-label-md font-label-md">Maintenance</span>
+</div>
+<p class="text-body-sm text-on-surface-variant font-code mt-1">TAG-99012-IF</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+<!-- Asset Item 4 -->
+<div class="relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest group">
+<div class="absolute inset-0 flex justify-between items-center px-6">
+<div class="bg-tertiary-container text-on-tertiary px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">how_to_reg</span>
+<span class="text-[10px] font-bold">CHECK OUT</span>
+</div>
+<div class="bg-error text-on-error px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="text-[10px] font-bold">REPORT</span>
+</div>
+</div>
+<div class="swipe-action relative bg-surface-container-lowest p-stack-md flex items-center gap-stack-md z-10 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer" onclick="toggleSwipe(this)">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">print</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-on-surface">LaserJet Pro X</h3>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container/10 text-tertiary text-label-md font-label-md">Available</span>
+</div>
+<p class="text-body-sm text-on-surface-variant font-code mt-1">TAG-44211-PR</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+<!-- Asset Item 5 -->
+<div class="relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest group">
+<div class="absolute inset-0 flex justify-between items-center px-6">
+<div class="bg-tertiary-container text-on-tertiary px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">how_to_reg</span>
+<span class="text-[10px] font-bold">CHECK OUT</span>
+</div>
+<div class="bg-error text-on-error px-4 py-full flex flex-col items-center justify-center h-full w-24">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="text-[10px] font-bold">REPORT</span>
+</div>
+</div>
+<div class="swipe-action relative bg-surface-container-lowest p-stack-md flex items-center gap-stack-md z-10 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer" onclick="toggleSwipe(this)">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">desktop_windows</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-on-surface">Dell UltraSharp 27"</h3>
+<span class="px-2 py-0.5 rounded-full bg-on-secondary-container/10 text-on-secondary-container text-label-md font-label-md">Assigned</span>
+</div>
+<p class="text-body-sm text-on-surface-variant font-code mt-1">TAG-77621-MN</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Stats Card / Bento Element -->
+<section class="mt-stack-lg mb-stack-lg">
+<div class="grid grid-cols-2 gap-stack-sm">
+<div class="bg-primary-container p-stack-md rounded-xl text-on-primary-container">
+<span class="material-symbols-outlined mb-2">inventory</span>
+<p class="text-body-sm opacity-80">Total Value</p>
+<p class="font-headline-md text-headline-md">$142,500</p>
+</div>
+<div class="bg-surface-container-high p-stack-md rounded-xl border border-outline-variant">
+<span class="material-symbols-outlined text-tertiary mb-2">check_circle</span>
+<p class="text-body-sm text-on-surface-variant">Asset Health</p>
+<p class="font-headline-md text-headline-md text-on-surface">98.4%</p>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB for Quick Scan -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary-container text-on-primary-container rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform duration-200 z-50">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-md border-t border-outline-variant flex justify-around items-center h-16 w-full px-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-95 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-md text-label-md">Assets</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">reorder</span>
+<span class="font-label-md text-label-md">Stock</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">History</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction: Swipe Simulation
+        function toggleSwipe(element) {
+            // This is a simplified simulation of swipe.
+            // In a real app, we'd use TouchEvents (touchstart, touchmove, touchend)
+            // with a threshold to trigger the translation.
+            
+            // Toggle between states for demonstration
+            if (element.style.transform === 'translateX(-100px)') {
+                element.style.transform = 'translateX(0)';
+            } else if (element.style.transform === 'translateX(100px)') {
+                element.style.transform = 'translateX(-100px)';
+            } else {
+                // Default tap opens details (simulated by a small shake or simple state change)
+                element.classList.add('bg-surface-container-high');
+                setTimeout(() => element.classList.remove('bg-surface-container-high'), 200);
+            }
+        }
+
+        // Implementation of touch swipe logic
+        document.querySelectorAll('.swipe-action').forEach(el => {
+            let startX = 0;
+            let currentX = 0;
+            
+            el.addEventListener('touchstart', e => {
+                startX = e.touches[0].clientX;
+                el.style.transition = 'none';
+            });
+
+            el.addEventListener('touchmove', e => {
+                currentX = e.touches[0].clientX;
+                let diff = currentX - startX;
+                // Limit swipe distance
+                if (diff > 100) diff = 100;
+                if (diff < -100) diff = -100;
+                el.style.transform = `translateX(${diff}px)`;
+            });
+
+            el.addEventListener('touchend', e => {
+                el.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                let diff = currentX - startX;
+                
+                if (diff > 50) {
+                    el.style.transform = 'translateX(100px)';
+                } else if (diff < -50) {
+                    el.style.transform = 'translateX(-100px)';
+                } else {
+                    el.style.transform = 'translateX(0)';
+                }
+            });
+        });
+
+        // Filter chip toggle
+        document.querySelectorAll('button.whitespace-nowrap').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('button.whitespace-nowrap').forEach(b => {
+                    b.classList.remove('active-filter');
+                    b.classList.add('text-on-surface-variant');
+                });
+                btn.classList.add('active-filter');
+                btn.classList.remove('text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

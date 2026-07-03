@@ -1,0 +1,232 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Stock Management | ITSM AssetHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Outfit:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"secondary-fixed-dim": "#ffb0a5", "surface-tint": "#0058bc", "secondary-container": "#ffc3bb", "on-tertiary-container": "#563e00", "on-primary-container": "#00214f", "inverse-primary": "#4d8efe", "surface-container": "#e3eae5", "tertiary-container": "#febf0d", outline: "#727875", tertiary: "#765600", "on-surface": "#2a302d", background: "#f3f8f4", "on-primary-fixed": "#000000", "surface-variant": "#d7dfda", "outline-variant": "#a9aeab", error: "#b31b25", surface: "#f3f8f4", "on-primary-fixed-variant": "#002a61", "inverse-on-surface": "#999e9b", primary: "#0058bc", "on-tertiary": "#fff1db", "tertiary-fixed": "#febf0d", "surface-container-highest": "#d7dfda", "surface-bright": "#f3f8f4", "on-error": "#ffefee", "on-secondary-fixed": "#700002", "on-primary": "#f0f2ff", "surface-container-low": "#ecf2ee", "surface-container-lowest": "#ffffff", "surface-container-high": "#dde4e0", "tertiary-fixed-dim": "#eeb200", "on-background": "#2a302d", "inverse-surface": "#0a0f0d", "on-secondary-container": "#940004", "error-container": "#fb5151", "primary-fixed": "#6d9fff", "primary-container": "#6d9fff", "surface-dim": "#ced6d1", secondary: "#b41a14", "on-tertiary-fixed-variant": "#614700", "primary-fixed-dim": "#5291ff", "on-error-container": "#570008", "on-secondary": "#ffefed", "on-tertiary-fixed": "#3d2b00", "on-secondary-fixed-variant": "#a4090a", "secondary-fixed": "#ffc3bb", "on-surface-variant": "#575d5a", "secondary-dim": "#a30709", "tertiary-dim": "#674b00", "primary-dim": "#004ca5", "error-dim": "#9f0519"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"stack-xs": "0.25rem", "stack-lg": "1.5rem", "margin-desktop": "2rem", "stack-sm": "0.5rem", "stack-md": "1rem", "margin-mobile": "1rem", gutter: "1.5rem", "container-max": "1440px"}, fontFamily: {"title-lg": ["Inter"], "headline-md": ["Outfit"], "display-lg": ["Outfit"], "headline-lg-mobile": ["Outfit"], "headline-lg": ["Outfit"], "body-md": ["Inter"], code: ["JetBrains Mono"], "body-sm": ["Inter"], "body-lg": ["Inter"], "label-md": ["Inter"], headline: ["Roboto"], display: ["Roboto"], body: ["Roboto"], label: ["Roboto"]}, fontSize: {"title-lg": ["20px", {lineHeight: "28px", fontWeight: "600"}], "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "600"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "600"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], code: ["13px", {lineHeight: "20px", fontWeight: "400"}], "body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "label-md": ["12px", {lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600"}]}}}};</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .stock-progress-transition {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-stack-md">
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full active:scale-95">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">ITSM AssetHub</h1>
+</div>
+<button class="text-primary hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full active:scale-95">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</header>
+<main class="pt-20 px-margin-mobile space-y-stack-lg max-w-md mx-auto">
+<!-- Search & Filter Area -->
+<section class="flex gap-stack-sm items-center">
+<div class="relative flex-grow">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:border-primary transition-all text-body-md outline-none" placeholder="Search consumables..." type="text">
+</div>
+<button class="bg-surface-container-low text-on-surface-variant p-3 rounded-xl border border-outline-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</section>
+<!-- Quick Summary Stats -->
+<section class="grid grid-cols-2 gap-stack-md">
+<div class="bg-error-container p-stack-md rounded-xl border border-error/10 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-error mb-1">warning</span>
+<span class="font-headline-md text-headline-md text-on-error-container">03</span>
+<span class="font-label-md text-label-md text-on-error-container uppercase">Low Stock</span>
+</div>
+<div class="bg-tertiary-container/10 p-stack-md rounded-xl border border-tertiary/20 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-tertiary mb-1">check_circle</span>
+<span class="font-headline-md text-headline-md text-on-tertiary-fixed-variant">12</span>
+<span class="font-label-md text-label-md text-on-tertiary-fixed-variant uppercase">Healthy</span>
+</div>
+</section>
+<!-- Consumables List -->
+<section class="space-y-stack-md">
+<h2 class="font-title-lg text-title-lg text-on-surface mb-stack-sm">Active Inventory</h2>
+<!-- Item 1: Critical -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface">CAT6 Ethernet Cables</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">2m Blue • Infrastructure</p>
+</div>
+<span class="bg-error-container text-on-error-container text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px]">priority_high</span> Critical
+                    </span>
+</div>
+<div class="flex items-end gap-stack-md">
+<div class="flex-grow">
+<div class="flex justify-between items-baseline mb-1">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Current Stock</span>
+<span class="font-headline-md text-headline-md text-error">08 <span class="text-body-sm text-on-surface-variant font-normal">/ 50</span></span>
+</div>
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-error stock-progress-transition" style="width: 16%"></div>
+</div>
+</div>
+<div class="flex items-center bg-surface-container-low rounded-lg border border-outline-variant p-1">
+<button class="p-2 hover:bg-surface-container text-on-surface active:scale-90 transition-transform" onclick="updateStock('cable-stock', -1)">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="w-8 text-center font-bold text-on-surface" id="cable-stock">08</span>
+<button class="p-2 hover:bg-surface-container text-on-surface active:scale-90 transition-transform" onclick="updateStock('cable-stock', 1)">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 2: Warning -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface">9V Batteries</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Alkaline • Power Supplies</p>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 uppercase tracking-wider">
+<span class="material-symbols-outlined text-[12px]">info</span> Low
+                    </span>
+</div>
+<div class="flex items-end gap-stack-md">
+<div class="flex-grow">
+<div class="flex justify-between items-baseline mb-1">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Current Stock</span>
+<span class="font-headline-md text-headline-md text-secondary">24 <span class="text-body-sm text-on-surface-variant font-normal">/ 100</span></span>
+</div>
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary stock-progress-transition opacity-80" style="width: 24%"></div>
+</div>
+</div>
+<div class="flex items-center bg-surface-container-low rounded-lg border border-outline-variant p-1">
+<button class="p-2 hover:bg-surface-container text-on-surface active:scale-90 transition-transform" onclick="updateStock('battery-stock', -1)">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="w-8 text-center font-bold text-on-surface" id="battery-stock">24</span>
+<button class="p-2 hover:bg-surface-container text-on-surface active:scale-90 transition-transform" onclick="updateStock('battery-stock', 1)">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 3: Healthy -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm opacity-90">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface">HP M402 Toner (Black)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">CF226A • Printing</p>
+</div>
+<span class="bg-tertiary-container/10 text-on-tertiary-fixed-variant text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 uppercase tracking-wider border border-tertiary/20">
+<span class="material-symbols-outlined text-[12px]">check</span> Sufficient
+                    </span>
+</div>
+<div class="flex items-end gap-stack-md">
+<div class="flex-grow">
+<div class="flex justify-between items-baseline mb-1">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Current Stock</span>
+<span class="font-headline-md text-headline-md text-tertiary">15 <span class="text-body-sm text-on-surface-variant font-normal">/ 20</span></span>
+</div>
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-tertiary stock-progress-transition" style="width: 75%"></div>
+</div>
+</div>
+<div class="flex items-center bg-surface-container-low rounded-lg border border-outline-variant p-1">
+<button class="p-2 hover:bg-surface-container text-on-surface active:scale-90 transition-transform" onclick="updateStock('toner-stock', -1)">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="w-8 text-center font-bold text-on-surface" id="toner-stock">15</span>
+<button class="p-2 hover:bg-surface-container text-on-surface active:scale-90 transition-transform" onclick="updateStock('toner-stock', 1)">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Scan to adjust -->
+<section class="mt-stack-lg">
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+<span class="font-title-lg text-title-lg">Scan to Adjust Stock</span>
+</button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-md border-t border-outline-variant flex justify-around items-center h-16 px-2">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Assets</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-95 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">reorder</span>
+<span class="font-label-md text-label-md">Stock</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">History</span>
+</a>
+</nav>
+<script>
+        function updateStock(id, change) {
+            const el = document.getElementById(id);
+            let val = parseInt(el.innerText);
+            val = Math.max(0, val + change);
+            el.innerText = val.toString().padStart(2, '0');
+            
+            // Visual feedback on the progress bar (simplified demo)
+            const card = el.closest('.bg-surface-container-lowest');
+            const progress = card.querySelector('.stock-progress-transition');
+            const currentStockLabel = card.querySelector('.text-headline-md').firstChild;
+            
+            // Dynamically update text color based on thresholds
+            // This is a simplified frontend-only demo of the logic
+            const max = id === 'cable-stock' ? 50 : id === 'battery-stock' ? 100 : 20;
+            const percentage = (val / max) * 100;
+            
+            progress.style.width = percentage + '%';
+            
+            if (percentage < 20) {
+                progress.classList.remove('bg-primary', 'bg-tertiary');
+                progress.classList.add('bg-error');
+            } else if (percentage < 50) {
+                progress.classList.remove('bg-error', 'bg-tertiary');
+                progress.classList.add('bg-primary');
+            } else {
+                progress.classList.remove('bg-error', 'bg-primary');
+                progress.classList.add('bg-tertiary');
+            }
+        }
+    </script>
+</body></html>

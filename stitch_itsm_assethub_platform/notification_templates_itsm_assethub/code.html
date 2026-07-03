@@ -1,0 +1,394 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Notification Settings - AssetHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Outfit:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        /* Style for code variables */
+        .var-tag {
+            background-color: #e1e0ff;
+            color: #4648d4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+        }
+    </style>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"secondary-container": "#ffc3bb", "on-background": "#2a302d", "surface-container": "#e3eae5", "on-secondary-container": "#940004", "primary-fixed": "#6d9fff", "on-primary": "#f0f2ff", "surface-container-low": "#ecf2ee", "on-tertiary-fixed-variant": "#614700", "on-primary-fixed": "#000000", "error-container": "#fb5151", "on-surface-variant": "#575d5a", "on-secondary-fixed": "#700002", "surface-dim": "#ced6d1", secondary: "#b41a14", "on-tertiary": "#fff1db", "inverse-on-surface": "#999e9b", "secondary-fixed": "#ffc3bb", "on-primary-fixed-variant": "#002a61", "on-secondary-fixed-variant": "#a4090a", outline: "#727875", "on-primary-container": "#00214f", "on-secondary": "#ffefed", "on-error-container": "#570008", "on-tertiary-fixed": "#3d2b00", "surface-bright": "#f3f8f4", "surface-variant": "#d7dfda", "surface-tint": "#0058bc", "on-tertiary-container": "#563e00", primary: "#0058bc", "surface-container-highest": "#d7dfda", "on-surface": "#2a302d", "on-error": "#ffefee", "inverse-primary": "#4d8efe", "primary-fixed-dim": "#5291ff", "surface-container-high": "#dde4e0", background: "#f3f8f4", "tertiary-container": "#febf0d", "surface-container-lowest": "#ffffff", tertiary: "#765600", "inverse-surface": "#0a0f0d", "tertiary-fixed-dim": "#eeb200", "secondary-fixed-dim": "#ffb0a5", surface: "#f3f8f4", error: "#b31b25", "tertiary-fixed": "#febf0d", "primary-container": "#6d9fff", "outline-variant": "#a9aeab", "secondary-dim": "#a30709", "tertiary-dim": "#674b00", "primary-dim": "#004ca5", "error-dim": "#9f0519"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"stack-md": "1rem", "stack-xs": "0.25rem", "stack-sm": "0.5rem", "margin-mobile": "1rem", "container-max": "1440px", gutter: "1.5rem", "margin-desktop": "2rem", "stack-lg": "1.5rem"}, fontFamily: {"body-lg": ["Inter"], "headline-lg": ["Outfit"], "title-lg": ["Inter"], "body-sm": ["Inter"], "headline-md": ["Outfit"], "display-lg": ["Outfit"], "body-md": ["Inter"], code: ["JetBrains Mono"], "label-md": ["Inter"], "headline-lg-mobile": ["Outfit"], headline: ["Roboto"], display: ["Roboto"], body: ["Roboto"], label: ["Roboto"]}, fontSize: {"body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-lg": ["32px", {lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "600"}], "title-lg": ["20px", {lineHeight: "28px", fontWeight: "600"}], "body-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}], "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], code: ["13px", {lineHeight: "20px", fontWeight: "400"}], "label-md": ["12px", {lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600"}], "headline-lg-mobile": ["24px", {lineHeight: "32px", fontWeight: "600"}]}}}};</script>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest dark:bg-inverse-surface flex flex-col py-stack-lg border-r border-outline-variant dark:border-outline z-50">
+<div class="px-6 mb-10">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">AssetHub</h1>
+<p class="text-body-sm text-on-surface-variant opacity-70">Enterprise ITMS</p>
+</div>
+<nav class="flex-1 space-y-1 px-3 overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined transition-transform group-hover:scale-110">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined transition-transform group-hover:scale-110">inventory_2</span>
+<span class="font-body-md">Asset Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined transition-transform group-hover:scale-110">support_agent</span>
+<span class="font-body-md">Service Desk</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined transition-transform group-hover:scale-110">engineering</span>
+<span class="font-body-md">PM System</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors group" href="#">
+<span class="material-symbols-outlined transition-transform group-hover:scale-110">inventory</span>
+<span class="font-body-md">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary bg-surface-container-low group" href="#">
+<span class="material-symbols-outlined transition-transform group-hover:scale-110">settings</span>
+<span class="font-body-md">Admin Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-6 pt-6 border-t border-outline-variant">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional headshot of a corporate IT director with a confident expression, wearing a tailored navy suit. The lighting is crisp and modern with a soft-focus office background that matches a clean, enterprise software aesthetic. The color grade is cool-toned with professional clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY1_G1GRILcQNLuUA0X80dRwIv_6tCComebYJGFJ_iCH_q7k6TvduCb1bdd6YxiQzRjgSeh3aE4J1ryk48Sa1oDZRfg-G8CsSFTRozxXALx0t5IvyiSjI3gJ2yB9FgNQLPbtq7SNRQI51RjXIQBQgSxDXu3FMaAQDff3jrdSUkQsTAXtt1kNO7ZZWxeCv9q2WU0cr1xkyyu5q27YCgy0SZpN9-99ni9Ec6XJmT5g86V-FaeJMUpCiaIWPoj37-5WnWUQLj4tdTVM8">
+<div>
+<p class="text-body-md font-bold">Admin User</p>
+<p class="text-body-sm text-on-surface-variant">Systems Architect</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 z-40 bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-md flex items-center justify-between w-[calc(100%-280px)] ml-auto px-margin-desktop h-16 border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 bg-surface-container-low px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full placeholder:text-outline" placeholder="Search templates, logs, or triggers..." type="text">
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container rounded-full transition-colors relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">help_outline</span>
+</button>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md transition-all hover:scale-[1.02] active:scale-95 shadow-sm">
+                + New Asset/Request
+            </button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-72 pt-24 pb-12 px-margin-desktop min-h-screen">
+<div class="max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="mb-10">
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-2">Notification Settings</h2>
+<p class="text-body-lg text-on-surface-variant">Configure automated triggers, message templates, and API integrations for enterprise-wide alerts.</p>
+</div>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left Column: Channel & Triggers -->
+<div class="col-span-12 lg:col-span-4 space-y-gutter">
+<!-- Channel Status Card -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+<h3 class="font-title-lg text-title-lg mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">hub</span>
+                            Channels
+                        </h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">mail</span>
+</div>
+<div>
+<p class="font-bold">Email Notifications</p>
+<p class="text-body-sm text-tertiary">Active • SMTP Ready</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-outline rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-700">chat</span>
+</div>
+<div>
+<p class="font-bold">LINE Messaging API</p>
+<p class="text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Connected
+                                        </p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-outline rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Event Triggers Card -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-title-lg text-title-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">bolt</span>
+                                Event Triggers
+                            </h3>
+<button class="text-primary font-label-md hover:underline">Edit All</button>
+</div>
+<div class="space-y-2">
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-bold">New Request</span>
+<span class="text-body-sm text-on-surface-variant">Triggered when a user submits an asset ticket.</span>
+</div>
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-bold">Asset Overdue</span>
+<span class="text-body-sm text-on-surface-variant">Triggered when checkout duration is exceeded.</span>
+</div>
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg bg-primary-fixed/30 border border-primary/20">
+<div class="flex flex-col">
+<span class="font-bold text-primary">Borrow Request Approved</span>
+<span class="text-body-sm text-on-surface-variant">Confirmation sent after manager approval.</span>
+</div>
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-bold">PM Task Assigned</span>
+<span class="text-body-sm text-on-surface-variant">Sent to technician for preventive maintenance.</span>
+</div>
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Template Editor & Preview -->
+<div class="col-span-12 lg:col-span-8 space-y-gutter">
+<!-- Editor Interface -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col h-full min-h-[700px]">
+<!-- Editor Toolbar -->
+<div class="bg-surface-container-low px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">edit_note</span>
+<span class="font-bold">Template: Borrow Request Approved</span>
+</div>
+<span class="h-4 w-px bg-outline-variant"></span>
+<div class="flex items-center gap-2 text-on-surface-variant text-body-sm">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                                    Last edited 2h ago
+                                </div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 text-on-surface-variant hover:bg-surface-container rounded transition-colors text-body-sm font-bold">Cancel</button>
+<button class="px-4 py-1.5 bg-primary text-on-primary rounded shadow-sm hover:opacity-90 transition-opacity text-body-sm font-bold">Save Changes</button>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row flex-1">
+<!-- Code/Variable Editor Pane -->
+<div class="lg:w-1/2 p-6 border-r border-outline-variant">
+<div class="mb-6">
+<label class="block text-label-md text-on-surface-variant mb-2">DYNAMIC VARIABLES</label>
+<div class="flex flex-wrap gap-2">
+<button class="var-tag hover:scale-105 transition-transform">AssetID</button>
+<button class="var-tag hover:scale-105 transition-transform">AssetName</button>
+<button class="var-tag hover:scale-105 transition-transform">UserName</button>
+<button class="var-tag hover:scale-105 transition-transform">DueDate</button>
+<button class="var-tag hover:scale-105 transition-transform">ApproverName</button>
+<button class="var-tag hover:scale-105 transition-transform">Department</button>
+</div>
+</div>
+<div class="flex-1">
+<label class="block text-label-md text-on-surface-variant mb-2">EMAIL CONTENT (HTML/Markdown)</label>
+<textarea class="w-full h-[400px] bg-surface-container-low border border-outline-variant rounded-lg p-4 font-code text-code focus:ring-2 focus:ring-primary focus:border-transparent resize-none leading-relaxed" spellcheck="false">&lt;h2&gt;Hello {UserName},&lt;/h2&gt;
+&lt;p&gt;Your request to borrow the asset &lt;strong&gt;{AssetName}&lt;/strong&gt; ({AssetID}) has been &lt;strong&gt;approved&lt;/strong&gt; by IT Operations.&lt;/p&gt;
+
+&lt;div class="info-box"&gt;
+  &lt;p&gt;&lt;strong&gt;Scheduled Return:&lt;/strong&gt; {DueDate}&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Pickup Location:&lt;/strong&gt; Central IT Hub - Station 4&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Please ensure the asset is returned in its original condition to avoid PM flagging. If you need an extension, please contact {ApproverName}.&lt;/p&gt;
+
+&lt;p&gt;Best regards,&lt;br&gt;AssetHub Team&lt;/p&gt;
+                                    </textarea>
+</div>
+</div>
+<!-- Live Preview Pane -->
+<div class="lg:w-1/2 p-6 bg-surface-container-low/30 relative">
+<label class="block text-label-md text-on-surface-variant mb-4 flex items-center justify-between">
+                                    LIVE PREVIEW (SIMULATED DATA)
+                                    <span class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                        Real-time
+                                    </span>
+</label>
+<div class="space-y-6">
+<!-- Email Preview -->
+<div class="bg-white border border-outline-variant rounded-lg shadow-sm overflow-hidden">
+<div class="bg-surface-container-low px-4 py-2 border-b border-outline-variant flex items-center justify-between text-body-sm">
+<span class="text-on-surface-variant">To: <span class="font-bold">j.doe@enterprise.com</span></span>
+<span class="text-on-surface-variant">Subject: <span class="font-bold">Borrow Request Approved - AS-9021</span></span>
+</div>
+<div class="p-6">
+<div class="font-headline-md text-xl mb-4 text-on-background">Hello John Doe,</div>
+<p class="mb-4">Your request to borrow the asset <strong class="text-primary">MacBook Pro 16"</strong> (AS-9021) has been <strong>approved</strong> by IT Operations.</p>
+<div class="bg-primary-fixed/20 border-l-4 border-primary p-4 rounded mb-4">
+<p class="text-body-md"><strong>Scheduled Return:</strong> Oct 24, 2023</p>
+<p class="text-body-md"><strong>Pickup Location:</strong> Central IT Hub - Station 4</p>
+</div>
+<p class="mb-6">Please ensure the asset is returned in its original condition to avoid PM flagging. If you need an extension, please contact Sarah Jenkins.</p>
+<p class="text-body-sm text-on-surface-variant border-t pt-4">Best regards,<br>AssetHub Team</p>
+</div>
+</div>
+<!-- LINE Messaging Preview -->
+<div class="bg-[#06c755] border border-outline-variant rounded-2xl shadow-lg p-1 max-w-[280px] mx-auto">
+<div class="bg-white rounded-[14px] p-4 relative">
+<div class="flex items-center gap-2 mb-3">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-xs">hub</span>
+</div>
+<div>
+<p class="text-[10px] font-bold leading-tight">AssetHub Bot</p>
+<p class="text-[8px] text-on-surface-variant leading-tight">Today 14:02</p>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 text-body-sm mb-2">
+                                                ✅ <strong>Request Approved</strong><br>
+                                                Item: MacBook Pro 16"<br>
+                                                Return by: 24 Oct<br>
+<br>
+                                                Please visit the IT Hub to collect your equipment.
+                                            </div>
+<div class="text-[10px] text-primary font-bold border-t border-outline-variant pt-2 text-center cursor-pointer">
+                                                View Ticket Details
+                                            </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- API Configuration Bottom Section -->
+<div class="mt-gutter grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-green-600">settings_input_component</span>
+<h3 class="font-title-lg text-title-lg">LINE Integration Details</h3>
+</div>
+<div class="space-y-3 font-code text-code bg-surface-container-low p-4 rounded-lg border border-outline-variant/30">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Webhook URL:</span>
+<span class="text-primary truncate ml-4">https://api.assethub.io/v1/line/webhook</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Channel Secret:</span>
+<span>••••••••••••••••••••••••</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">Token Status:</span>
+<span class="text-tertiary">Active (Expires in 89 days)</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex gap-3">
+<button class="flex-1 py-2 border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-low transition-colors">Test Connection</button>
+<button class="flex-1 py-2 border border-outline-variant rounded-lg font-label-md hover:bg-surface-container-low transition-colors">Renew Secret</button>
+</div>
+</section>
+<section class="bg-primary/5 border border-primary/20 rounded-xl p-6 relative overflow-hidden group">
+<!-- Subtle pattern background -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<svg height="100%" width="100%">
+<pattern height="20" id="dotPattern" patternUnits="userSpaceOnUse" width="20" x="0" y="0">
+<circle class="text-primary" cx="2" cy="2" fill="currentColor" r="1"></circle>
+</pattern>
+<rect fill="url(#dotPattern)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<div class="relative z-10">
+<h3 class="font-title-lg text-title-lg mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                            Delivery Insights
+                        </h3>
+<p class="text-body-md text-on-surface-variant mb-6">Automated notifications maintain a 99.8% delivery success rate across all channels this month.</p>
+<div class="grid grid-cols-3 gap-4">
+<div class="text-center">
+<p class="text-2xl font-black text-primary">12.4k</p>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total Alerts</p>
+</div>
+<div class="text-center">
+<p class="text-2xl font-black text-tertiary">84%</p>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Read Rate</p>
+</div>
+<div class="text-center">
+<p class="text-2xl font-black text-error">0.02%</p>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Bounce</p>
+</div>
+</div>
+</div>
+<div class="mt-8 relative z-10">
+<button class="w-full py-3 bg-white border border-primary/20 rounded-lg font-bold text-primary flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all group-hover:shadow-md">
+                             View Complete Logs
+                             <span class="material-symbols-outlined">trending_flat</span>
+</button>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Floating Action for Quick Help/Support - Hidden as per suppression logic for settings but keeping script context -->
+<!-- Scripts for micro-interactions -->
+<script>
+        document.querySelectorAll('.var-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                const textarea = document.querySelector('textarea');
+                const text = `{${tag.textContent}}`;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
+                textarea.focus();
+                textarea.selectionStart = textarea.selectionEnd = start + text.length;
+            });
+        });
+
+        // Theme switching logic (for demo purposes)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // document.documentElement.classList.add('dark');
+        }
+    </script>
+</body></html>

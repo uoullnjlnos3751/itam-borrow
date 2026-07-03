@@ -27,9 +27,22 @@ export default function RootLayout({
       </head>
       <body className="bg-background text-on-background font-body-md min-h-screen" suppressHydrationWarning>
         <AppMsalProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <div className="flex min-h-screen">
+              <SideNavWrapper />
+              <div className="flex-1 w-full lg:ml-64 relative">
+                {children}
+              </div>
+            </div>
+          </AuthProvider>
         </AppMsalProvider>
       </body>
     </html>
   );
+}
+
+// Client component wrapper for SideNav to avoid SSR hydration issues with usePathname
+import { SideNav } from '@/components/side-nav';
+function SideNavWrapper() {
+  return <SideNav />;
 }

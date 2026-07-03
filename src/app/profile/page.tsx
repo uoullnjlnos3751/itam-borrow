@@ -26,11 +26,11 @@ export default function ProfilePage() {
 
   return (
     <div className="pb-24">
-      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex justify-center items-center px-margin-mobile h-16 max-w-2xl mx-auto left-0 right-0">
+      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex justify-center items-center px-margin-mobile h-16 max-w-2xl mx-auto lg:max-w-none lg:px-8 left-0 right-0 lg:max-w-none lg:left-64">
         <h1 className="font-headline-md text-title-lg font-bold text-primary">โปรไฟล์ของฉัน</h1>
       </header>
 
-      <main className="pt-24 px-margin-mobile max-w-2xl mx-auto space-y-stack-lg">
+      <main className="pt-24 px-margin-mobile max-w-2xl mx-auto lg:max-w-none lg:px-8 space-y-stack-lg">
         <div className="flex flex-col items-center text-center">
           <div className="w-24 h-24 rounded-full bg-primary-container text-primary flex items-center justify-center text-display-sm font-bold mb-stack-md shadow-sm">
             {user.display_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}

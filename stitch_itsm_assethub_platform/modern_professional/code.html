@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html lang="th"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AssetHub - รายการรออนุมัติ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Sarabun:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#00458d",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#bd5700",
+                    "on-secondary-container": "#3f5881",
+                    "on-secondary-fixed": "#001b3d",
+                    "on-primary-container": "#fefcff",
+                    "surface-container-high": "#e6e8f1",
+                    "surface-container-low": "#f1f3fc",
+                    "on-surface": "#181c22",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#aec7f7",
+                    "secondary-container": "#b6d0ff",
+                    "secondary": "#465f88",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e0e2eb",
+                    "surface-bright": "#f9f9ff",
+                    "on-primary-fixed": "#001b3e",
+                    "on-error": "#ffffff",
+                    "surface-container": "#ebedf7",
+                    "surface": "#f9f9ff",
+                    "outline": "#717785",
+                    "on-tertiary-fixed-variant": "#763400",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#ffb68c",
+                    "secondary-fixed": "#d6e3ff",
+                    "primary-container": "#0a73e0",
+                    "tertiary-fixed": "#ffdbc9",
+                    "inverse-primary": "#aac7ff",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#964400",
+                    "surface-variant": "#e0e2eb",
+                    "primary-fixed-dim": "#aac7ff",
+                    "surface-dim": "#d7dae3",
+                    "on-tertiary-fixed": "#321200",
+                    "inverse-on-surface": "#eef0fa",
+                    "on-surface-variant": "#414753",
+                    "primary-fixed": "#d6e3ff",
+                    "surface-tint": "#005db8",
+                    "outline-variant": "#c1c6d5",
+                    "on-secondary-fixed-variant": "#2d476f",
+                    "on-tertiary-container": "#fffbff",
+                    "inverse-surface": "#2d3037",
+                    "background": "#f9f9ff",
+                    "on-background": "#181c22",
+                    "primary": "#005ab4"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter", "Sarabun", "sans-serif"],
+                    "display": ["Inter", "Sarabun", "sans-serif"],
+                    "body": ["Inter", "Sarabun", "sans-serif"],
+                    "label": ["Inter", "Sarabun", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', 'Sarabun', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c6d5; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline flex flex-col py-8 z-50">
+<div class="px-6 mb-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-2xl">inventory_2</span>
+</div>
+<div>
+<h1 class="font-headline-md text-2xl font-bold text-primary dark:text-primary-fixed-dim leading-none">AssetHub</h1>
+<p class="text-[10px] uppercase tracking-widest text-outline mt-1">Enterprise ITMS</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-primary dark:text-primary-fixed-dim font-bold border-r-4 border-primary bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">device_reset</span>
+<span class="font-body-md">Service Desk</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md">Asset Management</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-body-md">PM System</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">inventory</span>
+<span class="font-body-md">Inventory</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-secondary-fixed-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-colors mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Admin Settings</span>
+</a>
+</nav>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 z-40 flex items-center justify-between w-[calc(100%-288px)] ml-auto px-8 h-16 bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-md border-b border-outline-variant dark:border-outline">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 text-sm" placeholder="ค้นหารายการคำขอ..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-lg">add</span>
+                + New Asset/Request
+            </button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<img class="w-10 h-10 rounded-full border-2 border-surface-container-highest" data-alt="Professional studio portrait of a corporate IT manager, high-quality lighting, soft blue background, wearing a modern business casual shirt, friendly and trustworthy expression, 8k resolution, clean and sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCw9pGdES-0uXpsxefk1h4HRGju1_H26RucNpZwhe9HIAB1j1VuoWMtQyTfnngIdvB4cuFxYsmNwBA5F_qx8BASH9Xtp8ZG2C81cgnbbCbDLeGGoPVyJX8jFEtS9b7hPokGCuuQt06AEhbsY4-7yw0offbx1KKnN2sS7nxCC5rKMfMRcNC2rzIN9zraqNsnViNTsMTGLlkXdy6-WyDIUQ4D2r9gy4YqhtfG2LOHNGeJA2O4i6Xge-3FUYuP_FTQodfQFnKt0v-Z6lM"/>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-72 pt-24 px-8 pb-8 min-h-screen">
+<div class="max-w-[1600px] mx-auto">
+<!-- Breadcrumbs -->
+<nav class="flex mb-6 text-sm gap-2 items-center text-outline">
+<span>Service Desk</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-medium">รายการรออนุมัติ</span>
+</nav>
+<div class="grid grid-cols-12 gap-6">
+<!-- Left: Request Queue (Bento Card Style) -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="px-6 py-5 flex items-center justify-between border-b border-outline-variant">
+<div>
+<h2 class="text-xl font-bold text-on-surface">รายการรออนุมัติ (Approval Queue)</h2>
+<p class="text-sm text-on-surface-variant">มี 5 รายการที่รอการตรวจสอบจากคุณ</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest transition-colors">ทั้งหมด</button>
+<button class="px-3 py-1.5 text-xs font-semibold rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">ด่วนที่สุด</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider font-semibold">
+<tr>
+<th class="px-6 py-4">ID คำขอ</th>
+<th class="px-6 py-4">ผู้ขอรับบริการ</th>
+<th class="px-6 py-4">ประเภท</th>
+<th class="px-6 py-4">วันที่</th>
+<th class="px-6 py-4 text-center">ความสำคัญ</th>
+<th class="px-6 py-4"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 (Active/Selected) -->
+<tr class="hover:bg-primary-fixed/30 cursor-pointer transition-colors bg-primary-fixed/10 border-l-4 border-primary">
+<td class="px-6 py-4 font-mono text-xs font-bold text-primary">#REQ-2024-089</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-xs font-bold text-on-secondary-container">สม</div>
+<div class="text-sm">
+<p class="font-semibold text-on-surface">สมชาย สายลม</p>
+<p class="text-xs text-on-surface-variant">Marketing Dept.</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Laptop Request</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">24 พ.ค. 2567</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded-full bg-error-container text-on-error-container text-[10px] font-bold">ด่วนที่สุด</span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-primary">chevron_right</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low cursor-pointer transition-colors">
+<td class="px-6 py-4 font-mono text-xs font-bold text-outline">#REQ-2024-092</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-bold">วิ</div>
+<div class="text-sm">
+<p class="font-semibold text-on-surface">วิภาดา รักดี</p>
+<p class="text-xs text-on-surface-variant">HR Section</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Software License</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">25 พ.ค. 2567</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold">ปกติ</span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low cursor-pointer transition-colors">
+<td class="px-6 py-4 font-mono text-xs font-bold text-outline">#REQ-2024-095</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-bold">กร</div>
+<div class="text-sm">
+<p class="font-semibold text-on-surface">เกริกพล มั่นคง</p>
+<p class="text-xs text-on-surface-variant">IT Support</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Monitor 27"</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">26 พ.ค. 2567</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded-full bg-tertiary-container/10 text-tertiary text-[10px] font-bold">ปานกลาง</span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low cursor-pointer transition-colors">
+<td class="px-6 py-4 font-mono text-xs font-bold text-outline">#REQ-2024-101</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-bold">นภ</div>
+<div class="text-sm">
+<p class="font-semibold text-on-surface">นภัสสร อ่อนนุ่ม</p>
+<p class="text-xs text-on-surface-variant">Finance</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Adobe CC Access</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">27 พ.ค. 2567</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold">ปกติ</span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 bg-surface-container-low flex justify-center">
+<button class="text-xs font-bold text-primary hover:underline transition-all">ดูรายการทั้งหมด</button>
+</div>
+</div>
+</div>
+<!-- Right: Request Details (Glassmorphic Sidebar) -->
+<div class="col-span-12 lg:col-span-4">
+<div class="bg-surface-container-lowest rounded-xl shadow-lg border border-primary/20 overflow-hidden sticky top-24">
+<div class="p-6 bg-gradient-to-br from-primary to-primary-container text-on-primary">
+<div class="flex justify-between items-start mb-4">
+<span class="px-2 py-1 bg-white/20 rounded text-[10px] font-bold uppercase tracking-widest">Pending Review</span>
+<button class="text-on-primary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<h3 class="text-2xl font-bold mb-1">รายละเอียดคำขอ</h3>
+<p class="text-primary-fixed text-sm">#REQ-2024-089 — MacBook Pro M3</p>
+</div>
+<div class="p-6 space-y-6">
+<!-- User Card -->
+<div class="flex items-center gap-4 p-4 bg-surface-container-low rounded-xl border border-outline-variant">
+<img class="w-12 h-12 rounded-full object-cover shadow-sm" data-alt="A close-up shot of a smiling Asian male professional in his late 20s, wearing a crisp white dress shirt and a lanyard. The background is a blurred modern office space with soft daylight. The aesthetic is clean, professional, and corporate, following a blue and white color scheme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhIEKm7Jd3SGXpyA29rYHR50PCpQZC3cE0f3YewERuJScsDuf2F-QwgpJDO7ae1jPZ4-uRwkv65HW5mQ6prx7o3vyzOWBIl-woum3tptrYnJKCjNVXa-2QaBRzX5lsbs1yIs8Wo00g9Ifd2x1V3xNqfgjAtPpSvN3guCHKBV-hxDlVev73B6VVcWGPBKZITarmYmm_PwdxQFDy0RLmD7pGF0NonjkCl7_GiZrDzVd-1gK4Iyu3QqF0PKen81HR6c1IEwucTIZcorw"/>
+<div>
+<p class="text-xs text-on-surface-variant uppercase font-bold tracking-tighter">ผู้ยื่นคำขอ</p>
+<p class="text-base font-bold text-on-surface leading-tight">สมชาย สายลม</p>
+<p class="text-xs text-primary font-medium">Senior Marketing Specialist</p>
+</div>
+</div>
+<!-- Details List -->
+<div class="space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 bg-surface rounded-lg border border-outline-variant/30">
+<p class="text-[10px] text-outline font-bold uppercase mb-1">ประเภทอุปกรณ์</p>
+<p class="text-sm font-semibold text-on-surface">Laptop / Workstation</p>
+</div>
+<div class="p-3 bg-surface rounded-lg border border-outline-variant/30">
+<p class="text-[10px] text-outline font-bold uppercase mb-1">ราคาโดยประมาณ</p>
+<p class="text-sm font-semibold text-on-surface">72,900 THB</p>
+</div>
+</div>
+<div class="p-4 bg-surface rounded-xl border border-outline-variant/30">
+<p class="text-[10px] text-outline font-bold uppercase mb-2">เหตุผลและความจำเป็น (Justification)</p>
+<p class="text-sm text-on-surface leading-relaxed">
+                                        มีความจำเป็นต้องใช้งาน MacBook Pro รุ่นใหม่เนื่องจากเครื่องเดิม (อายุ 5 ปี) เริ่มมีปัญหาในการประมวลผลงานตัดต่อวิดีโอ 4K และแคมเปญโฆษณาขนาดใหญ่ ทำให้การทำงานล่าช้ากว่ากำหนด
+                                    </p>
+</div>
+<div class="flex items-center gap-2 p-3 bg-tertiary-container/5 rounded-lg border border-tertiary-container/20">
+<span class="material-symbols-outlined text-tertiary text-lg">info</span>
+<p class="text-xs text-tertiary font-medium">ต้องการใช้งานภายในวันที่ 1 มิ.ย. 2567</p>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="pt-4 flex flex-col gap-3">
+<button class="w-full bg-primary text-on-primary py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md hover:bg-primary-container active:scale-95 transition-all" id="approve-btn">
+<span class="material-symbols-outlined">check_circle</span>
+                                    อนุมัติ (Approve)
+                                </button>
+<button class="w-full border-2 border-error text-error py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-error-container/20 active:scale-95 transition-all" id="reject-btn">
+<span class="material-symbols-outlined">cancel</span>
+                                    ไม่อนุมัติ (Reject)
+                                </button>
+<p class="text-[10px] text-center text-outline italic">การดำเนินการนี้จะถูกบันทึกใน Audit Log อัตโนมัติ</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Additional Context Cards (Bento) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+<div class="bg-surface-container rounded-xl p-6 border border-outline-variant hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">history</span>
+</div>
+<span class="text-xs font-bold text-primary">ประวัติล่าสุด</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-2">สมชาย เคยได้รับอนุมัติ:</p>
+<ul class="space-y-2">
+<li class="flex items-center gap-2 text-xs font-medium text-on-surface">
+<div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                            Logitech MX Master 3S (2023)
+                        </li>
+<li class="flex items-center gap-2 text-xs font-medium text-on-surface">
+<div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                            Dell UltraSharp 27" (2022)
+                        </li>
+</ul>
+</div>
+<div class="bg-surface-container rounded-xl p-6 border border-outline-variant hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-secondary/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary">analytics</span>
+</div>
+<span class="text-xs font-bold text-secondary">สถิติงบประมาณ</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-1">งบประมาณคงเหลือในไตรมาส:</p>
+<p class="text-2xl font-black text-on-surface">฿425,000</p>
+<div class="w-full bg-outline-variant/30 h-1.5 rounded-full mt-4">
+<div class="bg-secondary h-full rounded-full w-2/3"></div>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-9xl">payments</span>
+</div>
+</div>
+<div class="bg-inverse-surface text-inverse-on-surface rounded-xl p-6 border border-outline-variant shadow-xl relative">
+<h4 class="font-bold mb-2">ข้อความด่วนจากระบบ</h4>
+<p class="text-xs text-outline-variant leading-relaxed">
+                        ระบบตรวจพบว่ารายการ #REQ-2024-089 เป็นอุปกรณ์ที่มีราคาสูงเกินเกณฑ์มาตรฐาน 20% กรุณาพิจารณาร่วมกับนโยบายงบประมาณส่วนกลาง
+                    </p>
+<button class="mt-4 text-xs font-bold text-inverse-primary flex items-center gap-1 hover:underline">
+                        อ่านข้อกำหนดเพิ่มเติม
+                        <span class="material-symbols-outlined text-xs">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions
+        const approveBtn = document.getElementById('approve-btn');
+        const rejectBtn = document.getElementById('reject-btn');
+
+        approveBtn.addEventListener('click', () => {
+            const confirmed = confirm('ยืนยันการอนุมัติรายการ #REQ-2024-089 หรือไม่?');
+            if (confirmed) {
+                approveBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> กำลังดำเนินการ...';
+                setTimeout(() => {
+                    approveBtn.innerHTML = '<span class="material-symbols-outlined">check</span> อนุมัติสำเร็จ';
+                    approveBtn.classList.replace('bg-primary', 'bg-green-600');
+                }, 1500);
+            }
+        });
+
+        rejectBtn.addEventListener('click', () => {
+            const reason = prompt('กรุณาระบุเหตุผลที่ไม่อนุมัติ:');
+            if (reason) {
+                alert('ส่งข้อมูลการไม่อนุมัติไปยังผู้ขอเรียบร้อยแล้ว');
+            }
+        });
+
+        // Hover effects for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.classList.add('translate-x-1');
+            });
+            row.addEventListener('mouseleave', () => {
+                row.classList.remove('translate-x-1');
+            });
+        });
+    </script>
+</body></html>

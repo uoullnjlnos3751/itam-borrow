@@ -62,7 +62,7 @@ export default function AssetsPage() {
 
   return (
     <div className="pb-24">
-      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-margin-mobile h-16 max-w-2xl mx-auto left-0 right-0">
+      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-margin-mobile h-16 max-w-2xl mx-auto lg:max-w-none lg:px-8 left-0 right-0 lg:max-w-none lg:left-64">
         <div className="flex items-center gap-stack-md">
           <MaterialIcon icon="devices" className="text-primary p-2" />
           <h1 className="font-headline-md text-title-lg font-bold text-primary">ยืมอุปกรณ์ IT</h1>
@@ -72,7 +72,7 @@ export default function AssetsPage() {
         </div>
       </header>
 
-      <main className="pt-16 px-margin-mobile max-w-2xl mx-auto">
+      <main className="pt-16 px-margin-mobile max-w-2xl mx-auto lg:max-w-none lg:px-8">
         <section className="py-stack-lg sticky top-16 bg-background z-40">
           <SearchInput
             placeholder="ค้นหาชื่ออุปกรณ์ หรือ Tag ID..."
