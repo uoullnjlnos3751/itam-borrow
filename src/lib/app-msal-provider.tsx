@@ -10,11 +10,15 @@ export function AppMsalProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (msalInstance) {
-      msalInstance.initialize().then(() => {
-        setIsInitialized(true);
-      }).catch(e => {
-        console.error("MSAL init error:", e);
-      });
+      msalInstance.initialize()
+        .then(() => msalInstance.handleRedirectPromise())
+        .then(() => {
+          setIsInitialized(true);
+        })
+        .catch(e => {
+          console.error("MSAL init error:", e);
+          setIsInitialized(true); // Still set to true so app can render and show error if needed
+        });
     }
   }, []);
 

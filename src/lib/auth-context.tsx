@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       sessionStorage.setItem('itam_user', JSON.stringify(mockUser));
     } else {
       try {
-        await instance.loginPopup(loginRequest);
+        await instance.loginRedirect(loginRequest);
       } catch (error) {
         console.error("MSAL Login Error:", error);
       }
@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       sessionStorage.removeItem('itam_user');
     } else {
-      instance.logoutPopup().catch(console.error);
+      instance.logoutRedirect().catch(console.error);
     }
   }, [isMockAuth, instance]);
 
