@@ -1,4 +1,4 @@
-import { Configuration, LogLevel } from '@azure/msal-browser';
+import { Configuration, LogLevel, PublicClientApplication } from '@azure/msal-browser';
 
 export const msalConfig: Configuration = {
   auth: {
@@ -26,6 +26,8 @@ export const msalConfig: Configuration = {
     },
   },
 };
+
+export const msalInstance = new PublicClientApplication(msalConfig);
 
 export const loginRequest = {
   scopes: ['openid', 'profile', 'email'],

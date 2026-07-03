@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
+import { AppMsalProvider } from '@/lib/app-msal-provider';
 
 export const metadata: Metadata = {
   title: 'AssetHub ยืม-คืน - ระบบยืม-คืนอุปกรณ์ IT',
@@ -25,7 +26,9 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background text-on-background font-body-md min-h-screen" suppressHydrationWarning>
-        <AuthProvider>{children}</AuthProvider>
+        <AppMsalProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </AppMsalProvider>
       </body>
     </html>
   );
