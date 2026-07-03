@@ -21,6 +21,7 @@ export function SideNav() {
     { href: '/admin', icon: 'space_dashboard', label: 'แดชบอร์ด' },
     { href: '/admin/assets', icon: 'inventory_2', label: 'จัดการอุปกรณ์' },
     { href: '/admin/history', icon: 'history', label: 'ประวัติทั้งหมด' },
+    { href: '/admin/users', icon: 'manage_accounts', label: 'ผู้ใช้งาน' },
     { href: '/profile', icon: 'account_circle', label: 'โปรไฟล์' },
   ];
 

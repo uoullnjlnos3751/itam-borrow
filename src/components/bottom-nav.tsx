@@ -19,7 +19,8 @@ const userNavItems: NavItem[] = [
 const adminNavItems: NavItem[] = [
   { href: '/admin', icon: 'space_dashboard', label: 'แดชบอร์ด' },
   { href: '/admin/assets', icon: 'inventory_2', label: 'อุปกรณ์' },
-  { href: '/admin/history', icon: 'history', label: 'ประวัติทั้งหมด' },
+  { href: '/admin/history', icon: 'history', label: 'ประวัติ' },
+  { href: '/admin/users', icon: 'manage_accounts', label: 'ผู้ใช้' },
   { href: '/profile', icon: 'account_circle', label: 'โปรไฟล์' },
 ];
 

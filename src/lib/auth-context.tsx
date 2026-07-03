@@ -32,40 +32,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isMockAuth = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === 'true';
 
   useEffect(() => {
-    if (isMockAuth) {
-      // Mock auth flow
-      const stored = sessionStorage.getItem('itam_user');
-      if (stored) {
-        try {
-          setUser(JSON.parse(stored));
-        } catch {
-          sessionStorage.removeItem('itam_user');
+    async function initAuth() {
+      if (isMockAuth) {
+        // Mock auth flow
+        const stored = sessionStorage.getItem('itam_user');
+        if (stored) {
+          try {
+            setUser(JSON.parse(stored));
+          } catch {
+            sessionStorage.removeItem('itam_user');
+          }
         }
-      }
-      setIsLoading(false);
-    } else {
-      // MSAL flow
-      if (isMsalAuthenticated && accounts.length > 0) {
-        const account = accounts[0];
-        // Create a temporary User object from MSAL account
-        setUser({
-          id: account.homeAccountId || account.localAccountId,
-          entra_object_id: account.localAccountId,
-          email: account.username,
-          display_name: account.name || account.username.split('@')[0],
-          role: 'user', // Default to user, admin logic can be added later
-          department: 'IT',
-          subsidiary: 'TRR',
-          last_login_at: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          is_active: true
-        });
+        setIsLoading(false);
       } else {
-        setUser(null);
+        // MSAL flow
+        if (isMsalAuthenticated && accounts.length > 0) {
+          const account = accounts[0];
+          
+          let userRole: UserRole = 'user';
+          
+          // Method 2: Check App Roles from Azure AD Token
+          const idTokenRoles = (account.idTokenClaims as any)?.roles || [];
+          if (idTokenRoles.includes('ITAdmin')) {
+            userRole = 'admin';
+          } else {
+            // Method 1: Check Database (Supabase) as fallback
+            try {
+              // Import dynamically or ensure supabase is available
+              const { supabase } = await import('./supabase');
+              const { data, error } = await supabase
+                .from('users')
+                .select('role')
+                .eq('entra_object_id', account.localAccountId)
+                .single();
+                
+              if (data && data.role === 'admin') {
+                userRole = 'admin';
+              }
+            } catch (error) {
+              console.error("Error fetching user role from database:", error);
+            }
+          }
+
+          // Create a temporary User object from MSAL account
+          setUser({
+            id: account.homeAccountId || account.localAccountId,
+            entra_object_id: account.localAccountId,
+            email: account.username,
+            display_name: account.name || account.username.split('@')[0],
+            role: userRole,
+            department: 'IT',
+            subsidiary: 'TRR',
+            last_login_at: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            is_active: true
+          });
+        } else {
+          setUser(null);
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
     }
+
+    initAuth();
   }, [isMockAuth, isMsalAuthenticated, accounts]);
 
   const login = useCallback(async (role: UserRole = 'user') => {
