@@ -18,6 +18,11 @@ export default function RequestPage() {
 
   const asset = mockAssets.find((a) => a.id === params.id);
 
+  const today = new Date().toISOString().split('T')[0];
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 7);
+  const maxDateStr = maxDate.toISOString().split('T')[0];
+
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login');
@@ -84,11 +89,13 @@ export default function RequestPage() {
         {/* Due date */}
         <div>
           <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">
-            วันที่ต้องการคืน
+            วันที่ต้องการคืน (ยืมได้สูงสุด 7 วัน)
           </label>
           <input
             type="date"
             value={dueDate}
+            min={today}
+            max={maxDateStr}
             onChange={(e) => setDueDate(e.target.value)}
             className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl outline-none focus:ring-2 focus:ring-primary text-body-md"
           />

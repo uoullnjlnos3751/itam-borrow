@@ -193,3 +193,33 @@ export const mockPendingRequests: BorrowRequest[] = [
     users: { ...mockUsers[0], display_name: 'สมชาย ใจดี', department: 'Sales', email: 'somchai@trrgroup.com' },
   },
 ];
+
+// ---- Mock Approved Requests (Ready for Pickup) ----
+export const mockApprovedRequests: BorrowRequest[] = [
+  {
+    id: 'br-approved-001', request_no: 'BR-2569-0047', user_id: 'user-001', asset_id: 'asset-003',
+    reason: 'ใช้ต่อจอพรีเซนต์งานพรุ่งนี้',
+    requested_due_date: '2026-07-05', status: 'approved',
+    approved_by: 'admin-001', approved_at: '2026-07-03T08:00:00Z', rejection_reason: null,
+    borrowed_at: null, due_date: null, returned_at: null,
+    return_confirmed_by: null, return_condition_note: null,
+    created_at: '2026-07-03T07:30:00Z', updated_at: '2026-07-03T08:00:00Z',
+    assets: mockAssets[2],
+    users: { ...mockUsers[0], display_name: 'วิภา สุขใจ', department: 'HR' },
+  }
+];
+
+// ---- Mock Active Borrowed Requests ----
+export const mockActiveBorrowRequests: BorrowRequest[] = [
+  {
+    id: 'br-borrowed-001', request_no: 'BR-2569-0040', user_id: 'user-001', asset_id: 'asset-004',
+    reason: 'เมาส์พัง รอของใหม่มาส่งสัปดาห์หน้า',
+    requested_due_date: '2026-07-08', status: 'borrowed',
+    approved_by: 'admin-001', approved_at: '2026-07-01T09:00:00Z', rejection_reason: null,
+    borrowed_at: '2026-07-01T10:00:00Z', due_date: '2026-07-08', returned_at: null,
+    return_confirmed_by: null, return_condition_note: null,
+    created_at: '2026-07-01T08:00:00Z', updated_at: '2026-07-01T10:00:00Z',
+    assets: mockAssets[3],
+    users: { ...mockUsers[0], display_name: 'มานะ อดทน', department: 'Marketing' },
+  }
+];

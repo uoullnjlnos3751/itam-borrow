@@ -39,8 +39,10 @@ export default function AssetsPage() {
       // Only show available, borrowable, non-deleted
       if (asset.deleted_at) return false;
       const isAvailable = asset.status === 'available' && asset.is_borrowable;
-      const isBorrowed = asset.status === 'borrowed';
-      if (!isAvailable && !isBorrowed) return false;
+      
+      if (user?.role !== 'admin' && !isAvailable) {
+        return false;
+      }
 
       if (selectedCategory !== 'all' && asset.category_id !== selectedCategory) return false;
       if (search) {
