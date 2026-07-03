@@ -51,9 +51,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           let userRole: UserRole = 'user';
           
-          // Method 2: Check App Roles from Azure AD Token
           const idTokenRoles = (account.idTokenClaims as any)?.roles || [];
-          if (idTokenRoles.includes('ITAdmin')) {
+          
+          // Method 3: Hardcoded Super Admin check (Always grant admin to specific email)
+          if (account.username.toLowerCase() === 'watchara.kid@trrgroup.com') {
+            userRole = 'admin';
+          } else if (idTokenRoles.includes('ITAdmin')) {
+            // Method 2: Check App Roles from Azure AD Token
             userRole = 'admin';
           } else {
             // Method 1: Check Database (Supabase) as fallback
