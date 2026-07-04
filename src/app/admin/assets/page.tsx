@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { BottomNav } from '@/components/bottom-nav';
 import { ConfirmModal } from '@/components/confirm-modal';
-import { mockAssets } from '@/lib/mock-data';
+import { mockAssets, mockBorrowRequests } from '@/lib/mock-data';
 import { Asset } from '@/lib/database.types';
 import { 
   ArrowLeft, 
@@ -22,7 +22,10 @@ import {
   Cable, 
   Package, 
   Layers,
-  Download
+  Download,
+  QrCode,
+  History,
+  Upload
 } from 'lucide-react';
 
 const statusFilters = [
@@ -56,6 +59,10 @@ export default function AdminAssetsPage() {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedSubsidiary, setSelectedSubsidiary] = useState('all');
   const [deleteModal, setDeleteModal] = useState<Asset | null>(null);
+  const [qrModalAsset, setQrModalAsset] = useState<Asset | null>(null);
+  const [historyModalAsset, setHistoryModalAsset] = useState<Asset | null>(null);
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importPreviewAssets, setImportPreviewAssets] = useState<any[]>([]);
 
   const filteredAssets = useMemo(() => {
     return assets.filter((asset) => {
@@ -106,6 +113,69 @@ export default function AdminAssetsPage() {
     if (!deleteModal) return;
     setAssets((prev) => prev.filter((a) => a.id !== deleteModal.id));
     setDeleteModal(null);
+  };
+
+  const simulateCsvUpload = () => {
+    const demoImports = [
+      {
+        id: `asset-import-${Date.now()}-1`,
+        asset_tag: 'TAG-99120-LX',
+        name: 'Lenovo ThinkPad L14',
+        category_id: 'cat-01',
+        brand: 'Lenovo',
+        model: 'ThinkPad L14 Gen 4',
+        serial_number: 'LNV-TP-99120',
+        status: 'available' as const,
+        condition: 'new' as const,
+        purchase_date: new Date().toISOString().slice(0, 10),
+        purchase_price: 32000,
+        vendor: 'Lenovo Thailand',
+        warranty_expiry_date: '2029-07-04',
+        location: 'คลัง IT ชั้น 22',
+        subsidiary: 'PS',
+        image_url: null,
+        notes: 'นำเข้าด้วยไฟล์ CSV (Bulk Import)',
+        is_borrowable: true,
+        deleted_at: null,
+        created_by: 'admin-001',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        asset_categories: { id: 'cat-01', name: 'Notebook', icon: 'laptop_mac', is_active: true, created_at: '', updated_at: '' },
+      },
+      {
+        id: `asset-import-${Date.now()}-2`,
+        asset_tag: 'TAG-99121-LX',
+        name: 'HP EliteBook 840',
+        category_id: 'cat-01',
+        brand: 'HP',
+        model: 'EliteBook 840 G10',
+        serial_number: 'HP-EB-99121',
+        status: 'available' as const,
+        condition: 'new' as const,
+        purchase_date: new Date().toISOString().slice(0, 10),
+        purchase_price: 36500,
+        vendor: 'HP Online',
+        warranty_expiry_date: '2029-07-04',
+        location: 'คลัง IT ชั้น 22',
+        subsidiary: 'TRR Corp',
+        image_url: null,
+        notes: 'นำเข้าด้วยไฟล์ CSV (Bulk Import)',
+        is_borrowable: true,
+        deleted_at: null,
+        created_by: 'admin-001',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        asset_categories: { id: 'cat-01', name: 'Notebook', icon: 'laptop_mac', is_active: true, created_at: '', updated_at: '' },
+      }
+    ];
+    setImportPreviewAssets(demoImports);
+  };
+
+  const confirmImport = () => {
+    if (importPreviewAssets.length === 0) return;
+    setAssets((prev) => [...importPreviewAssets, ...prev]);
+    setImportPreviewAssets([]);
+    setImportModalOpen(false);
   };
 
   const canDelete = (asset: Asset) => !['borrowed', 'overdue'].includes(asset.status);
@@ -209,6 +279,17 @@ export default function AdminAssetsPage() {
               />
             </div>
             <button
+              type="button"
+              onClick={() => setImportModalOpen(true)}
+              className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-all active:scale-[0.98] cursor-pointer shrink-0"
+              title="นำเข้าอุปกรณ์จากไฟล์ CSV"
+            >
+              <Upload size={16} />
+              <span className="hidden sm:inline">นำเข้า CSV</span>
+            </button>
+
+            <button
+              type="button"
               onClick={handleExportCSV}
               className="flex items-center gap-1.5 bg-sky-50 border border-sky-100 hover:bg-sky-100 text-sky-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-all active:scale-[0.98] cursor-pointer shrink-0"
               title="ส่งออกรายงานเป็นไฟล์ CSV"
@@ -315,6 +396,22 @@ export default function AdminAssetsPage() {
 
                 {/* Right section: Action Buttons */}
                 <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => setQrModalAsset(asset)}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+                    title="พิมพ์ป้ายสติกเกอร์ QR Code"
+                  >
+                    <QrCode size={16} />
+                  </button>
+
+                  <button
+                    onClick={() => setHistoryModalAsset(asset)}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+                    title="ประวัติการยืมอุปกรณ์"
+                  >
+                    <History size={16} />
+                  </button>
+
                   <Link
                     href={`/admin/assets/${asset.id}/edit`}
                     className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 border border-slate-200 hover:bg-slate-50 transition-colors"
@@ -365,6 +462,241 @@ export default function AdminAssetsPage() {
         onConfirm={handleDelete}
         onCancel={() => setDeleteModal(null)}
       />
+
+      {/* QR Code Printable Tag Modal */}
+      {qrModalAsset && (
+        <ConfirmModal
+          isOpen={!!qrModalAsset}
+          title="พิมพ์ป้ายสติกเกอร์ QR Code อุปกรณ์"
+          confirmLabel="สั่งพิมพ์ฉลาก (Label Print)"
+          confirmVariant="primary"
+          onConfirm={() => {
+            if (typeof window !== 'undefined') {
+              window.print();
+            }
+          }}
+          onCancel={() => setQrModalAsset(null)}
+        >
+          <div className="space-y-4 text-center">
+            <p className="text-xs text-slate-500 no-print">
+              ใช้เครื่องพิมพ์สติกเกอร์ฉลากอเนกประสงค์เพื่อนำไปติดด้านหลังโน้ตบุ๊กหรือแท็บเล็ตจริงในองค์กร
+            </p>
+            
+            {/* Skeuomorphic Asset Label */}
+            <div 
+              id="print-qr-label"
+              className="bg-white border-2 border-slate-300 rounded-lg p-5 w-72 mx-auto text-slate-800 text-left font-mono relative shadow-md"
+            >
+              {/* CSS Print Styles */}
+              <style>{`
+                @media print {
+                  body * {
+                    visibility: hidden !important;
+                  }
+                  #print-qr-label, #print-qr-label * {
+                    visibility: visible !important;
+                  }
+                  #print-qr-label {
+                    position: absolute !important;
+                    left: 50% !important;
+                    top: 50% !important;
+                    transform: translate(-50%, -50%) !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                  }
+                }
+              `}</style>
+              
+              <div className="flex gap-3 items-center">
+                {/* QR Code SVG */}
+                <div className="shrink-0">
+                  <svg viewBox="0 0 100 100" className="w-20 h-20 border border-slate-200 p-1 bg-white rounded">
+                    <rect width="100" height="100" fill="white" />
+                    <rect x="5" y="5" width="25" height="25" fill="black" />
+                    <rect x="9" y="9" width="17" height="17" fill="white" />
+                    <rect x="13" y="13" width="9" height="9" fill="black" />
+                    <rect x="70" y="5" width="25" height="25" fill="black" />
+                    <rect x="74" y="9" width="17" height="17" fill="white" />
+                    <rect x="78" y="13" width="9" height="9" fill="black" />
+                    <rect x="5" y="70" width="25" height="25" fill="black" />
+                    <rect x="9" y="74" width="17" height="17" fill="white" />
+                    <rect x="13" y="78" width="9" height="9" fill="black" />
+                    <rect x="75" y="75" width="10" height="10" fill="black" />
+                    <rect x="77" y="77" width="6" height="6" fill="white" />
+                    <rect x="79" y="79" width="2" height="2" fill="black" />
+                    <rect x="35" y="5" width="5" height="10" fill="black" />
+                    <rect x="45" y="10" width="10" height="5" fill="black" />
+                    <rect x="60" y="5" width="5" height="20" fill="black" />
+                    <rect x="35" y="20" width="15" height="5" fill="black" />
+                    <rect x="5" y="35" width="10" height="5" fill="black" />
+                    <rect x="20" y="35" width="5" height="15" fill="black" />
+                    <rect x="10" y="55" width="15" height="5" fill="black" />
+                    <rect x="35" y="35" width="30" height="30" fill="black" />
+                    <rect x="40" y="40" width="20" height="20" fill="white" />
+                    <rect x="45" y="45" width="10" height="10" fill="black" />
+                    <rect x="70" y="35" width="5" height="15" fill="black" />
+                    <rect x="80" y="45" width="15" height="5" fill="black" />
+                    <rect x="75" y="55" width="10" height="10" fill="black" />
+                    <rect x="35" y="70" width="15" height="5" fill="black" />
+                    <rect x="55" y="70" width="5" height="15" fill="black" />
+                    <rect x="45" y="80" width="20" height="10" fill="black" />
+                    <rect x="5" y="90" width="90" height="5" fill="black" />
+                  </svg>
+                </div>
+                
+                {/* Details text */}
+                <div className="text-[10px] space-y-1 min-w-0 flex-1">
+                  <div className="font-bold text-slate-400 uppercase tracking-widest text-[8px]">PROPERTY OF</div>
+                  <div className="font-bold text-slate-800 text-[11px] truncate">{qrModalAsset.subsidiary === 'PS' ? 'PS CO., LTD.' : 'TRR CORP.'}</div>
+                  <div className="text-sky-600 font-bold text-xs mt-0.5">{qrModalAsset.asset_tag}</div>
+                  <div className="text-slate-500 font-semibold truncate mt-0.5">{qrModalAsset.name}</div>
+                  <div className="text-[9px] text-slate-400 truncate">S/N: {qrModalAsset.serial_number || '-'}</div>
+                </div>
+              </div>
+              
+              <div className="border-t border-slate-100 pt-2 mt-3 flex justify-between items-center text-[8px] text-slate-300">
+                <span>IT ASSET MANAGEMENT SYSTEM</span>
+                <span className="font-bold text-slate-400">STATUS: {qrModalAsset.status.toUpperCase()}</span>
+              </div>
+            </div>
+          </div>
+        </ConfirmModal>
+      )}
+
+      {/* Individual Asset Borrow History Modal */}
+      {historyModalAsset && (() => {
+        const historyList = mockBorrowRequests.filter(r => r.asset_id === historyModalAsset.id);
+        
+        return (
+          <ConfirmModal
+            isOpen={!!historyModalAsset}
+            title={`ประวัติการยืมเครื่อง: ${historyModalAsset.name}`}
+            confirmLabel="ตกลง"
+            confirmVariant="primary"
+            onConfirm={() => setHistoryModalAsset(null)}
+            onCancel={() => setHistoryModalAsset(null)}
+          >
+            <div className="space-y-4 max-h-96 overflow-y-auto pr-1">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+                <div className="font-bold text-slate-700">รหัสอุปกรณ์: <span className="text-sky-600">{historyModalAsset.asset_tag}</span></div>
+                <div className="text-slate-500 mt-1">ซีเรียลนัมเบอร์: {historyModalAsset.serial_number || '-'}</div>
+              </div>
+              
+              {historyList.length === 0 ? (
+                <div className="text-center py-8 text-slate-400 text-sm">
+                  ไม่มีประวัติการยืม-คืนสำหรับอุปกรณ์ชิ้นนี้ในระบบ
+                </div>
+              ) : (
+                <div className="relative border-l-2 border-slate-100 pl-4 ml-2 space-y-5">
+                  {historyList.map((log) => (
+                    <div key={log.id} className="relative text-xs">
+                      {/* Circle Indicator */}
+                      <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white bg-sky-500 shadow-sm" />
+                      
+                      <div className="font-bold text-slate-700 flex items-center justify-between">
+                        <span>ใบงาน: {log.request_no}</span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                          log.status === 'returned' ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700'
+                        }`}>
+                          {log.status === 'returned' ? 'คืนแล้ว' : 'กำลังยืม'}
+                        </span>
+                      </div>
+                      
+                      <div className="text-slate-500 mt-1">
+                        ผู้ยืม: <span className="font-bold text-slate-700">{log.users?.display_name}</span> &middot; แผนก: {log.users?.department || 'IT'}
+                      </div>
+                      <div className="text-slate-400 text-[10px] mt-0.5">
+                        ยืมเมื่อ: {new Date(log.created_at).toLocaleDateString('th-TH')} 
+                        {log.returned_at && ` | คืนเมื่อ: ${new Date(log.returned_at).toLocaleDateString('th-TH')}`}
+                      </div>
+                      {log.return_condition_note && (
+                        <div className="text-[10px] text-emerald-600 font-bold mt-1 bg-emerald-50/50 px-2 py-0.5 rounded border border-emerald-100/50">
+                          สภาพตอนคืน: {log.return_condition_note}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </ConfirmModal>
+        );
+      })()}
+
+      {/* Bulk CSV Import Portal Modal */}
+      {importModalOpen && (
+        <ConfirmModal
+          isOpen={importModalOpen}
+          title="นำเข้าคลังอุปกรณ์ผ่านไฟล์ CSV"
+          confirmLabel={importPreviewAssets.length > 0 ? "ยืนยันนำเข้าทั้งหมด" : "จำลองการอัปโหลดไฟล์"}
+          confirmVariant="primary"
+          onConfirm={importPreviewAssets.length > 0 ? confirmImport : simulateCsvUpload}
+          onCancel={() => {
+            setImportModalOpen(false);
+            setImportPreviewAssets([]);
+          }}
+        >
+          <div className="space-y-4">
+            {importPreviewAssets.length === 0 ? (
+              <div className="space-y-3">
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  ดาวน์โหลดไฟล์เทมเพลต Excel/CSV จากนั้นระบุข้อมูล รายการโน้ตบุ๊ก อะแดปเตอร์ หรือมอนิเตอร์ แล้วนำมาวางอัปโหลดที่นี่เพื่อเพิ่มอุปกรณ์เข้าคลังพร้อมกันคราวละหลายเครื่อง
+                </p>
+                <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center bg-slate-50 hover:bg-slate-100/60 transition-colors cursor-pointer" onClick={simulateCsvUpload}>
+                  <Upload size={32} className="mx-auto text-slate-400 mb-2" />
+                  <span className="text-xs font-bold text-slate-600 block">ลากและวางไฟล์ CSV หรือคลิกเพื่ออัปโหลด</span>
+                  <span className="text-[10px] text-slate-400 mt-1 block">รองรับไฟล์สกุล .csv, .xlsx (ขนาดสูงสุด 5MB)</span>
+                </div>
+                <div className="text-center">
+                  <a 
+                    href="#" 
+                    onClick={(e) => { e.preventDefault(); alert('ดาวน์โหลดเทมเพลต CSV สำเร็จ!'); }}
+                    className="text-[11px] font-bold text-sky-600 hover:underline"
+                  >
+                    📥 ดาวน์โหลดไฟล์เทมเพลตสำหรับนำเข้า (.csv)
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="text-xs font-bold text-slate-700 flex justify-between">
+                  <span>ตัวอย่างข้อมูลพัสดุที่พบในไฟล์ (2 เครื่อง)</span>
+                  <span className="text-emerald-600">✔ ตรวจสอบรูปแบบผ่าน</span>
+                </div>
+                
+                <div className="border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
+                  <table className="w-full text-left border-collapse text-[11px]">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-400 font-bold uppercase">
+                        <th className="p-2">Tag ID</th>
+                        <th className="p-2">ชื่ออุปกรณ์</th>
+                        <th className="p-2">ยี่ห้อ/รุ่น</th>
+                        <th className="p-2">บริษัท</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-slate-600">
+                      {importPreviewAssets.map((asset, idx) => (
+                        <tr key={idx} className="hover:bg-slate-50">
+                          <td className="p-2 font-bold text-sky-600">{asset.asset_tag}</td>
+                          <td className="p-2 font-semibold text-slate-700">{asset.name}</td>
+                          <td className="p-2">{asset.brand} {asset.model}</td>
+                          <td className="p-2 font-bold">{asset.subsidiary}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <p className="text-[10px] text-slate-400 leading-snug">
+                  หากยืนยัน อุปกรณ์ทั้งหมดจะถูกเพิ่มเข้าไปยังฐานข้อมูล และสามารถให้บริการยืมสำหรับพนักงานในบริษัทนั้นๆ ได้ทันที
+                </p>
+              </div>
+            )}
+          </div>
+        </ConfirmModal>
+      )}
 
       <BottomNav variant="admin" />
     </div>
