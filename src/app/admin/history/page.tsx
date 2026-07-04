@@ -13,7 +13,8 @@ import {
   FileText,
   HelpCircle,
   TrendingUp,
-  Inbox
+  Inbox,
+  Download
 } from 'lucide-react';
 
 const filterOptions = [
@@ -43,6 +44,33 @@ export default function AdminHistoryPage() {
     }
     return result;
   }, [selectedFilter, search]);
+
+  const handleExportCSV = () => {
+    const header = ['รหัสรายการ', 'เลขที่อุปกรณ์ (Tag ID)', 'ชื่ออุปกรณ์', 'ผู้ยืม', 'แผนกผู้ยืม', 'บริษัทสังกัด', 'วันที่เริ่มยืม', 'กำหนดส่งคืน', 'วันที่คืนจริง', 'สถานะ', 'เหตุผลการยืม'];
+    const rows = filteredRequests.map(r => [
+      r.request_no,
+      r.assets?.asset_tag || '',
+      r.assets?.name || '',
+      r.users?.display_name || '',
+      r.users?.department || '',
+      r.users?.subsidiary || '',
+      r.borrowed_at ? r.borrowed_at.slice(0,10) : '',
+      r.due_date ? r.due_date.slice(0,10) : r.requested_due_date.slice(0,10),
+      r.returned_at ? r.returned_at.slice(0,10) : '',
+      r.status,
+      r.reason || ''
+    ]);
+    
+    const csvContent = "\uFEFF" + [header.join(','), ...rows.map(e => e.map(val => `"${val.toString().replace(/"/g, '""')}"`).join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ITAM_Borrow_History_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
@@ -105,16 +133,26 @@ export default function AdminHistoryPage() {
       <main className="max-w-7xl mx-auto px-4 lg:px-8 mt-6">
         {/* Search & Filter pills */}
         <section className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 mb-6">
-          {/* Search bar */}
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              type="text"
-              placeholder="ค้นหาชื่ออุปกรณ์, รหัสรายการ, หรือชื่อผู้ยืม..."
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition-all"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          {/* Search bar & Export */}
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="text"
+                placeholder="ค้นหาชื่ออุปกรณ์, รหัสรายการ, หรือชื่อผู้ยืม..."
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition-all"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-1.5 bg-sky-50 border border-sky-100 hover:bg-sky-100 text-sky-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-all active:scale-[0.98] cursor-pointer shrink-0"
+              title="ส่งออกประวัติเป็น CSV"
+            >
+              <Download size={16} />
+              <span className="hidden sm:inline">ส่งออก CSV</span>
+            </button>
           </div>
 
           {/* Filter Options */}

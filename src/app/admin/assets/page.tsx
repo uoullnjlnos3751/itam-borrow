@@ -21,7 +21,8 @@ import {
   Mouse, 
   Cable, 
   Package, 
-  Layers
+  Layers,
+  Download
 } from 'lucide-react';
 
 const statusFilters = [
@@ -71,6 +72,35 @@ export default function AdminAssetsPage() {
       return true;
     });
   }, [assets, search, selectedStatus, selectedSubsidiary]);
+
+  const handleExportCSV = () => {
+    const header = ['รหัสอุปกรณ์ (Asset Tag)', 'ชื่ออุปกรณ์', 'หมวดหมู่', 'ยี่ห้อ', 'รุ่น', 'Serial Number', 'สถานะ', 'สภาพ', 'จุดจัดเก็บ (Location)', 'บริษัท (Subsidiary)', 'แผนก (Department)', 'วันที่ซื้อ', 'ราคา (บาท)'];
+    const rows = filteredAssets.map(asset => [
+      asset.asset_tag,
+      asset.name,
+      asset.asset_categories?.name || '',
+      asset.brand || '',
+      asset.model || '',
+      asset.serial_number || '',
+      asset.status,
+      asset.condition,
+      asset.location || '',
+      asset.subsidiary || '',
+      asset.department || 'ส่วนกลาง',
+      asset.purchase_date || '',
+      asset.purchase_price || ''
+    ]);
+    
+    const csvContent = "\uFEFF" + [header.join(','), ...rows.map(e => e.map(val => `"${val.toString().replace(/"/g, '""')}"`).join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ITAM_Assets_Report_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handleDelete = () => {
     if (!deleteModal) return;
@@ -166,16 +196,26 @@ export default function AdminAssetsPage() {
       <main className="max-w-7xl mx-auto px-4 lg:px-8 mt-6">
         {/* Search & Filters */}
         <section className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 mb-6">
-          {/* Search Input */}
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              type="text"
-              placeholder="ค้นหาชื่ออุปกรณ์, Tag ID, Serial Number..."
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition-all"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          {/* Search Input & Export Button */}
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="text"
+                placeholder="ค้นหาชื่ออุปกรณ์, Tag ID, Serial Number..."
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition-all"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-1.5 bg-sky-50 border border-sky-100 hover:bg-sky-100 text-sky-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-all active:scale-[0.98] cursor-pointer shrink-0"
+              title="ส่งออกรายงานเป็นไฟล์ CSV"
+            >
+              <Download size={16} />
+              <span className="hidden sm:inline">ส่งออก CSV</span>
+            </button>
           </div>
 
           {/* Status Pills */}
