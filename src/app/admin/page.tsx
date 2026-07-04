@@ -10,7 +10,7 @@ import { BorrowRequest } from '@/lib/database.types';
 import { 
   LayoutDashboard, Boxes, ShoppingCart, Wrench, Shield, CheckCircle2, 
   Clock, AlertTriangle, Zap, RotateCcw, ClipboardList, ChevronRight, X,
-  Mail, MessageSquare
+  Mail, MessageSquare, Scan, Lightbulb, CalendarDays, Check, AlertCircle
 } from 'lucide-react';
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -30,6 +30,8 @@ export default function AdminDashboardPage() {
   const [returnNote, setReturnNote] = useState('');
 
   const [selectedSubsidiary, setSelectedSubsidiary] = useState('all');
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [scannerMode, setScannerMode] = useState<'checkout' | 'return'>('checkout');
   const [notification, setNotification] = useState<{
     show: boolean;
     type: 'email' | 'teams';
@@ -165,6 +167,81 @@ export default function AdminDashboardPage() {
     }));
   };
 
+  const getSmartInsights = () => {
+    const insights = [];
+    if (selectedSubsidiary === 'all' || selectedSubsidiary === 'PS') {
+      insights.push({
+        type: 'warning',
+        title: 'Notebook (PS) - คลังวิกฤต',
+        desc: 'เหลืออุปกรณ์พร้อมยืมเพียง 1 เครื่อง แต่อัตราการยืมเฉลี่ยต่อสัปดาห์คือ 2 เครื่อง แนะนำให้จัดซื้อเพิ่มหรือเปิด PM คืน',
+      });
+    }
+    if (selectedSubsidiary === 'all' || selectedSubsidiary === 'TRR Corp') {
+      insights.push({
+        type: 'info',
+        title: 'Projector (TRR Corp) - การใช้งานต่ำ',
+        desc: 'อัตราการยืมต่ำกว่า 10% ใน 30 วัน แนะนำให้โอนย้ายไปยังบริษัทในเครืออื่นที่ต้องการใช้งานสูงกว่า (เช่น PS)',
+      });
+    }
+    if (selectedSubsidiary === 'all' || selectedSubsidiary === 'PS') {
+      insights.push({
+        type: 'warning',
+        title: 'Adapter/Cable (PS) - อัตราชำรุดสูง',
+        desc: 'อัตราการบันทึกสภาพชำรุดของ Adapter เพิ่มขึ้น 15% ในเดือนนี้ แนะนำให้แอดมินสุ่มตรวจคุณภาพสายสัญญาณ',
+      });
+    }
+    if (selectedSubsidiary === 'SSEC' || selectedSubsidiary === 'TRRP') {
+      insights.push({
+        type: 'success',
+        title: 'คลังสินค้าสุขภาพดี',
+        desc: 'อัตราการยืมและคืนอยู่ในสัดส่วนที่สมดุล และอุปกรณ์ทั้งหมดพร้อมใช้งานครบถ้วน',
+      });
+    }
+    return insights;
+  };
+
+  const weeklyBookingTimeline = [
+    {
+      assetName: 'MacBook Pro 16" (TAG-88291-LX)',
+      subsidiary: 'PS',
+      bookings: [
+        { dayIndex: 0, length: 3, label: 'จักรกฤษณ์ (PS) - ยืมพรีเซนต์งานลูกค้า', color: 'bg-sky-500 text-white border-sky-600' }, // Mon-Wed
+      ]
+    },
+    {
+      assetName: 'Projector Epson EB-X06 (TAG-51022-PJ)',
+      subsidiary: 'PS',
+      bookings: [
+        { dayIndex: 2, length: 1, label: 'วิภา (PS) - ประชุมย่อย', color: 'bg-indigo-500 text-white border-indigo-600' }, // Wed
+        { dayIndex: 4, length: 2, label: 'มานะ (PS) - สัมมนาใหญ่', color: 'bg-emerald-500 text-white border-emerald-600' }, // Fri-Sat
+      ]
+    },
+    {
+      assetName: 'Dell UltraSharp 27" (TAG-77621-MN)',
+      subsidiary: 'PS',
+      bookings: [
+        { dayIndex: 1, length: 4, label: 'วิภา (PS) - ส่งซ่อมบำรุง', color: 'bg-amber-500 text-white border-amber-600' }, // Tue-Fri
+      ]
+    },
+    {
+      assetName: 'iPad Air 5 (TAG-90981-IP)',
+      subsidiary: 'TRR Corp',
+      bookings: [
+        { dayIndex: 1, length: 2, label: 'สมชาย (TRR Corp) - ตรวจไซต์งาน', color: 'bg-sky-500 text-white border-sky-600' }, // Tue-Wed
+        { dayIndex: 4, length: 1, label: 'สมชาย (TRR Corp) - ออกบูธนิทรรศการ', color: 'bg-emerald-500 text-white border-emerald-600' }, // Fri
+      ]
+    },
+    {
+      assetName: 'Logitech Presenter R500 (TAG-12290-CK)',
+      subsidiary: 'TRR Corp',
+      bookings: [
+        { dayIndex: 3, length: 2, label: 'สมชาย (TRR Corp) - ประกันบอร์ดบริหาร', color: 'bg-indigo-500 text-white border-indigo-600' }, // Thu-Fri
+      ]
+    }
+  ];
+
+  const displayedTimeline = weeklyBookingTimeline.filter(t => selectedSubsidiary === 'all' || t.subsidiary === selectedSubsidiary);
+
   const alertCount = displayedOverdue.length + displayedPending.length + displayedExtensions.length;
 
   if (isLoading) {
@@ -227,7 +304,55 @@ export default function AdminDashboardPage() {
             กำลังแสดงข้อมูลสำหรับ: {selectedSubsidiary === 'all' ? 'ทุกบริษัทในเครือ' : selectedSubsidiary}
           </div>
         </section>
-        
+
+        {/* Smart Inventory Insights (Feature 4) */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {getSmartInsights().map((insight, idx) => (
+            <div
+              key={idx}
+              className={`p-4 rounded-2xl border flex gap-3 transition-all ${
+                insight.type === 'warning'
+                  ? 'bg-red-50/40 border-red-100 text-red-800'
+                  : insight.type === 'success'
+                  ? 'bg-emerald-50/40 border-emerald-100 text-emerald-800'
+                  : 'bg-blue-50/40 border-blue-100 text-blue-800'
+              }`}
+            >
+              <div
+                className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                  insight.type === 'warning'
+                    ? 'bg-red-100/80 text-red-600'
+                    : insight.type === 'success'
+                    ? 'bg-emerald-100/80 text-emerald-600'
+                    : 'bg-blue-100/80 text-blue-600'
+                }`}
+              >
+                {insight.type === 'warning' ? (
+                  <AlertCircle size={18} />
+                ) : insight.type === 'success' ? (
+                  <CheckCircle2 size={18} />
+                ) : (
+                  <Lightbulb size={18} />
+                )}
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  {insight.title}
+                  {insight.type === 'warning' && (
+                    <span className="bg-red-100 text-red-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase">วิกฤต</span>
+                  )}
+                  {insight.type === 'info' && (
+                    <span className="bg-blue-100 text-blue-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase">แนะนำ</span>
+                  )}
+                </h4>
+                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                  {insight.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </section>
+
         {/* Proactive Alerts Bar */}
         {alertCount > 0 && (
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
@@ -327,13 +452,21 @@ export default function AdminDashboardPage() {
                 <h3 className="font-bold text-sm">ทางลัด (Quick Actions)</h3>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <button className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center cursor-pointer">
-                  <CheckCircle2 size={20} />
-                  <span className="text-xs font-medium">สแกนรับของ</span>
+                <button
+                  type="button"
+                  onClick={() => { setScannerMode('checkout'); setScannerOpen(true); }}
+                  className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center cursor-pointer"
+                >
+                  <Scan size={20} />
+                  <span className="text-xs font-medium">สแกนส่งมอบ</span>
                 </button>
-                <button className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => { setScannerMode('return'); setScannerOpen(true); }}
+                  className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center cursor-pointer"
+                >
                   <RotateCcw size={20} />
-                  <span className="text-xs font-medium">รับคืนอุปกรณ์</span>
+                  <span className="text-xs font-medium">สแกนรับคืน</span>
                 </button>
                 <button onClick={() => router.push('/admin/assets')} className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center cursor-pointer">
                   <Boxes size={20} />
@@ -437,6 +570,77 @@ export default function AdminDashboardPage() {
                     <Bar dataKey="คืน" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={40} />
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Weekly Booking Timeline (Feature 3) */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="text-sky-500" size={18} />
+                  <h3 className="font-bold text-sm text-slate-800">ตารางจองยืมรายสัปดาห์ (Weekly Timeline)</h3>
+                </div>
+                <div className="grid grid-cols-7 gap-1 text-center w-48 shrink-0">
+                  {['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา'].map((day, idx) => (
+                    <div key={idx} className="text-[10px] font-bold text-slate-400">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {displayedTimeline.length === 0 ? (
+                <div className="text-center py-6 text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                  ไม่มีตารางการจองในบริษัทนี้ในสัปดาห์นี้
+                </div>
+              ) : (
+                <div className="space-y-3.5">
+                  {displayedTimeline.map((item, idx) => (
+                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100/60 pb-3 last:border-0 last:pb-0">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-slate-700 truncate">
+                            {item.assetName}
+                          </span>
+                          <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-1 py-0.5 rounded shrink-0">
+                            {item.subsidiary}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* CSS Grid Gantt Bar */}
+                      <div className="grid grid-cols-7 gap-1 h-7 bg-slate-100/60 rounded-lg relative border border-slate-200/60 w-48 shrink-0 overflow-hidden">
+                        {item.bookings.map((b, bIdx) => (
+                          <div
+                            key={bIdx}
+                            style={{
+                              gridColumn: `${b.dayIndex + 1} / span ${b.length}`
+                            }}
+                            className={`h-full rounded-md px-1 text-[8px] font-bold border flex items-center justify-center truncate shadow-sm transition-all hover:brightness-95 ${b.color}`}
+                            title={b.label}
+                          >
+                            {b.label}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="flex gap-4 pt-2 border-t border-slate-100 text-[10px] font-semibold text-slate-400">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded bg-sky-500 border border-sky-600" />
+                  <span>จองใช้งาน</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded bg-indigo-500 border border-indigo-600" />
+                  <span>ใช้งานด่วน</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded bg-amber-500 border border-amber-600" />
+                  <span>ส่งซ่อม/PM</span>
+                </div>
               </div>
             </div>
 
@@ -594,6 +798,114 @@ export default function AdminDashboardPage() {
               onChange={(e) => setReturnNote(e.target.value)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm resize-none"
             />
+          </div>
+        </div>
+      </ConfirmModal>
+
+      {/* Scanner Simulation Modal (Feature 2) */}
+      <ConfirmModal
+        isOpen={scannerOpen}
+        title={scannerMode === 'checkout' ? 'สแกนส่งมอบอุปกรณ์ (Hand Over)' : 'สแกนรับคืนอุปกรณ์ (Check In)'}
+        confirmLabel="ปิดกล้องสแกน"
+        confirmVariant="primary"
+        onConfirm={() => setScannerOpen(false)}
+        onCancel={() => setScannerOpen(false)}
+      >
+        <div className="space-y-4">
+          <p className="text-xs text-slate-500">
+            ระบบใช้กล้องเว็บแคมหรือกล้องโทรศัพท์สแกน QR Code/Barcode บนตัวทรัพย์สินไอทีเพื่อระบุรายละเอียด
+          </p>
+          
+          {/* Simulated Camera Viewport */}
+          <div className="relative w-full aspect-video rounded-xl bg-slate-900 border border-slate-700 flex flex-col items-center justify-center overflow-hidden">
+            <style>{`
+              @keyframes scan {
+                0%, 100% { top: 10%; }
+                50% { top: 90%; }
+              }
+              .animate-scan-line {
+                animation: scan 2.5s infinite ease-in-out;
+              }
+            `}</style>
+            
+            {/* Pulsing scanning red line */}
+            <div className="absolute left-0 right-0 h-0.5 bg-red-500 shadow-md shadow-red-500/80 animate-scan-line z-10" />
+            
+            {/* Viewfinder borders */}
+            <div className="absolute w-32 h-32 border-2 border-sky-400/40 rounded-xl flex items-center justify-center z-0">
+              <Scan className="text-sky-400/20 animate-pulse" size={36} />
+            </div>
+
+            <span className="absolute bottom-3 text-[10px] text-white/50 bg-black/60 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest flex items-center gap-1.5 z-20">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" /> Camera Live View
+            </span>
+          </div>
+
+          {/* Quick Demo Scan Buttons */}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-slate-500 uppercase">ปุ่มจำลองการสแกนรหัส (Demo Scan)</label>
+            {scannerMode === 'checkout' ? (
+              <div className="grid grid-cols-1 gap-2">
+                {displayedApproved.length > 0 ? (
+                  displayedApproved.map(req => (
+                    <button
+                      key={req.id}
+                      type="button"
+                      onClick={() => {
+                        handleCheckOut(req);
+                        setScannerOpen(false);
+                        setNotification({
+                          show: true,
+                          type: 'email',
+                          recipient: req.users?.display_name || 'พนักงาน',
+                          subject: 'ส่งมอบอุปกรณ์เรียบร้อยแล้ว',
+                          body: `ใบงานยืมเลขที่ ${req.request_no} ได้รับการส่งมอบอุปกรณ์ ${req.assets?.name} เรียบร้อยแล้ว\nสถานะอุปกรณ์: กำลังยืม\nวันกำหนดส่งคืน: ${formatDate(req.requested_due_date)}`
+                        });
+                      }}
+                      className="w-full text-left bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 hover:border-emerald-300 rounded-xl p-3 text-xs font-bold flex justify-between items-center transition-colors cursor-pointer"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div>สแกน {req.assets?.name}</div>
+                        <div className="text-[10px] text-emerald-600 mt-0.5">Tag ID: {req.assets?.asset_tag} &middot; ผู้รับ: {req.users?.display_name}</div>
+                      </div>
+                      <ChevronRight size={16} />
+                    </button>
+                  ))
+                ) : (
+                  <div className="text-center py-4 bg-slate-50 text-slate-400 text-xs rounded-xl border border-slate-200">
+                    ไม่มีรายการ "รอส่งมอบ" ของบริษัทนี้ในระบบที่สแกนได้ในขณะนี้
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-2">
+                {displayedActive.length > 0 ? (
+                  displayedActive.slice(0, 3).map(req => (
+                    <button
+                      key={req.id}
+                      type="button"
+                      onClick={() => {
+                        setScannerOpen(false);
+                        setReturnModal(req);
+                        setReturnCondition('good');
+                        setReturnNote('');
+                      }}
+                      className="w-full text-left bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 hover:border-indigo-300 rounded-xl p-3 text-xs font-bold flex justify-between items-center transition-colors cursor-pointer"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div>สแกน {req.assets?.name}</div>
+                        <div className="text-[10px] text-indigo-600 mt-0.5">Tag ID: {req.assets?.asset_tag} &middot; ผู้ยืม: {req.users?.display_name}</div>
+                      </div>
+                      <ChevronRight size={16} />
+                    </button>
+                  ))
+                ) : (
+                  <div className="text-center py-4 bg-slate-50 text-slate-400 text-xs rounded-xl border border-slate-200">
+                    ไม่มีอุปกรณ์ "กำลังถูกยืม" ของบริษัทนี้ในขณะนี้
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </ConfirmModal>
