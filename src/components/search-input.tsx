@@ -1,6 +1,6 @@
 'use client';
 
-import { MaterialIcon } from './material-icon';
+import { Search } from 'lucide-react';
 
 interface SearchInputProps {
   placeholder?: string;
@@ -10,15 +10,14 @@ interface SearchInputProps {
 
 export function SearchInput({ placeholder = 'ค้นหา...', value, onChange }: SearchInputProps) {
   return (
-    <div className="relative mb-stack-md">
-      <MaterialIcon
-        icon="search"
-        size={20}
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
+    <div className="relative mb-4">
+      <Search
+        size={18}
+        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
       />
       <input
         type="text"
-        className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-body-md"
+        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all outline-none text-sm text-slate-800"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}

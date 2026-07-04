@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { BottomNav } from '@/components/bottom-nav';
 import { FilterPills } from '@/components/filter-pills';
-import { StatusBadge } from '@/components/status-badge';
-import { MaterialIcon } from '@/components/material-icon';
 import { ConfirmModal } from '@/components/confirm-modal';
 import { mockBorrowRequests } from '@/lib/mock-data';
 import { BorrowRequest } from '@/lib/database.types';
+import { 
+  Search, Bell, Hourglass, CheckCircle2, History, Clock, 
+  AlertTriangle, RotateCcw, Info, X, ShieldCheck
+} from 'lucide-react';
 
 const filterOptions = [
   { label: 'ทั้งหมด', value: 'all' },
@@ -25,6 +27,11 @@ export default function HistoryPage() {
   const [returnModal, setReturnModal] = useState<BorrowRequest | null>(null);
   const [requests, setRequests] = useState(mockBorrowRequests);
   const [selectedRequest, setSelectedRequest] = useState<BorrowRequest | null>(null);
+
+  // Extension states
+  const [extendModal, setExtendModal] = useState<BorrowRequest | null>(null);
+  const [extendDate, setExtendDate] = useState('');
+  const [extendReason, setExtendReason] = useState('');
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -60,119 +67,174 @@ export default function HistoryPage() {
     setReturnModal(null);
   };
 
+  const handleExtend = () => {
+    if (!extendModal || !extendDate || !extendReason) return;
+    
+    setRequests((prev) =>
+      prev.map((r) =>
+        r.id === extendModal.id
+          ? { 
+              ...r, 
+              extension_status: 'pending', 
+              extension_requested_date: extendDate, 
+              extension_reason: extendReason 
+            }
+          : r
+      )
+    );
+    if (selectedRequest?.id === extendModal.id) {
+      setSelectedRequest((prev) => prev ? { 
+        ...prev, 
+        extension_status: 'pending', 
+        extension_requested_date: extendDate, 
+        extension_reason: extendReason 
+      } : null);
+    }
+    setExtendModal(null);
+    setExtendDate('');
+    setExtendReason('');
+  };
+
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
     return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
+  const renderStatusBadge = (status: string) => {
+    switch (status) {
+      case 'borrowed':
+        return <span className="bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">กำลังยืม</span>;
+      case 'approved':
+        return <span className="bg-sky-100 text-sky-700 border border-sky-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">รอรับของ</span>;
+      case 'pending':
+        return <span className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">รออนุมัติ</span>;
+      case 'returned':
+        return <span className="bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">คืนแล้ว</span>;
+      case 'overdue':
+        return <span className="bg-red-100 text-red-700 border border-red-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">เกินกำหนด</span>;
+      default:
+        return <span className="bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">{status}</span>;
+    }
+  };
+
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>;
+    return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full" /></div>;
   }
 
   return (
-    <div className="pb-24 lg:pb-8">
+    <div className="min-h-screen bg-slate-50 pb-24 lg:pb-12 text-slate-900 font-sans">
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-margin-mobile h-16">
-        <h1 className="font-headline-md text-title-lg font-bold text-on-surface">ประวัติการยืม</h1>
-        <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary text-body-sm font-bold">
-          {user?.display_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'U'}
+      <header className="lg:hidden fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-4 h-16">
+        <h1 className="text-lg font-bold text-slate-800">ประวัติการยืม</h1>
+        <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 text-sm font-bold border border-sky-200 overflow-hidden">
+          {user?.profile_image_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={user.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            user?.display_name?.charAt(0) || 'U'
+          )}
         </div>
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden lg:flex sticky top-0 z-50 justify-between items-center w-full px-8 py-4 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
-        <h1 className="text-headline-lg font-bold text-on-surface">คำขอของฉัน</h1>
+      <header className="hidden lg:flex sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 px-8 h-16 items-center justify-between">
+        <h1 className="text-lg font-bold text-slate-800">คำขอของฉัน</h1>
         <div className="flex items-center gap-4">
           <div className="relative">
-            <MaterialIcon icon="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
               placeholder="ค้นหารายการ..." 
-              className="bg-surface-container border-none rounded-full pl-10 pr-4 py-2 text-body-md focus:ring-2 focus:ring-primary w-64 outline-none transition-all"
+              className="bg-slate-100 border-none rounded-full pl-9 pr-4 py-2 text-sm focus:ring-2 focus:ring-sky-500 w-64 outline-none transition-all"
             />
           </div>
-          <button className="text-on-surface-variant hover:bg-surface-container p-2 rounded-full transition-colors">
-            <MaterialIcon icon="notifications" />
+          <button className="text-slate-500 hover:bg-slate-100 p-2 rounded-full transition-colors">
+            <Bell size={20} />
           </button>
-          <div className="w-10 h-10 rounded-full bg-primary-container text-primary flex items-center justify-center font-bold">
-            {user?.display_name?.charAt(0)}
+          <div className="w-9 h-9 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold border border-sky-200 overflow-hidden">
+            {user?.profile_image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={user.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              user?.display_name?.charAt(0) || 'U'
+            )}
           </div>
         </div>
       </header>
 
-      <main className="pt-20 lg:pt-8 px-margin-mobile lg:px-8 max-w-2xl lg:max-w-7xl mx-auto space-y-stack-lg">
+      <main className="pt-20 lg:pt-6 px-4 lg:px-8 max-w-7xl mx-auto space-y-6">
         
         {/* Desktop Bento Grid */}
-        <section className="hidden lg:grid grid-cols-3 gap-6 mb-10">
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+        <section className="hidden lg:grid grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-amber-300 transition-colors">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-secondary-container rounded-lg text-on-secondary-container">
-                <MaterialIcon icon="hourglass_empty" />
+              <div className="p-2.5 bg-amber-50 rounded-xl text-amber-500">
+                <Hourglass size={20} />
               </div>
-              <span className="text-label-md text-on-surface-variant uppercase tracking-wider">Active</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active</span>
             </div>
             <div>
-              <div className="text-display-sm font-bold text-on-surface">{stats.active}</div>
-              <div className="text-body-md text-on-surface-variant">กำลังดำเนินการ/กำลังใช้งาน</div>
+              <div className="text-3xl font-bold text-slate-800">{stats.active}</div>
+              <div className="text-sm font-medium text-slate-500 mt-1">กำลังดำเนินการ/กำลังใช้งาน</div>
             </div>
           </div>
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-sky-300 transition-colors">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-primary-container rounded-lg text-on-primary-container">
-                <MaterialIcon icon="check_circle" />
+              <div className="p-2.5 bg-sky-50 rounded-xl text-sky-500">
+                <CheckCircle2 size={20} />
               </div>
-              <span className="text-label-md text-on-surface-variant uppercase tracking-wider">Approved</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Approved</span>
             </div>
             <div>
-              <div className="text-display-sm font-bold text-on-surface">{stats.approved}</div>
-              <div className="text-body-md text-on-surface-variant">ได้รับอนุมัติ (รอรับของ)</div>
+              <div className="text-3xl font-bold text-slate-800">{stats.approved}</div>
+              <div className="text-sm font-medium text-slate-500 mt-1">ได้รับอนุมัติ (รอรับของ)</div>
             </div>
           </div>
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-emerald-300 transition-colors">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-surface-container-highest rounded-lg text-on-surface-variant">
-                <MaterialIcon icon="history" />
+              <div className="p-2.5 bg-emerald-50 rounded-xl text-emerald-500">
+                <History size={20} />
               </div>
-              <span className="text-label-md text-on-surface-variant uppercase tracking-wider">Completed</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Completed</span>
             </div>
             <div>
-              <div className="text-display-sm font-bold text-on-surface">{stats.completed}</div>
-              <div className="text-body-md text-on-surface-variant">ส่งคืนเรียบร้อยแล้ว</div>
+              <div className="text-3xl font-bold text-slate-800">{stats.completed}</div>
+              <div className="text-sm font-medium text-slate-500 mt-1">ส่งคืนเรียบร้อยแล้ว</div>
             </div>
           </div>
         </section>
 
         {/* Mobile Filter Pills */}
-        <section className="lg:hidden sticky top-16 bg-background z-40 py-2">
+        <section className="lg:hidden sticky top-16 bg-slate-50 z-40 py-2">
           <FilterPills options={filterOptions} selected={selectedFilter} onSelect={setSelectedFilter} />
         </section>
 
         {/* Split View Container for Desktop / Standard List for Mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           
           {/* Left Column (Table on Desktop, Cards on Mobile) */}
           <div className="lg:col-span-2">
             
             {/* Desktop Table View */}
-            <div className="hidden lg:block bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
-              <div className="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
-                <h2 className="font-semibold text-title-md">รายการคำขอทั้งหมด</h2>
+            <div className="hidden lg:block bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+              <div className="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+                <h2 className="font-bold text-slate-800">รายการคำขอทั้งหมด</h2>
                 <FilterPills options={filterOptions} selected={selectedFilter} onSelect={setSelectedFilter} />
               </div>
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-surface-container-low text-label-md uppercase text-on-surface-variant border-b border-outline-variant">
-                    <th className="px-6 py-4 font-semibold">ID คำขอ</th>
-                    <th className="px-6 py-4 font-semibold">ชื่อรายการ</th>
-                    <th className="px-6 py-4 font-semibold">วันที่ขอ</th>
-                    <th className="px-6 py-4 font-semibold">กำหนดคืน</th>
-                    <th className="px-6 py-4 font-semibold">สถานะ</th>
+                  <tr className="bg-slate-50 text-xs uppercase text-slate-500 border-b border-slate-200">
+                    <th className="px-5 py-3 font-bold">ID คำขอ</th>
+                    <th className="px-5 py-3 font-bold">ชื่อรายการ</th>
+                    <th className="px-5 py-3 font-bold">วันที่ขอ</th>
+                    <th className="px-5 py-3 font-bold">กำหนดคืน</th>
+                    <th className="px-5 py-3 font-bold">สถานะ</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-outline-variant/50">
+                <tbody className="divide-y divide-slate-100">
                   {filteredRequests.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="text-center py-12 text-on-surface-variant">
+                      <td colSpan={5} className="text-center py-12 text-slate-400">
                         ไม่มีประวัติการยืม
                       </td>
                     </tr>
@@ -181,13 +243,13 @@ export default function HistoryPage() {
                     <tr 
                       key={req.id}
                       onClick={() => setSelectedRequest(req)}
-                      className={`hover:bg-surface-container-low transition-colors cursor-pointer ${selectedRequest?.id === req.id ? 'bg-primary-container/10' : ''}`}
+                      className={`hover:bg-slate-50 transition-colors cursor-pointer ${selectedRequest?.id === req.id ? 'bg-sky-50/50' : ''}`}
                     >
-                      <td className="px-6 py-4 text-body-md font-medium text-primary">{req.request_no}</td>
-                      <td className="px-6 py-4 text-body-md">{req.assets?.name}</td>
-                      <td className="px-6 py-4 text-body-md">{formatDate(req.created_at)}</td>
-                      <td className="px-6 py-4 text-body-md">{req.due_date ? formatDate(req.due_date) : '-'}</td>
-                      <td className="px-6 py-4"><StatusBadge status={req.status} /></td>
+                      <td className="px-5 py-4 text-sm font-bold text-sky-600">{req.request_no}</td>
+                      <td className="px-5 py-4 text-sm font-bold text-slate-800">{req.assets?.name}</td>
+                      <td className="px-5 py-4 text-sm text-slate-600">{formatDate(req.created_at)}</td>
+                      <td className="px-5 py-4 text-sm text-slate-600">{req.due_date ? formatDate(req.due_date) : '-'}</td>
+                      <td className="px-5 py-4">{renderStatusBadge(req.status)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -195,11 +257,11 @@ export default function HistoryPage() {
             </div>
 
             {/* Mobile Cards View */}
-            <div className="lg:hidden space-y-stack-sm">
+            <div className="lg:hidden space-y-4">
               {filteredRequests.length === 0 && (
-                <div className="text-center py-12 text-on-surface-variant">
-                  <MaterialIcon icon="history" size={48} className="mb-stack-sm opacity-50" />
-                  <p>ไม่มีประวัติการยืม</p>
+                <div className="text-center py-12 text-slate-400 flex flex-col items-center">
+                  <History size={48} className="mb-3 opacity-20" />
+                  <p className="font-medium">ไม่มีประวัติการยืม</p>
                 </div>
               )}
               {filteredRequests.map((req) => {
@@ -207,22 +269,22 @@ export default function HistoryPage() {
                 return (
                   <div
                     key={req.id}
-                    className={`rounded-xl border border-outline-variant bg-surface-container-lowest p-stack-md shadow-sm ${
+                    className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all ${
                       isInactive ? 'opacity-70' : ''
                     }`}
                   >
-                    <div className="flex justify-between items-start mb-stack-xs">
-                      <h3 className="font-title-lg text-title-lg text-on-surface">{req.assets?.name}</h3>
-                      <StatusBadge status={req.status} />
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-bold text-slate-800 text-sm pr-4">{req.assets?.name}</h3>
+                      {renderStatusBadge(req.status)}
                     </div>
-                    <p className="text-body-sm text-on-surface-variant">
+                    <p className="text-xs font-medium text-slate-500 mb-4">
                       {req.request_no} &middot; {req.assets?.asset_tag}
                     </p>
-                    <div className="flex justify-between items-center mt-stack-sm pt-stack-sm border-t border-outline-variant">
-                      <span className="text-body-sm text-on-surface-variant">
+                    <div className="flex justify-between items-center py-3 border-t border-slate-100">
+                      <span className="text-xs text-slate-500">
                         {req.status === 'borrowed' || req.status === 'approved' ? 'กำหนดคืน' : req.status === 'returned' ? 'คืนเมื่อ' : 'วันที่ส่งคำขอ'}
                       </span>
-                      <span className="text-body-sm font-medium text-on-surface">
+                      <span className="text-xs font-bold text-slate-700">
                         {req.status === 'borrowed' || req.status === 'approved'
                           ? formatDate(req.due_date || req.requested_due_date)
                           : req.status === 'returned' && req.returned_at
@@ -230,13 +292,20 @@ export default function HistoryPage() {
                           : formatDate(req.created_at)}
                       </span>
                     </div>
+                    {(req.status === 'borrowed' || req.status === 'overdue') && !req.extension_status && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setExtendModal(req); }}
+                        className="w-full mt-2 bg-amber-50 text-amber-600 hover:bg-amber-100 text-sm font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors border border-amber-200"
+                      >
+                        <Clock size={16} /> ขอต่อเวลา
+                      </button>
+                    )}
                     {(req.status === 'borrowed' || req.status === 'approved') && (
                       <button
-                        onClick={() => setReturnModal(req)}
-                        className="w-full mt-stack-md bg-primary text-on-primary text-label-md font-label-md py-2.5 rounded-full flex items-center justify-center gap-stack-xs active:scale-95 transition-transform"
+                        onClick={(e) => { e.stopPropagation(); setReturnModal(req); }}
+                        className="w-full mt-2 bg-sky-500 text-white hover:bg-sky-600 text-sm font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
                       >
-                        <MaterialIcon icon="assignment_return" size={18} />
-                        แจ้งคืนอุปกรณ์
+                        <RotateCcw size={16} /> แจ้งคืนอุปกรณ์
                       </button>
                     )}
                   </div>
@@ -249,71 +318,86 @@ export default function HistoryPage() {
           {/* Right Column (Details Panel on Desktop) */}
           <div className="hidden lg:block lg:col-span-1">
             {selectedRequest ? (
-              <div className="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-md sticky top-28 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="flex justify-between items-start mb-6">
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm sticky top-24 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="flex justify-between items-start mb-5">
                   <div>
-                    <h2 className="text-headline-sm font-bold text-primary">{selectedRequest.request_no}</h2>
-                    <p className="text-title-lg font-medium text-on-surface mt-1">{selectedRequest.assets?.name}</p>
+                    <h2 className="text-sm font-bold text-sky-600 mb-1">{selectedRequest.request_no}</h2>
+                    <p className="text-base font-bold text-slate-800 leading-tight">{selectedRequest.assets?.name}</p>
                   </div>
-                  <StatusBadge status={selectedRequest.status} />
+                  {renderStatusBadge(selectedRequest.status)}
                 </div>
 
-                <div className="space-y-6">
-                  <div className="p-4 bg-surface-container-low rounded-xl border border-outline-variant/50">
-                    <h3 className="text-label-md font-semibold text-on-surface-variant mb-3 uppercase tracking-wider flex items-center gap-2">
-                      <MaterialIcon icon="info" size={16} /> รายละเอียดคำขอ
+                <div className="space-y-4">
+                  <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200">
+                    <h3 className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider flex items-center gap-1.5">
+                      <Info size={14} /> รายละเอียดคำขอ
                     </h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-body-md">
-                        <span className="text-on-surface-variant">รหัสอ้างอิง (Tag)</span>
-                        <span className="font-medium text-on-surface">{selectedRequest.assets?.asset_tag}</span>
+                    <div className="space-y-2.5">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-500">รหัสอ้างอิง (Tag)</span>
+                        <span className="font-bold text-slate-700">{selectedRequest.assets?.asset_tag}</span>
                       </div>
-                      <div className="flex justify-between text-body-md">
-                        <span className="text-on-surface-variant">วันที่ขอ</span>
-                        <span className="font-medium text-on-surface">{formatDate(selectedRequest.created_at)}</span>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-500">วันที่ขอ</span>
+                        <span className="font-bold text-slate-700">{formatDate(selectedRequest.created_at)}</span>
                       </div>
-                      <div className="flex justify-between text-body-md">
-                        <span className="text-on-surface-variant">กำหนดส่งคืน</span>
-                        <span className="font-medium text-on-surface">{formatDate(selectedRequest.due_date || selectedRequest.requested_due_date)}</span>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-500">กำหนดส่งคืน</span>
+                        <span className="font-bold text-slate-700">{formatDate(selectedRequest.due_date || selectedRequest.requested_due_date)}</span>
                       </div>
                       {selectedRequest.returned_at && (
-                        <div className="flex justify-between text-body-md">
-                          <span className="text-on-surface-variant">วันที่คืนจริง</span>
-                          <span className="font-medium text-on-surface">{formatDate(selectedRequest.returned_at)}</span>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-slate-500">วันที่คืนจริง</span>
+                          <span className="font-bold text-slate-700">{formatDate(selectedRequest.returned_at)}</span>
+                        </div>
+                      )}
+                      {selectedRequest.extension_status && (
+                        <div className="flex justify-between text-sm items-center mt-3 p-2 bg-amber-50/50 rounded-lg border border-amber-100">
+                          <span className="text-slate-600 flex items-center gap-1.5 text-xs font-bold"><Clock size={14}/> สถานะต่อเวลา</span>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${selectedRequest.extension_status === 'pending' ? 'bg-amber-100 text-amber-700' : selectedRequest.extension_status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                            {selectedRequest.extension_status === 'pending' ? 'รออนุมัติ' : selectedRequest.extension_status === 'approved' ? 'อนุมัติแล้ว' : 'ไม่อนุมัติ'}
+                          </span>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <div className="p-4 bg-surface-container-low rounded-xl border border-outline-variant/50">
-                    <h3 className="text-label-md font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">เหตุผลการยืม</h3>
-                    <p className="text-body-md text-on-surface">{selectedRequest.reason}</p>
+                  <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200">
+                    <h3 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">เหตุผลการยืม</h3>
+                    <p className="text-sm text-slate-700">{selectedRequest.reason}</p>
                     {selectedRequest.rejection_reason && (
-                      <div className="mt-3 p-3 bg-error-container/20 rounded-lg border border-error/20">
-                        <p className="text-label-sm font-bold text-error mb-1">เหตุผลที่ถูกปฏิเสธ:</p>
-                        <p className="text-body-sm text-on-surface-variant">{selectedRequest.rejection_reason}</p>
+                      <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-100">
+                        <p className="text-xs font-bold text-red-600 mb-1">เหตุผลที่ถูกปฏิเสธ:</p>
+                        <p className="text-sm text-slate-700">{selectedRequest.rejection_reason}</p>
                       </div>
                     )}
                   </div>
 
-                  {(selectedRequest.status === 'borrowed' || selectedRequest.status === 'approved') && (
-                    <div className="pt-4">
+                  {(selectedRequest.status === 'borrowed' || selectedRequest.status === 'approved' || selectedRequest.status === 'overdue') && (
+                    <div className="pt-2 flex flex-col gap-2">
+                      {(selectedRequest.status === 'borrowed' || selectedRequest.status === 'overdue') && !selectedRequest.extension_status && (
+                        <button
+                          onClick={() => setExtendModal(selectedRequest)}
+                          className="w-full py-2.5 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors"
+                        >
+                          <Clock size={18} /> ขอต่อเวลายืม
+                        </button>
+                      )}
                       <button
                         onClick={() => setReturnModal(selectedRequest)}
-                        className="w-full py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all active:scale-95 shadow-md shadow-primary/20"
+                        className="w-full py-2.5 bg-sky-500 text-white hover:bg-sky-600 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm"
                       >
-                        <MaterialIcon icon="replay" size={20} />
-                        แจ้งคืนอุปกรณ์
+                        <RotateCcw size={18} /> แจ้งคืนอุปกรณ์
                       </button>
-                      <p className="text-center text-xs text-on-surface-variant mt-3">การคืนอุปกรณ์ต้องได้รับการตรวจสอบจากฝ่ายไอทีภายใน 24 ชม.</p>
+                      <p className="text-center text-[10px] text-slate-400 mt-1">การคืนอุปกรณ์ต้องได้รับการตรวจสอบจากฝ่ายไอทีภายใน 24 ชม.</p>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="bg-surface-container-low border border-outline-variant border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center text-on-surface-variant h-64 sticky top-28">
-                <MaterialIcon icon="touch_app" size={48} className="mb-4 opacity-50" />
-                <p className="font-medium">เลือกรายการคำขอเพื่อดูรายละเอียด</p>
+              <div className="bg-white border border-slate-200 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center text-slate-400 h-64 sticky top-24">
+                <ShieldCheck size={40} className="mb-3 opacity-20" />
+                <p className="font-medium text-sm">เลือกรายการคำขอเพื่อดูรายละเอียด</p>
               </div>
             )}
           </div>
@@ -329,6 +413,59 @@ export default function HistoryPage() {
         onConfirm={handleReturn}
         onCancel={() => setReturnModal(null)}
       />
+
+      {/* Extension Modal */}
+      {extendModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-6 shadow-xl animate-in zoom-in-95 duration-200 relative">
+            <button onClick={() => { setExtendModal(null); setExtendDate(''); setExtendReason(''); }} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+              <X size={20} />
+            </button>
+            <h2 className="text-lg font-bold text-slate-800 mb-2">ขอต่อเวลายืม</h2>
+            <p className="text-sm text-slate-500 mb-6 leading-relaxed">คุณสามารถขอขยายเวลาได้สูงสุด 7 วันนับจากวันครบกำหนดเดิม <br/><strong className="text-slate-700">({extendModal.due_date ? formatDate(extendModal.due_date) : '-'})</strong></p>
+            
+            <div className="space-y-4 mb-8">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">วันที่ต้องการคืนใหม่</label>
+                <input 
+                  type="date" 
+                  value={extendDate}
+                  onChange={(e) => setExtendDate(e.target.value)}
+                  min={extendModal.due_date ? new Date(extendModal.due_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
+                  max={extendModal.due_date ? new Date(new Date(extendModal.due_date).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : ''}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 text-sm font-medium"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">เหตุผลที่ขอต่อเวลา</label>
+                <textarea 
+                  rows={3}
+                  value={extendReason}
+                  onChange={(e) => setExtendReason(e.target.value)}
+                  placeholder="ระบุเหตุผลความจำเป็น..."
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 text-sm resize-none"
+                />
+              </div>
+            </div>
+            
+            <div className="flex gap-3 justify-end">
+              <button 
+                onClick={() => { setExtendModal(null); setExtendDate(''); setExtendReason(''); }}
+                className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-100 transition-colors"
+              >
+                ยกเลิก
+              </button>
+              <button 
+                onClick={handleExtend}
+                disabled={!extendDate || !extendReason}
+                className="px-5 py-2.5 rounded-xl text-sm font-bold bg-sky-500 text-white hover:bg-sky-600 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ส่งคำขอต่อเวลา
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav variant="user" />
     </div>

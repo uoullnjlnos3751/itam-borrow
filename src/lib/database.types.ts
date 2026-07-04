@@ -46,6 +46,7 @@ export interface User {
   role: UserRole;
   is_active: boolean;
   last_login_at: string | null;
+  profile_image_url?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -102,6 +103,12 @@ export interface BorrowRequest {
   returned_at: string | null;
   return_confirmed_by: string | null;
   return_condition_note: string | null;
+  
+  // Extension Fields
+  extension_status: 'pending' | 'approved' | 'rejected' | null;
+  extension_requested_date: string | null;
+  extension_reason: string | null;
+  
   created_at: string;
   updated_at: string;
   // Joined fields

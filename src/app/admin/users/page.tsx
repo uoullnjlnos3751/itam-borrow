@@ -3,11 +3,22 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { MaterialIcon } from '@/components/material-icon';
 import { BottomNav } from '@/components/bottom-nav';
 import { ConfirmModal } from '@/components/confirm-modal';
 import { mockUsers } from '@/lib/mock-data';
 import { User, UserRole } from '@/lib/database.types';
+import { 
+  ArrowLeft, 
+  Search, 
+  Shield, 
+  User as UserIcon, 
+  Check, 
+  Briefcase, 
+  Building2,
+  Lock,
+  Unlock,
+  Settings
+} from 'lucide-react';
 
 export default function AdminUsersPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -31,7 +42,7 @@ export default function AdminUsersPage() {
       result = result.filter(u => 
         u.display_name.toLowerCase().includes(q) || 
         u.email.toLowerCase().includes(q) ||
-        u.department?.toLowerCase().includes(q)
+        (u.department && u.department.toLowerCase().includes(q))
       );
     }
     return result;
@@ -52,152 +63,208 @@ export default function AdminUsersPage() {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>;
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full" />
+      </div>
+    );
   }
 
   return (
-    <div className="pb-24 lg:pb-8 bg-background min-h-screen">
-      {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center gap-4 px-margin-mobile h-16">
-        <button onClick={() => router.back()} className="text-on-surface-variant p-2 -ml-2 rounded-full hover:bg-surface-container">
-          <MaterialIcon icon="arrow_back" />
-        </button>
-        <h1 className="font-headline-md text-title-lg font-bold text-on-surface">จัดการผู้ใช้งาน</h1>
-      </header>
-
-      {/* Desktop Header */}
-      <header className="hidden lg:flex sticky top-0 z-50 justify-between items-center w-full px-8 py-4 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
-        <h1 className="text-headline-lg font-bold text-on-surface">จัดการผู้ใช้งาน</h1>
+    <div className="min-h-screen bg-slate-50 pb-28 font-sans">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 h-16 flex items-center justify-between px-4 lg:px-8">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-primary-container text-primary flex items-center justify-center font-bold">
-            {user?.display_name?.charAt(0) || 'A'}
-          </div>
+          <button onClick={() => router.back()} className="text-slate-500 hover:text-slate-800 p-2 rounded-full hover:bg-slate-100 transition-colors shrink-0">
+            <ArrowLeft size={20} />
+          </button>
+          <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <Settings size={20} className="text-sky-500" />
+            <span>จัดการผู้ใช้งานและกำหนดสิทธิ์</span>
+          </h1>
         </div>
       </header>
 
-      <main className="pt-20 lg:pt-8 px-margin-mobile lg:px-8 max-w-2xl lg:max-w-7xl mx-auto space-y-stack-lg">
-        
+      <main className="max-w-7xl mx-auto px-4 lg:px-8 mt-6">
         {/* Search Bar */}
-        <section className="sticky top-16 lg:top-auto z-40 bg-background lg:bg-transparent py-2 lg:py-0">
+        <section className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6">
           <div className="relative">
-            <MaterialIcon icon="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant" size={20} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
-              placeholder="ค้นหาชื่อ, อีเมล หรือแผนก..." 
+              placeholder="ค้นหาชื่อ, อีเมล หรือแผนกผู้ใช้งาน..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface-container-lowest border border-outline-variant rounded-full pl-12 pr-4 py-3 text-body-md focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition-all"
             />
           </div>
         </section>
 
         {/* Desktop Table View */}
-        <section className="hidden lg:block bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+        <section className="hidden lg:block bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-surface-container-low text-label-md uppercase text-on-surface-variant border-b border-outline-variant">
-                <th className="px-6 py-4 font-semibold">ชื่อ - นามสกุล</th>
-                <th className="px-6 py-4 font-semibold">อีเมล</th>
-                <th className="px-6 py-4 font-semibold">แผนก</th>
-                <th className="px-6 py-4 font-semibold text-center">สิทธิ์การใช้งาน</th>
-                <th className="px-6 py-4 font-semibold text-right">ใช้งานล่าสุด</th>
+              <tr className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-200">
+                <th className="px-6 py-4">ผู้ใช้งาน</th>
+                <th className="px-6 py-4">อีเมล</th>
+                <th className="px-6 py-4">แผนก / สังกัด</th>
+                <th className="px-6 py-4 text-center">ระดับสิทธิ์</th>
+                <th className="px-6 py-4 text-right">เข้าใช้งานล่าสุด</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-outline-variant/50">
-              {filteredUsers.length === 0 && (
+            <tbody className="divide-y divide-slate-100 text-sm">
+              {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-12 text-on-surface-variant">ไม่พบข้อมูลผู้ใช้งาน</td>
+                  <td colSpan={5} className="text-center py-12 text-slate-400">ไม่พบข้อมูลผู้ใช้งานในระบบ</td>
                 </tr>
+              ) : (
+                filteredUsers.map((u) => {
+                  const initials = u.display_name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase();
+                  
+                  return (
+                    <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4 font-bold text-slate-800 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold border border-sky-200 overflow-hidden shrink-0">
+                          {u.profile_image_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={u.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
+                          ) : (
+                            initials
+                          )}
+                        </div>
+                        <div>
+                          <div className="font-bold text-slate-800">{u.display_name}</div>
+                          <div className="text-[10px] text-slate-400 lg:hidden">{u.email}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-500">{u.email}</td>
+                      <td className="px-6 py-4 text-slate-500">
+                        <div className="font-semibold text-slate-700">{u.department || '-'}</div>
+                        <div className="text-[10px] text-slate-400">{u.subsidiary || ''}</div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="inline-flex bg-slate-50 rounded-xl p-1 border border-slate-200 shadow-inner">
+                          <button
+                            onClick={() => u.role !== 'user' && setRoleModal({ user: u, newRole: 'user' })}
+                            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                              u.role === 'user' 
+                                ? 'bg-white text-slate-800 shadow-sm border border-slate-200/50' 
+                                : 'text-slate-400 hover:text-slate-600'
+                            }`}
+                          >
+                            User ทั่วไป
+                          </button>
+                          <button
+                            onClick={() => u.role !== 'admin' && setRoleModal({ user: u, newRole: 'admin' })}
+                            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                              u.role === 'admin' 
+                                ? 'bg-sky-500 text-white shadow-sm border border-sky-500' 
+                                : 'text-slate-400 hover:text-slate-600'
+                            }`}
+                          >
+                            IT Admin
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-400 text-right font-medium">
+                        {formatDate(u.last_login_at)}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
-              {filteredUsers.map((u) => (
-                <tr key={u.id} className="hover:bg-surface-container-low transition-colors">
-                  <td className="px-6 py-4 text-body-md font-medium text-on-surface flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold shrink-0">
-                      {u.display_name.charAt(0)}
+            </tbody>
+          </table>
+        </section>
+
+        {/* Mobile Cards View */}
+        <section className="lg:hidden space-y-4">
+          {filteredUsers.length === 0 ? (
+            <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-400">
+              ไม่พบข้อมูลผู้ใช้งาน
+            </div>
+          ) : (
+            filteredUsers.map((u) => {
+              const initials = u.display_name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .slice(0, 2)
+                .toUpperCase();
+
+              return (
+                <div key={u.id} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold border border-sky-200 overflow-hidden shrink-0">
+                      {u.profile_image_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={u.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        initials
+                      )}
                     </div>
-                    {u.display_name}
-                  </td>
-                  <td className="px-6 py-4 text-body-md text-on-surface-variant">{u.email}</td>
-                  <td className="px-6 py-4 text-body-md text-on-surface-variant">{u.department || '-'}</td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="inline-flex bg-surface-container-high rounded-full p-1 border border-outline-variant">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-bold text-slate-800 text-sm truncate">{u.display_name}</h3>
+                      <p className="text-xs text-slate-400 truncate">{u.email}</p>
+                      
+                      <div className="flex gap-4 mt-2 text-xs text-slate-500 font-medium">
+                        <div className="flex items-center gap-1">
+                          <Briefcase size={12} className="text-slate-400" />
+                          <span>{u.department || '-'}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Building2 size={12} className="text-slate-400" />
+                          <span>{u.subsidiary || '-'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-slate-100 pt-4 space-y-2">
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      ระดับสิทธิ์ผู้ใช้งาน (Role)
+                    </div>
+                    
+                    <div className="flex bg-slate-50 rounded-xl p-1 border border-slate-200">
                       <button
                         onClick={() => u.role !== 'user' && setRoleModal({ user: u, newRole: 'user' })}
-                        className={`px-4 py-1.5 rounded-full text-label-md transition-all ${
-                          u.role === 'user' ? 'bg-background text-on-surface shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
+                        className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          u.role === 'user' 
+                            ? 'bg-white text-slate-800 shadow-sm border border-slate-200/50' 
+                            : 'text-slate-400'
                         }`}
                       >
                         User
                       </button>
                       <button
                         onClick={() => u.role !== 'admin' && setRoleModal({ user: u, newRole: 'admin' })}
-                        className={`px-4 py-1.5 rounded-full text-label-md transition-all ${
-                          u.role === 'admin' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
+                        className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          u.role === 'admin' 
+                            ? 'bg-sky-500 text-white shadow-sm border border-sky-500' 
+                            : 'text-slate-400'
                         }`}
                       >
                         IT Admin
                       </button>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-body-sm text-on-surface-variant text-right">
-                    {formatDate(u.last_login_at)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-
-        {/* Mobile Cards View */}
-        <section className="lg:hidden space-y-stack-sm">
-          {filteredUsers.length === 0 && (
-            <div className="text-center py-12 text-on-surface-variant">ไม่พบข้อมูลผู้ใช้งาน</div>
+                  </div>
+                </div>
+              );
+            })
           )}
-          {filteredUsers.map((u) => (
-            <div key={u.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-md shadow-sm">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold shrink-0 text-title-lg">
-                  {u.display_name.charAt(0)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-title-md font-bold text-on-surface truncate">{u.display_name}</h3>
-                  <p className="text-body-sm text-on-surface-variant truncate">{u.email}</p>
-                  <p className="text-xs text-primary mt-1 font-medium">{u.department || 'ไม่มีข้อมูลแผนก'}</p>
-                </div>
-              </div>
-              
-              <div className="border-t border-outline-variant pt-4 mt-2">
-                <p className="text-label-sm text-on-surface-variant mb-2 uppercase">ตั้งค่าสิทธิ์ (Role)</p>
-                <div className="flex bg-surface-container-high rounded-lg p-1 border border-outline-variant w-full">
-                  <button
-                    onClick={() => u.role !== 'user' && setRoleModal({ user: u, newRole: 'user' })}
-                    className={`flex-1 py-2 rounded-md text-label-md transition-all ${
-                      u.role === 'user' ? 'bg-background text-on-surface shadow-sm font-bold' : 'text-on-surface-variant'
-                    }`}
-                  >
-                    User
-                  </button>
-                  <button
-                    onClick={() => u.role !== 'admin' && setRoleModal({ user: u, newRole: 'admin' })}
-                    className={`flex-1 py-2 rounded-md text-label-md transition-all ${
-                      u.role === 'admin' ? 'bg-primary text-on-primary shadow-sm font-bold' : 'text-on-surface-variant'
-                    }`}
-                  >
-                    IT Admin
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
         </section>
-
       </main>
 
       <ConfirmModal
         isOpen={!!roleModal}
-        title="ยืนยันการเปลี่ยนสิทธิ์"
-        description={`คุณต้องการเปลี่ยนสิทธิ์ของ "${roleModal?.user?.display_name}" เป็น ${roleModal?.newRole === 'admin' ? 'IT Admin' : 'User ทั่วไป'} ใช่หรือไม่?`}
-        confirmLabel="ยืนยัน"
+        title="ยืนยันการเปลี่ยนสิทธิ์?"
+        description={`คุณแน่ใจว่าต้องการปรับสิทธิ์ระดับการเข้าถึงของ "${roleModal?.user?.display_name}" เป็น [${roleModal?.newRole === 'admin' ? 'IT Admin' : 'User พนักงานทั่วไป'}] หรือไม่?`}
+        confirmLabel="ยืนยันเปลี่ยนสิทธิ์"
         confirmVariant={roleModal?.newRole === 'admin' ? 'primary' : 'danger'}
         onConfirm={handleRoleChange}
         onCancel={() => setRoleModal(null)}

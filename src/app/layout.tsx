@@ -17,15 +17,11 @@ export default function RootLayout({
     <html lang="th" className="light" suppressHydrationWarning>
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-          rel="stylesheet"
-        />
-        <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="bg-background text-on-background font-body-md min-h-screen" suppressHydrationWarning>
+      <body className="bg-slate-50 text-slate-800 font-sans min-h-screen antialiased" suppressHydrationWarning>
         <AppMsalProvider>
           <AuthProvider>
             <div className="flex min-h-screen">

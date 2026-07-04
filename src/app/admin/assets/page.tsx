@@ -2,14 +2,27 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { MaterialIcon } from '@/components/material-icon';
 import { BottomNav } from '@/components/bottom-nav';
-import { SearchInput } from '@/components/search-input';
-import { FilterPills } from '@/components/filter-pills';
-import { StatusBadge } from '@/components/status-badge';
 import { ConfirmModal } from '@/components/confirm-modal';
 import { mockAssets } from '@/lib/mock-data';
-import { Asset, AssetStatus } from '@/lib/database.types';
+import { Asset } from '@/lib/database.types';
+import { 
+  ArrowLeft, 
+  Search, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Laptop, 
+  Monitor, 
+  Printer, 
+  Video, 
+  Wifi, 
+  Smartphone, 
+  Mouse, 
+  Cable, 
+  Package, 
+  Layers
+} from 'lucide-react';
 
 const statusFilters = [
   { label: 'ทั้งหมด', value: 'all' },
@@ -58,110 +71,215 @@ export default function AdminAssetsPage() {
   const canDelete = (asset: Asset) => !['borrowed', 'overdue'].includes(asset.status);
   const isDamaged = (asset: Asset) => asset.status === 'damaged';
 
+  const getCategoryIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'laptop_mac':
+        return <Laptop size={20} />;
+      case 'desktop_windows':
+      case 'monitor':
+        return <Monitor size={20} />;
+      case 'print':
+        return <Printer size={20} />;
+      case 'videocam':
+        return <Video size={20} />;
+      case 'router':
+        return <Wifi size={20} />;
+      case 'smartphone':
+        return <Smartphone size={20} />;
+      case 'mouse':
+        return <Mouse size={20} />;
+      case 'cable':
+        return <Cable size={20} />;
+      default:
+        return <Package size={20} />;
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'available':
+        return (
+          <span className="bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+            ว่าง
+          </span>
+        );
+      case 'borrowed':
+        return (
+          <span className="bg-sky-100 text-sky-700 border border-sky-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+            กำลังถูกยืม
+          </span>
+        );
+      case 'maintenance':
+        return (
+          <span className="bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+            ส่งซ่อม
+          </span>
+        );
+      case 'damaged':
+        return (
+          <span className="bg-red-100 text-red-700 border border-red-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+            ชำรุด
+          </span>
+        );
+      case 'lost':
+        return (
+          <span className="bg-slate-100 text-slate-700 border border-slate-300 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+            สูญหาย
+          </span>
+        );
+      default:
+        return (
+          <span className="bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+            {status}
+          </span>
+        );
+    }
+  };
+
   return (
-    <div className="pb-24">
-      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center justify-between px-margin-mobile h-16 max-w-2xl mx-auto lg:max-w-none lg:px-8 left-0 right-0 lg:max-w-none lg:left-64">
-        <div className="flex items-center gap-stack-md">
-          <Link href="/admin" className="text-on-surface p-1">
-            <MaterialIcon icon="arrow_back" />
+    <div className="min-h-screen bg-slate-50 pb-28 font-sans">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 h-16 flex items-center justify-between px-4 lg:px-8">
+        <div className="flex items-center gap-4">
+          <Link href="/admin" className="text-slate-500 hover:text-slate-800 p-2 rounded-full hover:bg-slate-100 transition-colors shrink-0">
+            <ArrowLeft size={20} />
           </Link>
-          <h1 className="font-headline-md text-title-lg font-bold text-on-surface">จัดการอุปกรณ์</h1>
+          <h1 className="text-lg font-bold text-slate-800">จัดการอุปกรณ์</h1>
         </div>
-        <Link href="/admin/categories" className="text-on-surface-variant p-1" title="จัดการหมวดหมู่">
-          <MaterialIcon icon="category" />
+
+        <Link href="/admin/categories" className="text-slate-500 hover:text-slate-800 p-2 rounded-full hover:bg-slate-100 transition-colors flex items-center gap-1.5 text-sm font-semibold" title="จัดการหมวดหมู่">
+          <Layers size={18} />
+          <span className="hidden sm:inline">หมวดหมู่</span>
         </Link>
       </header>
 
-      <main className="pt-16 px-margin-mobile max-w-2xl mx-auto lg:max-w-none lg:px-8">
-        <section className="py-stack-lg sticky top-16 bg-background z-40">
-          <SearchInput
-            placeholder="ค้นหาชื่อ, Tag ID, Serial..."
-            value={search}
-            onChange={setSearch}
-          />
-          <FilterPills options={statusFilters} selected={selectedStatus} onSelect={setSelectedStatus} />
-        </section>
+      <main className="max-w-7xl mx-auto px-4 lg:px-8 mt-6">
+        {/* Search & Filters */}
+        <section className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 mb-6">
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input
+              type="text"
+              placeholder="ค้นหาชื่ออุปกรณ์, Tag ID, Serial Number..."
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition-all"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
 
-        <section className="space-y-stack-sm">
-          {filteredAssets.length === 0 && (
-            <div className="text-center py-12 text-on-surface-variant">
-              <MaterialIcon icon="inventory_2" size={48} className="mb-stack-sm opacity-50" />
-              <p>ไม่พบอุปกรณ์</p>
-            </div>
-          )}
-          {filteredAssets.map((asset) => (
-            <div
-              key={asset.id}
-              className={`rounded-xl p-stack-md flex items-center gap-stack-md ${
-                isDamaged(asset)
-                  ? 'border border-error/30 bg-error/5'
-                  : 'border border-outline-variant bg-surface-container-lowest'
-              }`}
-            >
-              <div
-                className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
-                  isDamaged(asset)
-                    ? 'bg-error/10 text-error'
-                    : asset.status === 'available'
-                    ? 'bg-primary-container text-primary'
-                    : 'bg-surface-container text-on-surface-variant'
+          {/* Status Pills */}
+          <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+            {statusFilters.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setSelectedStatus(opt.value)}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border transition-all cursor-pointer ${
+                  selectedStatus === opt.value
+                    ? 'bg-sky-500 text-white border-sky-500 shadow-sm shadow-sky-500/10'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                 }`}
               >
-                <MaterialIcon icon={asset.asset_categories?.icon || 'devices'} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start gap-2">
-                  <h3 className="font-title-lg text-title-lg text-on-surface truncate">{asset.name}</h3>
-                  <StatusBadge status={asset.status} variant="asset" />
-                </div>
-                <p className="text-body-sm text-on-surface-variant mt-0.5">
-                  {asset.asset_tag} &middot; {asset.asset_categories?.name} &middot; สภาพ: {conditionLabels[asset.condition] || asset.condition}
-                </p>
-              </div>
-              <div className="flex gap-1 shrink-0">
-                <Link
-                  href={`/admin/assets/${asset.id}/edit`}
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low"
-                  title="แก้ไข"
-                >
-                  <MaterialIcon icon="edit" size={20} />
-                </Link>
-                {canDelete(asset) ? (
-                  <button
-                    onClick={() => setDeleteModal(asset)}
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-error hover:bg-error/10"
-                    title="ลบ"
-                  >
-                    <MaterialIcon icon="delete" size={20} />
-                  </button>
-                ) : (
-                  <button
-                    disabled
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-outline-variant"
-                    title="ลบไม่ได้ ขณะถูกยืมอยู่"
-                  >
-                    <MaterialIcon icon="delete" size={20} />
-                  </button>
-                )}
-              </div>
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Assets List */}
+        <section className="space-y-4">
+          {filteredAssets.length === 0 ? (
+            <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-500 flex flex-col items-center justify-center">
+              <Package size={48} className="text-slate-300 mb-4" />
+              <div className="font-bold text-slate-700 text-base">ไม่พบอุปกรณ์ในระบบ</div>
+              <p className="text-xs text-slate-400 mt-1">กรุณาลองเปลี่ยนเงื่อนไขการค้นหาหรือกดเพิ่มอุปกรณ์ใหม่</p>
             </div>
-          ))}
+          ) : (
+            filteredAssets.map((asset) => (
+              <div
+                key={asset.id}
+                className={`bg-white rounded-2xl border p-5 shadow-sm flex items-center justify-between gap-4 transition-all hover:border-slate-300 ${
+                  isDamaged(asset) ? 'border-red-200 bg-red-50/10' : 'border-slate-200'
+                }`}
+              >
+                {/* Left section: Icon & Details */}
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 ${
+                    isDamaged(asset)
+                      ? 'bg-red-50 text-red-500 border-red-100'
+                      : asset.status === 'available'
+                      ? 'bg-emerald-50 text-emerald-500 border-emerald-100'
+                      : 'bg-slate-100 text-slate-400 border-slate-200'
+                  }`}>
+                    {getCategoryIcon(asset.asset_categories?.icon || '')}
+                  </div>
+
+                  <div className="min-w-0 space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-bold text-slate-800 text-sm leading-snug truncate">
+                        {asset.name}
+                      </h3>
+                      {getStatusBadge(asset.status)}
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-x-2 text-xs text-slate-400 font-medium">
+                      <span className="text-sky-600 font-semibold">{asset.asset_tag}</span>
+                      <span>&middot;</span>
+                      <span>{asset.asset_categories?.name}</span>
+                      <span>&middot;</span>
+                      <span>สภาพ: {conditionLabels[asset.condition] || asset.condition}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right section: Action Buttons */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <Link
+                    href={`/admin/assets/${asset.id}/edit`}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 border border-slate-200 hover:bg-slate-50 transition-colors"
+                    title="แก้ไข"
+                  >
+                    <Edit size={16} />
+                  </Link>
+
+                  {canDelete(asset) ? (
+                    <button
+                      onClick={() => setDeleteModal(asset)}
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-red-500 border border-red-100 hover:bg-red-50 transition-colors cursor-pointer"
+                      title="ลบ"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 border border-slate-100 bg-slate-50 cursor-not-allowed"
+                      title="ไม่สามารถลบได้ขณะยืมอยู่"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </section>
       </main>
 
-      {/* FAB */}
+      {/* Floating Action Button (FAB) */}
       <Link
         href="/admin/assets/new"
-        className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-lg active:scale-95 transition-transform z-50"
+        className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center shadow-lg shadow-sky-500/20 active:scale-95 transition-transform z-50 cursor-pointer lg:bottom-10 lg:right-10"
+        title="เพิ่มอุปกรณ์ใหม่"
       >
-        <MaterialIcon icon="add" />
+        <Plus size={24} />
       </Link>
 
       <ConfirmModal
         isOpen={!!deleteModal}
         title="ยืนยันการลบอุปกรณ์?"
-        description="อุปกรณ์นี้จะถูกซ่อนจากรายการยืม แต่ประวัติการยืม-คืนเดิมจะยังเก็บไว้ (soft delete) ไม่สามารถลบอุปกรณ์ที่กำลังถูกยืมอยู่ได้"
-        confirmLabel="ลบอุปกรณ์"
+        description="อุปกรณ์นี้จะถูกซ่อนออกจากคลังรายการยืม แต่ประวัติเดิมในระบบจะไม่หายไป (Soft Delete) คุณสามารถกู้คืนได้ภายหลัง"
+        confirmLabel="ยืนยันลบอุปกรณ์"
         confirmVariant="danger"
         onConfirm={handleDelete}
         onCancel={() => setDeleteModal(null)}

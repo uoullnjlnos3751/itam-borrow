@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { X } from 'lucide-react';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -27,35 +28,50 @@ export function ConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 z-[60] flex items-end justify-center"
+      className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4"
       onClick={onCancel}
     >
       <div
-        className="bg-surface-container-lowest w-full max-w-2xl rounded-t-2xl p-margin-mobile animate-slide-up"
+        className="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-xl border border-slate-200 animate-slide-up sm:animate-fade-in relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-title-lg font-title-lg text-on-surface mb-stack-xs">
+        {/* Close Button */}
+        <button 
+          onClick={onCancel}
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-50 transition-colors"
+        >
+          <X size={18} />
+        </button>
+
+        {/* Title */}
+        <h3 className="text-base font-bold text-slate-800 mb-2">
           {title}
         </h3>
+        
+        {/* Description */}
         {description && (
-          <p className="text-body-sm text-on-surface-variant mb-stack-lg">
+          <p className="text-xs text-slate-500 leading-relaxed mb-5">
             {description}
           </p>
         )}
-        {children && <div className="mb-stack-lg">{children}</div>}
-        <div className="flex gap-stack-sm">
+        
+        {/* Custom Content Children */}
+        {children && <div className="mb-5">{children}</div>}
+        
+        {/* Action Buttons */}
+        <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 bg-surface-container text-on-surface py-3 rounded-xl text-body-md transition-colors hover:bg-surface-container-high"
+            className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
           >
             ยกเลิก
           </button>
           <button
             onClick={onConfirm}
-            className={`flex-1 py-3 rounded-xl text-body-md transition-colors ${
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold text-white transition-all active:scale-[0.98] cursor-pointer shadow-sm ${
               confirmVariant === 'danger'
-                ? 'bg-error text-white hover:bg-error/90'
-                : 'bg-primary text-on-primary hover:bg-primary/90'
+                ? 'bg-red-500 hover:bg-red-600 shadow-red-500/10'
+                : 'bg-sky-500 hover:bg-sky-600 shadow-sky-500/10'
             }`}
           >
             {confirmLabel}

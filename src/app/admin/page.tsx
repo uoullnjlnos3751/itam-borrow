@@ -3,11 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { MaterialIcon } from '@/components/material-icon';
 import { BottomNav } from '@/components/bottom-nav';
 import { ConfirmModal } from '@/components/confirm-modal';
 import { mockPendingRequests, mockOverdueRequests, mockApprovedRequests, mockActiveBorrowRequests } from '@/lib/mock-data';
 import { BorrowRequest } from '@/lib/database.types';
+import { 
+  LayoutDashboard, Boxes, ShoppingCart, Wrench, Shield, CheckCircle2, 
+  Clock, AlertTriangle, Zap, RotateCcw, ClipboardList, ChevronRight, X
+} from 'lucide-react';
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function AdminDashboardPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -23,6 +27,8 @@ export default function AdminDashboardPage() {
   const [returnModal, setReturnModal] = useState<BorrowRequest | null>(null);
   const [returnCondition, setReturnCondition] = useState('good');
   const [returnNote, setReturnNote] = useState('');
+
+  const pendingExtensions = activeBorrowRequests.filter(req => req.extension_status === 'pending');
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || user?.role !== 'admin')) {
@@ -60,320 +66,383 @@ export default function AdminDashboardPage() {
     setReturnNote('');
   };
 
+  const handleApproveExtension = (request: BorrowRequest) => {
+    setActiveBorrowRequests((prev) => prev.map((r) => 
+      r.id === request.id 
+        ? { ...r, extension_status: 'approved', due_date: r.extension_requested_date } 
+        : r
+    ));
+  };
+
+  const handleRejectExtension = (request: BorrowRequest) => {
+    setActiveBorrowRequests((prev) => prev.map((r) => 
+      r.id === request.id 
+        ? { ...r, extension_status: 'rejected' } 
+        : r
+    ));
+  };
+
+  // Dummy Chart Data
+  const chartData = [
+    { name: 'ม.ค.', ยืม: 12, อนุมัติ: 10, คืน: 8 },
+    { name: 'ก.พ.', ยืม: 19, อนุมัติ: 18, คืน: 15 },
+    { name: 'มี.ค.', ยืม: 15, อนุมัติ: 12, คืน: 10 },
+    { name: 'เม.ย.', ยืม: 22, อนุมัติ: 20, คืน: 18 },
+  ];
+
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" /></div>;
+    return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full" /></div>;
   }
 
+  const alertCount = mockOverdueRequests.length + pendingRequests.length + pendingExtensions.length;
+
   return (
-    <div className="pb-24 lg:pb-8 bg-background">
-      {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-margin-mobile h-16">
+    <div className="min-h-screen bg-slate-50 pb-24 lg:pb-12 text-slate-900 font-sans">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 lg:px-8 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <LayoutDashboard className="text-sky-500" size={24} />
+          <h1 className="text-lg font-bold text-slate-800">Dashboard ภาพรวมระบบ</h1>
+        </div>
         <div className="flex items-center gap-3">
-          <MaterialIcon icon="admin_panel_settings" className="text-primary" />
-          <h1 className="font-headline-md text-title-lg font-bold text-primary">ITSM Admin</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <MaterialIcon icon="notifications" className="text-on-surface-variant" />
-          <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary text-body-sm font-bold">
-            {user?.display_name?.charAt(0) || 'A'}
+          <div className="hidden sm:flex items-center gap-2 bg-emerald-50 text-emerald-600 text-xs font-bold px-3 py-1.5 rounded-full border border-emerald-200">
+            <div className="w-2 h-2 rounded-full bg-emerald-500" /> Live
+          </div>
+          <div className="w-9 h-9 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold border border-sky-200 overflow-hidden">
+            {user?.profile_image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={user.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              user?.display_name?.charAt(0) || 'A'
+            )}
           </div>
         </div>
       </header>
 
-      {/* Desktop Header */}
-      <header className="hidden lg:flex sticky top-0 z-50 justify-between items-center w-full px-8 py-4 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
-        <h1 className="text-headline-lg font-bold text-on-surface">Admin Dashboard</h1>
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <MaterialIcon icon="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant" size={20} />
-            <input 
-              type="text" 
-              placeholder="ค้นหาอุปกรณ์ หรือผู้ใช้..." 
-              className="bg-surface-container border-none rounded-full pl-10 pr-4 py-2 text-body-md focus:ring-2 focus:ring-primary w-64 outline-none transition-all"
-            />
-          </div>
-          <button className="text-on-surface-variant hover:bg-surface-container p-2 rounded-full transition-colors">
-            <MaterialIcon icon="notifications" />
-          </button>
-          <div className="w-10 h-10 rounded-full bg-primary-container text-primary flex items-center justify-center font-bold">
-            {user?.display_name?.charAt(0) || 'A'}
-          </div>
-        </div>
-      </header>
-
-      <main className="pt-20 lg:pt-8 px-margin-mobile lg:px-8 max-w-2xl lg:max-w-7xl mx-auto space-y-stack-lg">
+      <main className="px-4 lg:px-8 max-w-7xl mx-auto mt-6 space-y-6">
         
-        {/* Welcome Section */}
-        <section className="mt-4">
-          <p className="text-on-surface-variant font-label-md uppercase tracking-wider">ยินดีต้อนรับ,</p>
-          <h2 className="font-headline-md text-headline-md font-bold text-on-surface lg:text-display-sm">{user?.display_name}</h2>
-        </section>
-
-        {/* Stats Grid - Adapting from technician_dashboard_mobile */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-stack-md">
-          {/* Pending Requests */}
-          <div className="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl flex flex-col justify-between shadow-sm transition-all duration-200 hover:border-primary/50 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <MaterialIcon icon="pending_actions" size={64} />
-            </div>
-            <div className="flex justify-between items-start mb-2 relative z-10">
-              <span className="material-symbols-outlined text-tertiary">pending_actions</span>
-              {pendingRequests.length > 0 && (
-                <span className="text-tertiary font-label-md bg-tertiary-container/20 px-2 py-0.5 rounded-full">New</span>
-              )}
-            </div>
-            <div className="relative z-10 mt-4">
-              <p className="text-on-surface-variant font-label-md">คำขอรออนุมัติ</p>
-              <p className="font-headline-md text-headline-md text-tertiary">{pendingRequests.length}</p>
-            </div>
-          </div>
-
-          {/* Approved (Ready for pickup) */}
-          <div className="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl flex flex-col justify-between shadow-sm transition-all duration-200 hover:border-primary/50 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <MaterialIcon icon="inventory_2" size={64} />
-            </div>
-            <div className="flex justify-between items-start mb-2 relative z-10">
-              <span className="material-symbols-outlined text-primary">inventory_2</span>
-            </div>
-            <div className="relative z-10 mt-4">
-              <p className="text-on-surface-variant font-label-md">รอส่งมอบ</p>
-              <p className="font-headline-md text-headline-md text-primary">{approvedRequests.length}</p>
-            </div>
-          </div>
-
-          {/* Active Borrowed */}
-          <div className="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl flex flex-col justify-between shadow-sm transition-all duration-200 hover:border-primary/50 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <MaterialIcon icon="devices" size={64} />
-            </div>
-            <div className="flex justify-between items-start mb-2 relative z-10">
-              <span className="material-symbols-outlined text-secondary">devices</span>
-            </div>
-            <div className="relative z-10 mt-4">
-              <p className="text-on-surface-variant font-label-md">กำลังถูกยืม</p>
-              <p className="font-headline-md text-headline-md text-secondary">{activeBorrowRequests.length}</p>
-            </div>
-          </div>
-
-          {/* Overdue */}
-          <div className="bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl flex flex-col justify-between shadow-sm transition-all duration-200 hover:border-error/50 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <MaterialIcon icon="warning" size={64} />
-            </div>
-            <div className="flex justify-between items-start mb-2 relative z-10">
-              <span className="material-symbols-outlined text-error">warning</span>
-              {mockOverdueRequests.length > 0 && (
-                <span className="text-error font-label-md bg-error-container/20 px-2 py-0.5 rounded-full">High</span>
-              )}
-            </div>
-            <div className="relative z-10 mt-4">
-              <p className="text-on-surface-variant font-label-md">เกินกำหนดคืน</p>
-              <p className="font-headline-md text-headline-md text-error">{mockOverdueRequests.length}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Quick Actions */}
-        <section className="space-y-stack-sm lg:hidden">
-          <h3 className="font-title-lg text-title-lg text-on-surface">จัดการด่วน (Quick Actions)</h3>
-          <div className="grid grid-cols-2 gap-stack-md">
-            <button className="bg-primary-container text-on-primary-container p-stack-lg rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all duration-200 shadow-sm">
-              <MaterialIcon icon="qr_code_scanner" size={32} />
-              <span className="font-label-md">Scan Asset</span>
-            </button>
-            <button className="bg-surface-container-highest text-on-surface border border-outline-variant p-stack-lg rounded-xl flex flex-col items-center justify-center gap-2 active:scale-95 transition-all duration-200" onClick={() => router.push('/admin/assets/new')}>
-              <MaterialIcon icon="add_circle" size={32} className="text-primary" />
-              <span className="font-label-md">เพิ่มอุปกรณ์ใหม่</span>
-            </button>
-          </div>
-        </section>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          
-          {/* Left Column for Activity */}
-          <div className="space-y-8">
-            {/* Pending Requests Section */}
-            {pendingRequests.length > 0 && (
-              <section className="space-y-stack-md">
-                <div className="flex justify-between items-center border-b border-outline-variant pb-2">
-                  <h3 className="font-title-lg text-title-lg text-on-surface flex items-center gap-2">
-                    <MaterialIcon icon="pending_actions" className="text-tertiary" /> 
-                    รออนุมัติ
-                  </h3>
-                  <span className="bg-tertiary-container text-on-tertiary-container text-xs font-bold px-2 py-1 rounded-full">{pendingRequests.length} รายการ</span>
+        {/* Proactive Alerts Bar */}
+        {alertCount > 0 && (
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {mockOverdueRequests.length > 0 && (
+              <div className="min-w-[280px] shrink-0 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
+                  <Clock className="text-red-500" size={20} />
                 </div>
-                
-                <div className="space-y-stack-sm">
-                  {pendingRequests.map((req) => (
-                    <div key={req.id} className="flex flex-col gap-3 bg-surface-container-lowest border border-outline-variant p-stack-md rounded-xl transition-all duration-200 shadow-sm">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 border border-outline-variant">
-                          <MaterialIcon icon={req.assets?.asset_categories?.icon || 'devices'} className="text-on-surface-variant" size={24} />
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">ยืมเกินกำหนด {mockOverdueRequests.length} รายการ</h4>
+                  <p className="text-xs text-slate-500">กรุณาติดตามผู้ยืม</p>
+                </div>
+              </div>
+            )}
+            {pendingRequests.length > 0 && (
+              <div className="min-w-[280px] shrink-0 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                  <ClipboardList className="text-amber-600" size={20} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">รออนุมัติ {pendingRequests.length} รายการ</h4>
+                  <p className="text-xs text-slate-500">คำขอยืมรอการตรวจสอบ</p>
+                </div>
+              </div>
+            )}
+            {pendingExtensions.length > 0 && (
+              <div className="min-w-[280px] shrink-0 bg-sky-50 border border-sky-200 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center shrink-0">
+                  <RotateCcw className="text-sky-500" size={20} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">ขอต่อเวลา {pendingExtensions.length} รายการ</h4>
+                  <p className="text-xs text-slate-500">พิจารณาขยายเวลา</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:border-sky-300 transition-all cursor-pointer">
+            <div className="flex justify-between items-start mb-3">
+              <div className="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center">
+                <Boxes className="text-sky-500" size={20} />
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800">124</h3>
+            <p className="text-sm font-medium text-slate-600 mt-1">ทรัพย์สิน IT ทั้งหมด</p>
+            <p className="text-xs text-slate-400 mt-0.5">พร้อมใช้ 98 · ซ่อม 5</p>
+          </div>
+          
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:border-amber-400 transition-all cursor-pointer">
+            <div className="flex justify-between items-start mb-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                <ShoppingCart className="text-amber-500" size={20} />
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800">{activeBorrowRequests.length}</h3>
+            <p className="text-sm font-medium text-slate-600 mt-1">กำลังยืม / รออนุมัติ</p>
+            <p className="text-xs text-slate-400 mt-0.5">รออนุมัติ {pendingRequests.length} · เกินกำหนด {mockOverdueRequests.length}</p>
+          </div>
+
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:border-red-300 transition-all cursor-pointer">
+            <div className="flex justify-between items-start mb-3">
+              <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+                <Wrench className="text-red-500" size={20} />
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800">5</h3>
+            <p className="text-sm font-medium text-slate-600 mt-1">งานซ่อมเปิดอยู่</p>
+            <p className="text-xs text-slate-400 mt-0.5">อุปกรณ์ระหว่างซ่อมบำรุง</p>
+          </div>
+
+          <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:border-emerald-300 transition-all cursor-pointer">
+            <div className="flex justify-between items-start mb-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <Shield className="text-emerald-500" size={20} />
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-slate-800">85%</h3>
+            <p className="text-sm font-medium text-slate-600 mt-1">PM เสร็จแล้ว</p>
+            <p className="text-xs text-slate-400 mt-0.5">34/40 แผนงาน</p>
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          
+          {/* Left / Center Column (Action Items) */}
+          <div className="xl:col-span-2 space-y-6">
+            
+            {/* Quick Actions (Mobile mainly, or Admin helpers) */}
+            <div className="bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl p-5 text-white shadow-md">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap size={18} />
+                <h3 className="font-bold text-sm">ทางลัด (Quick Actions)</h3>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <button className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center">
+                  <CheckCircle2 size={20} />
+                  <span className="text-xs font-medium">สแกนรับของ</span>
+                </button>
+                <button className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center">
+                  <RotateCcw size={20} />
+                  <span className="text-xs font-medium">รับคืนอุปกรณ์</span>
+                </button>
+                <button className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center">
+                  <LayoutDashboard size={20} />
+                  <span className="text-xs font-medium">เพิ่มทรัพย์สิน</span>
+                </button>
+                <button className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center">
+                  <Shield size={20} />
+                  <span className="text-xs font-medium">จัดการ PM</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Approvals Queue */}
+            {(pendingRequests.length > 0 || pendingExtensions.length > 0) && (
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center gap-2">
+                    <ClipboardList size={18} className="text-sky-500" />
+                    <h3 className="font-bold text-sm text-slate-800">คิวงานรออนุมัติ (Approval Queue)</h3>
+                  </div>
+                  <div className="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-1 rounded-full">{pendingRequests.length + pendingExtensions.length} งาน</div>
+                </div>
+
+                <div className="space-y-3">
+                  {/* Extension Requests */}
+                  {pendingExtensions.map((req) => (
+                    <div key={req.id} className="group flex flex-col sm:flex-row gap-4 bg-sky-50/50 border border-sky-100 p-4 rounded-xl hover:border-sky-200 transition-all">
+                      <div className="w-12 h-12 rounded-xl bg-sky-100 text-sky-500 flex items-center justify-center shrink-0">
+                        <RotateCcw size={24} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-1">
+                          <h4 className="font-bold text-slate-800 text-sm truncate">{req.assets?.name}</h4>
+                          <span className="text-[10px] font-bold text-sky-600 uppercase tracking-wider bg-sky-100 px-2 py-0.5 rounded-full shrink-0">ขอต่อเวลา</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-title-md text-on-surface truncate font-bold">{req.assets?.name}</p>
-                          <p className="text-body-sm text-on-surface-variant truncate">ผู้ขอ: {req.users?.display_name}</p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-label-sm text-on-surface-variant uppercase">วันที่ต้องการ</p>
-                          <p className="text-body-sm font-medium">{formatDate(req.requested_due_date)}</p>
+                        <p className="text-xs text-slate-500 mb-2">ผู้ยืม: {req.users?.display_name}</p>
+                        <div className="bg-white/60 p-2.5 rounded-lg border border-sky-50 text-xs text-slate-600">
+                          <span className="font-bold">เหตุผล:</span> {req.extension_reason} <br/>
+                          <span className="font-bold">ขอขยายถึง:</span> {req.extension_requested_date ? formatDate(req.extension_requested_date) : '-'}
                         </div>
                       </div>
-                      
-                      <div className="bg-surface-container-low p-3 rounded-lg border border-outline-variant/30 text-body-sm text-on-surface-variant">
-                        <span className="font-bold text-on-surface">เหตุผล:</span> {req.reason}
-                      </div>
-                      
-                      <div className="flex gap-2 mt-2">
-                        <button
-                          onClick={() => setRejectModal(req)}
-                          className="flex-1 bg-surface-container-highest text-on-surface text-label-md font-label-md py-2.5 rounded-lg border border-outline-variant hover:bg-error/10 hover:text-error hover:border-error/30 transition-colors"
-                        >
-                          ปฏิเสธ
+                      <div className="flex sm:flex-col gap-2 shrink-0">
+                        <button onClick={() => handleApproveExtension(req)} className="flex-1 sm:flex-none bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                          อนุมัติ
                         </button>
-                        <button
-                          onClick={() => handleApprove(req)}
-                          className="flex-1 bg-primary text-on-primary text-label-md font-label-md py-2.5 rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
-                        >
+                        <button onClick={() => handleRejectExtension(req)} className="flex-1 sm:flex-none bg-white border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-slate-600 text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                          ไม่อนุมัติ
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* New Borrow Requests */}
+                  {pendingRequests.map((req) => (
+                    <div key={req.id} className="group flex flex-col sm:flex-row gap-4 bg-white border border-slate-200 p-4 rounded-xl hover:border-sky-200 transition-all">
+                      <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-500 border border-slate-100 flex items-center justify-center shrink-0">
+                        <ShoppingCart size={24} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-1">
+                          <h4 className="font-bold text-slate-800 text-sm truncate">{req.assets?.name}</h4>
+                          <span className="text-xs font-bold text-slate-500">{formatDate(req.requested_due_date)}</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mb-2">ผู้ขอ: {req.users?.display_name}</p>
+                        <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-xs text-slate-600">
+                          <span className="font-bold">เหตุผล:</span> {req.reason}
+                        </div>
+                      </div>
+                      <div className="flex sm:flex-col gap-2 shrink-0">
+                        <button onClick={() => handleApprove(req)} className="flex-1 sm:flex-none bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors">
                           อนุมัติให้ยืม
                         </button>
+                        <button onClick={() => setRejectModal(req)} className="flex-1 sm:flex-none bg-white border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-slate-600 text-xs font-bold px-4 py-2 rounded-lg transition-colors">
+                          ปฏิเสธ
+                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
-              </section>
+              </div>
             )}
 
-            {/* Approved Requests Section */}
+            {/* Trend Chart (Dummy) */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm h-[320px] flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <LayoutDashboard size={18} className="text-sky-500" />
+                <h3 className="font-bold text-sm text-slate-800">แนวโน้มการยืม-คืน ปี {new Date().getFullYear()}</h3>
+              </div>
+              <div className="flex-1 w-full min-h-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#64748b' }} axisLine={{ stroke: '#e2e8f0' }} tickLine={false} />
+                    <YAxis tick={{ fontSize: 12, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                      cursor={{ fill: '#f8fafc' }}
+                    />
+                    <Bar dataKey="ยืม" fill="#0ea5e9" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                    <Bar dataKey="อนุมัติ" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                    <Bar dataKey="คืน" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right Column (Tracking / Lists) */}
+          <div className="space-y-6">
+            
+            {/* Ready to Deliver */}
             {approvedRequests.length > 0 && (
-              <section className="space-y-stack-md">
-                <div className="flex justify-between items-center border-b border-outline-variant pb-2">
-                  <h3 className="font-title-lg text-title-lg text-on-surface flex items-center gap-2">
-                    <MaterialIcon icon="inventory_2" className="text-primary" /> 
-                    รอส่งมอบ (Approved)
-                  </h3>
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={18} className="text-emerald-500" />
+                    <h3 className="font-bold text-sm text-slate-800">รอส่งมอบ (Approved)</h3>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">{approvedRequests.length}</span>
                 </div>
-                
-                <div className="space-y-stack-sm">
-                  {approvedRequests.map((req) => (
-                    <div key={req.id} className="flex items-center gap-4 bg-primary-container/10 border border-primary/20 p-stack-sm pr-4 rounded-xl transition-all duration-200 hover:bg-primary-container/20">
-                      <div className="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
-                        <MaterialIcon icon="check_circle" className="text-primary" />
+                <div className="space-y-3">
+                  {approvedRequests.map(req => (
+                    <div key={req.id} className="flex items-center gap-3 p-3 bg-emerald-50/50 border border-emerald-100 rounded-xl">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-slate-800 text-sm truncate">{req.assets?.name}</h4>
+                        <p className="text-xs text-slate-500 truncate">ผู้รับ: {req.users?.display_name}</p>
                       </div>
-                      <div className="flex-1 min-w-0 py-1">
-                        <p className="font-title-md text-on-surface truncate font-bold">{req.assets?.name}</p>
-                        <p className="text-body-sm text-on-surface-variant">ผู้รับ: {req.users?.display_name}</p>
-                      </div>
-                      <button
-                        onClick={() => handleCheckOut(req)}
-                        className="shrink-0 bg-primary text-on-primary text-label-md font-label-md px-4 py-2 rounded-lg shadow-sm hover:bg-primary/90 transition-colors flex items-center gap-1"
-                      >
-                        <MaterialIcon icon="front_hand" size={16} /> ส่งมอบ
+                      <button onClick={() => handleCheckOut(req)} className="bg-emerald-500 hover:bg-emerald-600 text-white p-2 rounded-lg transition-colors shrink-0">
+                        <ChevronRight size={18} />
                       </button>
                     </div>
                   ))}
                 </div>
-              </section>
-            )}
-          </div>
-
-          {/* Right Column for Active & Overdue */}
-          <div className="space-y-8">
-            {/* Active Borrowed Section */}
-            {activeBorrowRequests.length > 0 && (
-              <section className="space-y-stack-md">
-                <div className="flex justify-between items-center border-b border-outline-variant pb-2">
-                  <h3 className="font-title-lg text-title-lg text-on-surface flex items-center gap-2">
-                    <MaterialIcon icon="devices" className="text-secondary" /> 
-                    กำลังถูกยืม
-                  </h3>
-                </div>
-                
-                <div className="space-y-stack-sm">
-                  {activeBorrowRequests.map((req) => (
-                    <div key={req.id} className="flex flex-col sm:flex-row sm:items-center gap-4 bg-surface-container-lowest border border-outline-variant p-stack-sm pr-4 rounded-xl transition-all duration-200 hover:shadow-md">
-                      <div className="w-12 h-12 hidden sm:flex rounded-lg bg-secondary-container items-center justify-center shrink-0">
-                        <MaterialIcon icon="devices" className="text-on-secondary-container" />
-                      </div>
-                      <div className="flex-1 min-w-0 pt-2 sm:pt-0 pl-2 sm:pl-0">
-                        <p className="font-title-md text-on-surface truncate font-bold">{req.assets?.name}</p>
-                        <p className="text-body-sm text-on-surface-variant">ผู้ยืม: {req.users?.display_name}</p>
-                        <p className="text-xs text-secondary mt-1 font-medium">คืนภายใน: {formatDate(req.requested_due_date)}</p>
-                      </div>
-                      <button
-                        onClick={() => { setReturnModal(req); setReturnCondition('good'); setReturnNote(''); }}
-                        className="w-full sm:w-auto shrink-0 bg-surface-container-highest text-on-surface text-label-md font-label-md px-4 py-2 rounded-lg border border-outline-variant hover:bg-surface-variant transition-colors flex items-center justify-center gap-1"
-                      >
-                        <MaterialIcon icon="assignment_return" size={16} /> รับคืน
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </section>
+              </div>
             )}
 
-            {/* Overdue Section */}
+            {/* Overdue */}
             {mockOverdueRequests.length > 0 && (
-              <section className="space-y-stack-md">
-                <div className="flex justify-between items-center border-b border-outline-variant pb-2">
-                  <h3 className="font-title-lg text-title-lg text-error flex items-center gap-2">
-                    <MaterialIcon icon="warning" /> 
-                    เกินกำหนดคืน
-                  </h3>
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle size={18} className="text-red-500" />
+                    <h3 className="font-bold text-sm text-slate-800">เกินกำหนดคืน (Overdue)</h3>
+                  </div>
+                  <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full">{mockOverdueRequests.length}</span>
                 </div>
-                
-                <div className="space-y-stack-sm">
-                  {mockOverdueRequests.map((req) => (
-                    <div key={req.id} className="flex flex-col sm:flex-row sm:items-center gap-4 bg-error-container/10 border border-error/30 p-stack-sm pr-4 rounded-xl transition-all duration-200">
-                      <div className="w-12 h-12 hidden sm:flex rounded-lg bg-error-container items-center justify-center shrink-0">
-                        <MaterialIcon icon="warning" className="text-error" />
+                <div className="space-y-3">
+                  {mockOverdueRequests.map(req => (
+                    <div key={req.id} className="flex flex-col gap-2 p-3 bg-red-50/50 border border-red-100 rounded-xl">
+                      <div className="flex justify-between items-start">
+                        <div className="min-w-0">
+                          <h4 className="font-bold text-slate-800 text-sm truncate">{req.asset_name}</h4>
+                          <p className="text-xs text-slate-500 truncate">ผู้ยืม: {req.borrower_name}</p>
+                        </div>
+                        <span className="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded-full shrink-0">-{req.days_overdue} วัน</span>
                       </div>
-                      <div className="flex-1 min-w-0 pt-2 sm:pt-0 pl-2 sm:pl-0">
-                        <p className="font-title-md text-on-surface truncate font-bold">{req.asset_name}</p>
-                        <p className="text-body-sm text-on-surface-variant">ผู้ยืม: {req.borrower_name}</p>
-                        <p className="text-xs text-error mt-1 font-bold">กำหนดคืน: {formatDate(req.due_date)}</p>
-                      </div>
-                      <button
-                        onClick={() => { setReturnModal(req as any); setReturnCondition('good'); setReturnNote(''); }}
-                        className="w-full sm:w-auto shrink-0 bg-error text-on-error text-label-md font-label-md px-4 py-2 rounded-lg shadow-sm hover:bg-error/90 transition-colors flex items-center justify-center gap-1"
-                      >
-                        <MaterialIcon icon="assignment_return" size={16} /> บังคับคืน
+                      <button onClick={() => { setReturnModal(req as any); setReturnCondition('good'); setReturnNote(''); }} className="w-full bg-white border border-red-200 hover:bg-red-50 text-red-600 text-xs font-bold py-2 rounded-lg transition-colors mt-1">
+                        บังคับคืนระบบ
                       </button>
                     </div>
                   ))}
                 </div>
-              </section>
+              </div>
             )}
+
+            {/* Active Borrowed */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Boxes size={18} className="text-amber-500" />
+                  <h3 className="font-bold text-sm text-slate-800">กำลังยืม (Active)</h3>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {activeBorrowRequests.slice(0, 5).map(req => (
+                  <div key={req.id} className="flex items-center justify-between gap-3 p-3 border border-slate-100 bg-slate-50/50 rounded-xl">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-bold text-slate-800 text-sm truncate">{req.assets?.name}</h4>
+                      <p className="text-xs text-slate-500 truncate">ผู้ยืม: {req.users?.display_name}</p>
+                    </div>
+                    <button onClick={() => { setReturnModal(req); setReturnCondition('good'); setReturnNote(''); }} className="text-xs font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 px-3 py-1.5 rounded-lg shrink-0 transition-colors">
+                      รับคืน
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
+
         </div>
       </main>
 
+      {/* Reject Modal */}
       <ConfirmModal
         isOpen={!!rejectModal}
         title="ปฏิเสธคำขอ"
         confirmLabel="ยืนยันปฏิเสธ"
         confirmVariant="danger"
         onConfirm={handleReject}
-        onCancel={() => {
-          setRejectModal(null);
-          setRejectReason('');
-        }}
+        onCancel={() => { setRejectModal(null); setRejectReason(''); }}
       >
         <div>
-          <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">
-            เหตุผลการปฏิเสธ
-          </label>
+          <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">เหตุผลการปฏิเสธ</label>
           <textarea
             rows={3}
             placeholder="เช่น อุปกรณ์ไม่ว่างในช่วงเวลาที่ขอ"
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
-            className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl outline-none focus:ring-2 focus:ring-primary text-body-md resize-none"
+            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm resize-none"
           />
         </div>
       </ConfirmModal>
 
+      {/* Return Modal */}
       <ConfirmModal
         isOpen={!!returnModal}
         title="บันทึกการรับคืนอุปกรณ์"
@@ -382,28 +451,26 @@ export default function AdminDashboardPage() {
         onConfirm={handleReturn}
         onCancel={() => setReturnModal(null)}
       >
-        <div className="space-y-stack-md">
-          <p className="text-body-md text-on-surface">
-            ตรวจเช็คสภาพอุปกรณ์: <span className="font-bold">{returnModal?.assets?.name}</span>
+        <div className="space-y-4">
+          <p className="text-sm text-slate-600">
+            ตรวจเช็คสภาพอุปกรณ์: <span className="font-bold text-slate-800">{returnModal?.assets?.name || (returnModal as any)?.asset_name}</span>
           </p>
           
           <div>
-            <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">
-              สภาพอุปกรณ์ที่รับคืน
-            </label>
+            <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">สภาพอุปกรณ์ที่รับคืน</label>
             <div className="flex gap-2">
               <button
                 onClick={() => setReturnCondition('good')}
-                className={`flex-1 py-2 rounded-lg border text-label-md font-medium ${
-                  returnCondition === 'good' ? 'bg-primary text-on-primary border-primary' : 'bg-surface-container-lowest border-outline-variant text-on-surface'
+                className={`flex-1 py-2 rounded-xl border text-sm font-bold transition-all ${
+                  returnCondition === 'good' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 ดี (ปกติ)
               </button>
               <button
                 onClick={() => setReturnCondition('damaged')}
-                className={`flex-1 py-2 rounded-lg border text-label-md font-medium ${
-                  returnCondition === 'damaged' ? 'bg-error text-on-error border-error' : 'bg-surface-container-lowest border-outline-variant text-on-surface'
+                className={`flex-1 py-2 rounded-xl border text-sm font-bold transition-all ${
+                  returnCondition === 'damaged' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 ชำรุด / เสียหาย
@@ -412,15 +479,13 @@ export default function AdminDashboardPage() {
           </div>
 
           <div>
-            <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">
-              หมายเหตุเพิ่มเติม (ถ้ามี)
-            </label>
+            <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">หมายเหตุเพิ่มเติม (ถ้ามี)</label>
             <textarea
               rows={2}
               placeholder="เช่น มีรอยขีดข่วน, สายชาร์จขาด"
               value={returnNote}
               onChange={(e) => setReturnNote(e.target.value)}
-              className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl outline-none focus:ring-2 focus:ring-primary text-body-md resize-none"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 text-sm resize-none"
             />
           </div>
         </div>

@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MaterialIcon } from './material-icon';
 import { mockCategories } from '@/lib/mock-data';
 import { Asset, AssetStatus, AssetCondition } from '@/lib/database.types';
+import { ArrowLeft, Save, CheckCircle2 } from 'lucide-react';
 
 const statusOptions: { value: AssetStatus; label: string }[] = [
   { value: 'available', label: 'ว่าง (Available)' },
@@ -61,155 +61,181 @@ export function AssetForm({ mode, asset }: AssetFormProps) {
     setTimeout(() => router.push('/admin/assets'), 1000);
   };
 
-  const inputClass = 'w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl outline-none focus:ring-2 focus:ring-primary text-body-md';
+  const inputClass = 'w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm text-slate-800 transition-all';
 
   if (saved) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-margin-mobile text-center">
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-stack-lg">
-          <MaterialIcon icon="check_circle" className="text-primary" size={40} />
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 text-center">
+        <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mb-6 border border-emerald-100 shadow-sm">
+          <CheckCircle2 size={32} />
         </div>
-        <h2 className="text-title-lg font-title-lg text-on-surface mb-stack-xs">
+        <h2 className="text-xl font-bold text-slate-800 mb-1">
           {mode === 'new' ? 'เพิ่มอุปกรณ์เรียบร้อยแล้ว' : 'บันทึกเรียบร้อยแล้ว'}
         </h2>
+        <p className="text-sm text-slate-400">ระบบกำลังพากลับไปยังคลังอุปกรณ์...</p>
       </div>
     );
   }
 
   return (
-    <div className="pb-28">
-      <header className="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant flex items-center gap-stack-md px-margin-mobile h-16 max-w-2xl mx-auto left-0 right-0">
-        <button onClick={() => router.back()} className="text-on-surface p-1">
-          <MaterialIcon icon="arrow_back" />
+    <div className="min-h-screen bg-slate-50 pb-28 font-sans">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 h-16 flex items-center px-4 lg:px-8">
+        <button onClick={() => router.back()} className="text-slate-500 hover:text-slate-800 p-2 rounded-full hover:bg-slate-100 transition-colors shrink-0 mr-4">
+          <ArrowLeft size={20} />
         </button>
-        <h1 className="font-headline-md text-title-lg font-bold text-on-surface">
+        <h1 className="text-lg font-bold text-slate-800">
           {mode === 'new' ? 'เพิ่มอุปกรณ์ใหม่' : 'แก้ไขอุปกรณ์'}
         </h1>
       </header>
 
-      <main className="pt-20 px-margin-mobile max-w-2xl mx-auto space-y-stack-lg">
-        {/* Identification */}
-        <div className="space-y-stack-md">
-          <p className="section-label">ข้อมูลระบุตัวตน</p>
-          <div>
-            <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">รหัสอุปกรณ์ (Asset Tag) *</label>
-            <input type="text" placeholder="เช่น TAG-88291-LX" value={assetTag} onChange={e => setAssetTag(e.target.value)} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">ชื่ออุปกรณ์ *</label>
-            <input type="text" placeholder='MacBook Pro 16"' value={name} onChange={e => setName(e.target.value)} className={inputClass} />
-          </div>
-          <div className="grid grid-cols-2 gap-stack-sm">
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">หมวดหมู่ *</label>
-              <select value={categoryId} onChange={e => setCategoryId(e.target.value)} className={inputClass}>
-                {mockCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+      <main className="max-w-3xl mx-auto px-4 mt-6 space-y-6">
+        {/* Card container */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6 shadow-sm">
+          
+          {/* Identification */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold text-sky-500 uppercase tracking-wider">ข้อมูลระบุตัวตน</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">รหัสอุปกรณ์ (Asset Tag) *</label>
+                <input type="text" placeholder="เช่น TAG-88291-LX" value={assetTag} onChange={e => setAssetTag(e.target.value)} className={inputClass} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">ชื่ออุปกรณ์ *</label>
+                <input type="text" placeholder='MacBook Pro 16"' value={name} onChange={e => setName(e.target.value)} className={inputClass} />
+              </div>
             </div>
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">ยี่ห้อ</label>
-              <input type="text" placeholder="Apple, Dell, HP..." value={brand} onChange={e => setBrand(e.target.value)} className={inputClass} />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">หมวดหมู่ *</label>
+                <select value={categoryId} onChange={e => setCategoryId(e.target.value)} className={inputClass}>
+                  {mockCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">ยี่ห้อ</label>
+                <input type="text" placeholder="Apple, Dell, HP..." value={brand} onChange={e => setBrand(e.target.value)} className={inputClass} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">รุ่น (Model)</label>
+                <input type="text" placeholder="16-inch M3 Pro" value={model} onChange={e => setModel(e.target.value)} className={inputClass} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Serial Number</label>
+                <input type="text" placeholder="C02DR4XXXXXX" value={serialNumber} onChange={e => setSerialNumber(e.target.value)} className={inputClass} />
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-stack-sm">
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">รุ่น (Model)</label>
-              <input type="text" placeholder="16-inch M3 Pro" value={model} onChange={e => setModel(e.target.value)} className={inputClass} />
+
+          <hr className="border-slate-100" />
+
+          {/* Status and conditions */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold text-sky-500 uppercase tracking-wider">สถานะและสภาพอุปกรณ์</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">สถานะ *</label>
+                <select value={status} onChange={e => setStatus(e.target.value as AssetStatus)} className={inputClass}>
+                  {statusOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">สภาพอุปกรณ์ *</label>
+                <select value={condition} onChange={e => setCondition(e.target.value as AssetCondition)} className={inputClass}>
+                  {conditionOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
             </div>
+
+            <label className="flex items-center gap-2 py-2 select-none cursor-pointer">
+              <input type="checkbox" checked={isBorrowable} onChange={e => setIsBorrowable(e.target.checked)} className="w-4.5 h-4.5 rounded border-slate-300 text-sky-500 focus:ring-sky-500" />
+              <span className="text-xs font-semibold text-slate-700">เปิดให้พนักงานยืมได้ (Borrowable)</span>
+            </label>
+          </div>
+
+          <hr className="border-slate-100" />
+
+          {/* Financial details */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold text-sky-500 uppercase tracking-wider">ข้อมูลการจัดซื้อ</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">วันที่ซื้อ</label>
+                <input type="date" value={purchaseDate} onChange={e => setPurchaseDate(e.target.value)} className={inputClass} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">ราคา (บาท)</label>
+                <input type="number" placeholder="79900" value={purchasePrice} onChange={e => setPurchasePrice(e.target.value)} className={inputClass} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">ผู้จำหน่าย</label>
+                <input type="text" placeholder="Advice, Synnex..." value={vendor} onChange={e => setVendor(e.target.value)} className={inputClass} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">หมดประกันวันที่</label>
+                <input type="date" value={warrantyExpiry} onChange={e => setWarrantyExpiry(e.target.value)} className={inputClass} />
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-slate-100" />
+
+          {/* Location and ownership */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold text-sky-500 uppercase tracking-wider">ตำแหน่งและเจ้าของ</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">จุดจัดเก็บ (Location)</label>
+                <input type="text" placeholder="เช่น คลัง IT ชั้น 22" value={location} onChange={e => setLocation(e.target.value)} className={inputClass} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">บริษัทในเครือ (เจ้าของทรัพย์สิน)</label>
+                <select value={subsidiary} onChange={e => setSubsidiary(e.target.value)} className={inputClass}>
+                  {subsidiaryOptions.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
+
             <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">Serial Number</label>
-              <input type="text" placeholder="C02DR4XXXXXX" value={serialNumber} onChange={e => setSerialNumber(e.target.value)} className={inputClass} />
+              <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">หมายเหตุเพิ่มเติม</label>
+              <textarea rows={3} placeholder="ข้อมูลประกอบเพิ่มเติม..." value={notes} onChange={e => setNotes(e.target.value)} className={`${inputClass} resize-none`} />
             </div>
           </div>
         </div>
 
-        {/* Lifecycle */}
-        <div className="space-y-stack-md pt-stack-lg border-t border-outline-variant">
-          <p className="section-label">สถานะและสภาพ</p>
-          <div className="grid grid-cols-2 gap-stack-sm">
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">สถานะ *</label>
-              <select value={status} onChange={e => setStatus(e.target.value as AssetStatus)} className={inputClass}>
-                {statusOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">สภาพอุปกรณ์ *</label>
-              <select value={condition} onChange={e => setCondition(e.target.value as AssetCondition)} className={inputClass}>
-                {conditionOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-          </div>
-          <label className="flex items-center gap-stack-sm py-1">
-            <input type="checkbox" checked={isBorrowable} onChange={e => setIsBorrowable(e.target.checked)} className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" />
-            <span className="text-body-md text-on-surface">เปิดให้พนักงานยืมได้ (Borrowable)</span>
-          </label>
-        </div>
-
-        {/* Financial */}
-        <div className="space-y-stack-md pt-stack-lg border-t border-outline-variant">
-          <p className="section-label">ข้อมูลการจัดซื้อ</p>
-          <div className="grid grid-cols-2 gap-stack-sm">
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">วันที่ซื้อ</label>
-              <input type="date" value={purchaseDate} onChange={e => setPurchaseDate(e.target.value)} className={inputClass} />
-            </div>
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">ราคา (บาท)</label>
-              <input type="number" placeholder="79,900" value={purchasePrice} onChange={e => setPurchasePrice(e.target.value)} className={inputClass} />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-stack-sm">
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">ผู้จำหน่าย</label>
-              <input type="text" placeholder="Advice, Synnex..." value={vendor} onChange={e => setVendor(e.target.value)} className={inputClass} />
-            </div>
-            <div>
-              <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">หมดประกันวันที่</label>
-              <input type="date" value={warrantyExpiry} onChange={e => setWarrantyExpiry(e.target.value)} className={inputClass} />
-            </div>
-          </div>
-        </div>
-
-        {/* Location */}
-        <div className="space-y-stack-md pt-stack-lg border-t border-outline-variant">
-          <p className="section-label">ตำแหน่งและเจ้าของ</p>
-          <div>
-            <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">จุดจัดเก็บ</label>
-            <input type="text" placeholder="เช่น คลัง IT ชั้น 22" value={location} onChange={e => setLocation(e.target.value)} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">บริษัทในเครือ (เจ้าของทรัพย์สิน)</label>
-            <select value={subsidiary} onChange={e => setSubsidiary(e.target.value)} className={inputClass}>
-              {subsidiaryOptions.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-label-md font-label-md text-on-surface-variant mb-stack-xs uppercase">หมายเหตุ</label>
-            <textarea rows={3} placeholder="ข้อมูลเพิ่มเติม..." value={notes} onChange={e => setNotes(e.target.value)} className={`${inputClass} resize-none`} />
-          </div>
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2">
+          <button onClick={() => router.back()} className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 py-3 rounded-xl text-xs font-bold transition-all active:scale-[0.98] cursor-pointer">
+            ยกเลิก
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={!assetTag || !name || saving}
+            className="flex-1 bg-sky-500 hover:bg-sky-600 text-white py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm shadow-sky-500/10 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? (
+              <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
+            ) : (
+              <>
+                <Save size={16} />
+                <span>บันทึกอุปกรณ์</span>
+              </>
+            )}
+          </button>
         </div>
       </main>
-
-      <div className="fixed bottom-0 w-full max-w-2xl mx-auto left-0 right-0 bg-surface-container-lowest border-t border-outline-variant p-margin-mobile flex gap-stack-sm">
-        <button onClick={() => router.back()} className="flex-1 text-center bg-surface-container text-on-surface text-body-lg font-medium py-3.5 rounded-xl">
-          ยกเลิก
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={!assetTag || !name || saving}
-          className="flex-1 bg-primary text-on-primary text-body-lg font-medium py-3.5 rounded-xl active:scale-[0.98] transition-transform flex items-center justify-center gap-stack-sm disabled:opacity-50"
-        >
-          {saving ? (
-            <div className="animate-spin w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full" />
-          ) : (
-            <>
-              <MaterialIcon icon="save" size={20} />
-              บันทึกอุปกรณ์
-            </>
-          )}
-        </button>
-      </div>
     </div>
   );
 }
