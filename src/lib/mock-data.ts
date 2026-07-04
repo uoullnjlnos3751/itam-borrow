@@ -292,3 +292,52 @@ export const mockActiveBorrowRequests: BorrowRequest[] = [
     users: { ...mockUsers[0], display_name: 'มานะ อดทน', department: 'Marketing' },
   }
 ];
+
+// ---- Mock Asset Audit Logs ----
+export const mockAssetAuditLogs = [
+  {
+    id: 'log-001',
+    asset_id: 'asset-001',
+    asset_tag_snapshot: 'TAG-88291-LX',
+    action: 'APPROVE_REQUEST',
+    changed_by: 'IT Admin (admin-001)',
+    change_summary: 'อนุมัติคำขอยืมอุปกรณ์ BR-2569-0041 สำหรับพนักงาน จักรกฤษณ์ (PS)',
+    created_at: '2026-07-04T10:30:00Z',
+  },
+  {
+    id: 'log-002',
+    asset_id: 'asset-002',
+    asset_tag_snapshot: 'TAG-51022-PJ',
+    action: 'UPDATE_STATUS',
+    changed_by: 'IT Admin (admin-001)',
+    change_summary: 'อัปเดตสถานะอุปกรณ์เป็น "ซ่อมบำรุง" (ส่งซ่อมเลนส์โปรเจกเตอร์มีจุดดำ)',
+    created_at: '2026-07-04T09:15:00Z',
+  },
+  {
+    id: 'log-003',
+    asset_id: 'asset-003',
+    asset_tag_snapshot: 'TAG-77451-AD',
+    action: 'CREATE_ASSET',
+    changed_by: 'IT Admin (admin-001)',
+    change_summary: 'เพิ่มอุปกรณ์ใหม่เข้าระบบ: USB-C Hub Adapter (Ugreen) สังกัดบริษัท PS',
+    created_at: '2026-07-03T16:00:00Z',
+  },
+  {
+    id: 'log-004',
+    asset_id: 'asset-006',
+    asset_tag_snapshot: 'TAG-77451-CB',
+    action: 'DELETE_ASSET',
+    changed_by: 'IT Admin (admin-001)',
+    change_summary: 'ย้ายอุปกรณ์ไปยังคลังชำรุด (Soft Delete) อุปกรณ์ USB-C Hub Adapter (Anker)',
+    created_at: '2026-07-02T14:45:00Z',
+  },
+  {
+    id: 'log-005',
+    asset_id: 'asset-005',
+    asset_tag_snapshot: 'TAG-77621-MN',
+    action: 'RETURN_ASSET',
+    changed_by: 'IT Admin (admin-001)',
+    change_summary: 'รับคืนอุปกรณ์ Dell UltraSharp 27" ตรวจเช็คสภาพ: ปกติ เรียบร้อย',
+    created_at: '2026-07-02T11:20:00Z',
+  }
+];
