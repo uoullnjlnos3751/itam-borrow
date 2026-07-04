@@ -10,7 +10,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (role?: UserRole) => void;
+  login: (role?: UserRole, email?: string) => void;
   logout: () => void;
 }
 
@@ -102,9 +102,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth();
   }, [isMockAuth, isMsalAuthenticated, accounts]);
 
-  const login = useCallback(async (role: UserRole = 'user') => {
+  const login = useCallback(async (role: UserRole = 'user', email?: string) => {
     if (isMockAuth) {
-      const mockUser = role === 'admin' ? mockUsers[1] : mockUsers[0];
+      let mockUser = mockUsers[0]; // default to jakkrit (PS)
+      if (email) {
+        mockUser = mockUsers.find(u => u.email === email) || mockUser;
+      } else if (role === 'admin') {
+        mockUser = mockUsers.find(u => u.role === 'admin') || mockUser;
+      }
       setUser(mockUser);
       sessionStorage.setItem('itam_user', JSON.stringify(mockUser));
     } else {

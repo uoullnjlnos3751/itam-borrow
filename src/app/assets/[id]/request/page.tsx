@@ -54,6 +54,29 @@ export default function RequestPage() {
     );
   }
 
+  // Cross-subsidiary borrow blocking security check
+  if (user?.role !== 'admin' && asset.subsidiary !== user?.subsidiary) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center font-sans">
+        <div className="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center border border-red-100 shadow-sm mb-4">
+          <Info size={28} />
+        </div>
+        <h2 className="text-lg font-bold text-slate-800 mb-1">
+          ไม่มีสิทธิ์ยืมอุปกรณ์ต่างบริษัท
+        </h2>
+        <p className="text-xs text-slate-500 max-w-sm mb-6 leading-relaxed">
+          คุณสังกัดบริษัท <span className="font-semibold text-slate-700">{user?.subsidiary}</span> แต่ต้องการยืมอุปกรณ์ของบริษัท <span className="font-semibold text-slate-700">{asset.subsidiary}</span> ซึ่งระบบไม่สามารถดำเนินการข้ามบริษัทได้
+        </p>
+        <button
+          onClick={() => router.push('/assets')}
+          className="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold py-2.5 px-6 rounded-xl transition-all cursor-pointer shadow-sm shadow-sky-500/10 active:scale-[0.98]"
+        >
+          กลับหน้าคลังอุปกรณ์
+        </button>
+      </div>
+    );
+  }
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-4 text-center">

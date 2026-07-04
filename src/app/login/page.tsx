@@ -19,8 +19,8 @@ export default function LoginPage() {
     }
   }, [user, isLoading, router]);
 
-  const handleLogin = (role: 'user' | 'admin' = 'user') => {
-    login(role);
+  const handleLogin = (role: 'user' | 'admin' = 'user', email?: string) => {
+    login(role, email);
   };
 
   if (isLoading) {
@@ -119,14 +119,30 @@ export default function LoginPage() {
                 <span className="relative bg-white px-3 text-xs text-slate-400 uppercase tracking-wider">สำหรับทดสอบระบบ</span>
               </div>
 
-              {/* Dev mode: admin login */}
-              <button
-                onClick={() => handleLogin('admin')}
-                className="w-full flex items-center justify-center gap-2 bg-sky-50 border border-sky-100 hover:bg-sky-100 text-sky-700 rounded-xl py-3 px-4 transition-all active:scale-[0.98] cursor-pointer font-semibold text-sm"
-              >
-                <Shield size={18} className="text-sky-600" />
-                <span>เข้าสู่ระบบในฐานะ IT Admin (Test)</span>
-              </button>
+              {/* Dev mode: mock logins */}
+              <div className="space-y-2">
+                <button
+                  onClick={() => handleLogin('admin')}
+                  className="w-full flex items-center justify-center gap-2 bg-sky-50 border border-sky-100 hover:bg-sky-100 text-sky-700 rounded-xl py-2.5 px-4 transition-all active:scale-[0.98] cursor-pointer font-semibold text-xs"
+                >
+                  <Shield size={16} className="text-sky-600" />
+                  <span>[ทดสอบ] ล็อกอินเป็น IT Admin (PS)</span>
+                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => handleLogin('user', 'jakkrit@trrgroup.com')}
+                    className="flex items-center justify-center gap-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-xl py-2 px-3 transition-all active:scale-[0.98] cursor-pointer font-semibold text-[10px]"
+                  >
+                    <span>ล็อกอินพนักงาน (PS)</span>
+                  </button>
+                  <button
+                    onClick={() => handleLogin('user', 'somchai@trrgroup.com')}
+                    className="flex items-center justify-center gap-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-xl py-2 px-3 transition-all active:scale-[0.98] cursor-pointer font-semibold text-[10px]"
+                  >
+                    <span>ล็อกอินพนักงาน (TRR Corp)</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs text-slate-500 space-y-1.5">

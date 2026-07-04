@@ -48,6 +48,11 @@ export default function AssetsPage() {
       if (asset.deleted_at) return false;
       const isAvailable = asset.status === 'available' && asset.is_borrowable;
       
+      // Restrict normal users to only see assets of their own subsidiary
+      if (user?.role !== 'admin' && asset.subsidiary !== user?.subsidiary) {
+        return false;
+      }
+
       // Regular users only see available items, admins see all (available or borrowed)
       if (user?.role !== 'admin' && !isAvailable) {
         return false;
@@ -140,7 +145,10 @@ export default function AssetsPage() {
           <div className="w-9 h-9 rounded-xl bg-sky-500 flex items-center justify-center text-white">
             <Laptop size={20} />
           </div>
-          <h1 className="text-lg font-bold text-slate-800">ยืมอุปกรณ์ IT</h1>
+          <div>
+            <h1 className="text-sm font-bold text-slate-800 leading-tight">ยืมอุปกรณ์ IT</h1>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">คลังบริษัท: {user?.subsidiary || '-'}</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">

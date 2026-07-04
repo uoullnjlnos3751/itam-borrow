@@ -41,15 +41,25 @@ const conditionLabels: Record<string, string> = {
   poor: 'แย่',
 };
 
+const subsidiaryFilters = [
+  { label: 'ทุกบริษัท', value: 'all' },
+  { label: 'PS', value: 'PS' },
+  { label: 'TRR Corp', value: 'TRR Corp' },
+  { label: 'SSEC', value: 'SSEC' },
+  { label: 'TRRP', value: 'TRRP' },
+];
+
 export default function AdminAssetsPage() {
   const [assets, setAssets] = useState(mockAssets.filter(a => !a.deleted_at));
   const [search, setSearch] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedSubsidiary, setSelectedSubsidiary] = useState('all');
   const [deleteModal, setDeleteModal] = useState<Asset | null>(null);
 
   const filteredAssets = useMemo(() => {
     return assets.filter((asset) => {
       if (selectedStatus !== 'all' && asset.status !== selectedStatus) return false;
+      if (selectedSubsidiary !== 'all' && asset.subsidiary !== selectedSubsidiary) return false;
       if (search) {
         const q = search.toLowerCase();
         return (
@@ -60,7 +70,7 @@ export default function AdminAssetsPage() {
       }
       return true;
     });
-  }, [assets, search, selectedStatus]);
+  }, [assets, search, selectedStatus, selectedSubsidiary]);
 
   const handleDelete = () => {
     if (!deleteModal) return;
@@ -169,20 +179,44 @@ export default function AdminAssetsPage() {
           </div>
 
           {/* Status Pills */}
-          <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-            {statusFilters.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setSelectedStatus(opt.value)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border transition-all cursor-pointer ${
-                  selectedStatus === opt.value
-                    ? 'bg-sky-500 text-white border-sky-500 shadow-sm shadow-sky-500/10'
-                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">สถานะอุปกรณ์</span>
+            <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+              {statusFilters.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setSelectedStatus(opt.value)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border transition-all cursor-pointer ${
+                    selectedStatus === opt.value
+                      ? 'bg-sky-500 text-white border-sky-500 shadow-sm shadow-sky-500/10'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Subsidiary Filters */}
+          <div className="flex flex-col gap-1 pt-2 border-t border-slate-100">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">สังกัดบริษัทเจ้าของ</span>
+            <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+              {subsidiaryFilters.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setSelectedSubsidiary(opt.value)}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+                    selectedSubsidiary === opt.value
+                      ? 'bg-sky-500 text-white border-sky-500 shadow-sm shadow-sky-500/10'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 

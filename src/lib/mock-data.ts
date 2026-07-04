@@ -36,7 +36,7 @@ export const mockUsers: User[] = [
     email: 'somchai@trrgroup.com',
     display_name: 'สมชาย ใจดี',
     department: 'Sales',
-    subsidiary: 'PS',
+    subsidiary: 'TRR Corp',
     role: 'user',
     is_active: true,
     last_login_at: new Date().toISOString(),
