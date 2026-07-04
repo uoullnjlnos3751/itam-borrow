@@ -79,13 +79,23 @@ export interface Asset {
   image_url: string | null;
   notes: string | null;
   is_borrowable: boolean;
-  department?: string | null;
   deleted_at: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
   // Joined fields
   asset_categories?: AssetCategory;
+}
+
+export interface AssetKit {
+  id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  asset_ids: string[]; // List of asset IDs in the kit
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface BorrowRequest {
@@ -139,6 +149,21 @@ export interface NotificationLog {
   status: string;
   error_message: string | null;
   created_at: string;
+}
+
+export type WaitlistStatus = 'waiting' | 'notified' | 'fulfilled' | 'cancelled';
+
+export interface WaitlistEntry {
+  id: string;
+  user_id: string;
+  asset_id: string;
+  status: WaitlistStatus;
+  notified_at: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined fields
+  users?: User;
+  assets?: Asset;
 }
 
 // ---- View Types ----

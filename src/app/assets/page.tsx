@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { BottomNav } from '@/components/bottom-nav';
-import { mockAssets, mockCategories } from '@/lib/mock-data';
+import { mockAssets, mockCategories, mockAssetKits } from '@/lib/mock-data';
 import Link from 'next/link';
 import { 
   Laptop, 
@@ -18,14 +18,18 @@ import {
   Package, 
   Search,
   SlidersHorizontal,
-  Info
+  Info,
+  ScanLine,
+  LayoutList
 } from 'lucide-react';
+import { QrScannerModal } from '@/components/qr-scanner';
 
 export default function AssetsPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -42,6 +46,20 @@ export default function AssetsPage() {
     ],
     []
   );
+
+  const handleScan = (tagId: string) => {
+    setIsScannerOpen(false);
+    const asset = mockAssets.find(a => a.asset_tag.toLowerCase() === tagId.toLowerCase());
+    if (asset) {
+      if (asset.status === 'available' && asset.is_borrowable) {
+        router.push(`/assets/${asset.id}/request`);
+      } else {
+        alert('อุปกรณ์นี้ไม่ว่างให้ยืมในขณะนี้ (Not available)');
+      }
+    } else {
+      alert('ไม่พบอุปกรณ์ที่ตรงกับรหัสนี้ในระบบ (Asset not found)');
+    }
+  };
 
   const filteredAssets = useMemo(() => {
     return mockAssets.filter((asset) => {
@@ -183,10 +201,18 @@ export default function AssetsPage() {
               />
             </div>
             
-            {/* Filter Indicator / Button */}
-            <div className="flex items-center gap-2 text-slate-500 text-sm font-semibold px-2">
-              <SlidersHorizontal size={16} />
-              <span>ตัวกรองตามหมวดหมู่</span>
+            {/* Filter & Actions */}
+            <div className="flex flex-row items-center gap-2">
+              <button 
+                onClick={() => setIsScannerOpen(true)}
+                className="flex items-center justify-center gap-1.5 bg-sky-100 hover:bg-sky-200 text-sky-700 px-3 py-2.5 rounded-xl text-xs font-bold transition-colors shrink-0"
+              >
+                <ScanLine size={16} /> สแกน
+              </button>
+              <div className="flex items-center gap-2 text-slate-500 text-sm font-semibold px-2 border-l border-slate-200 pl-4">
+                <SlidersHorizontal size={16} />
+                <span className="hidden sm:inline">ตัวกรองตามหมวดหมู่</span>
+              </div>
             </div>
           </div>
 
@@ -208,15 +234,58 @@ export default function AssetsPage() {
           </div>
         </section>
 
-        {/* Catalog Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAssets.length === 0 ? (
-            <div className="col-span-full bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-500 flex flex-col items-center justify-center">
-              <Package size={48} className="text-slate-300 mb-4" />
-              <div className="font-bold text-slate-700 text-base">ไม่พบอุปกรณ์ที่ตรงกับคำค้นหา</div>
-              <p className="text-xs text-slate-400 mt-1">ลองเปลี่ยนคำค้นหาหรือตัวกรองหมวดหมู่</p>
+        {/* Asset Kits Gallery */}
+        <section className="mb-10">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
+              <LayoutList size={18} />
             </div>
-          ) : (
+            <h2 className="text-lg font-bold text-slate-800">ชุดอุปกรณ์แนะนำ (Kits)</h2>
+          </div>
+          
+          <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+            {mockAssetKits.filter(k => k.is_active).map(kit => (
+              <div key={kit.id} className="min-w-[280px] w-[280px] bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm flex flex-col hover:border-indigo-300 transition-all group shrink-0">
+                <div className="h-32 bg-slate-100 relative overflow-hidden">
+                  {kit.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={kit.image_url} alt={kit.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-300"><Package size={32} /></div>
+                  )}
+                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur text-[10px] font-bold px-2 py-1 rounded-md text-indigo-700 shadow-sm border border-indigo-100">
+                    {kit.asset_ids.length} ชิ้น
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col">
+                  <h3 className="font-bold text-slate-800 text-sm mb-1">{kit.name}</h3>
+                  <p className="text-xs text-slate-500 line-clamp-2 mb-4 flex-1">{kit.description}</p>
+                  <Link href={`/assets/kits/${kit.id}`} className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold py-2 rounded-xl transition-colors text-center border border-indigo-100">
+                    ขอยืมทั้งชุด
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Catalog Grid */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">
+              <Package size={18} />
+            </div>
+            <h2 className="text-lg font-bold text-slate-800">อุปกรณ์ทั้งหมด</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAssets.length === 0 ? (
+              <div className="col-span-full bg-white border border-slate-200 rounded-2xl p-12 text-center text-slate-500 flex flex-col items-center justify-center">
+                <Package size={48} className="text-slate-300 mb-4" />
+                <div className="font-bold text-slate-700 text-base">ไม่พบอุปกรณ์ที่ตรงกับคำค้นหา</div>
+                <p className="text-xs text-slate-400 mt-1">ลองเปลี่ยนคำค้นหาหรือตัวกรองหมวดหมู่</p>
+              </div>
+            ) : (
             filteredAssets.map((asset) => {
               const isAvailable = asset.status === 'available' && asset.is_borrowable;
               return (
@@ -259,7 +328,7 @@ export default function AssetsPage() {
                       </div>
                       <p className="text-xs text-slate-500 leading-normal">
                         ยี่ห้อ/รุ่น: {asset.brand || '-'} {asset.model || ''} <br/>
-                        จุดเก็บ: {asset.location || '-'} &middot; แผนกยืม: <span className="font-semibold text-slate-600">{asset.department || 'ส่วนกลาง'}</span>
+                        จุดเก็บ: {asset.location || '-'}
                       </p>
                     </div>
                   </div>
@@ -275,10 +344,12 @@ export default function AssetsPage() {
                       </Link>
                     ) : (
                       <button
-                        disabled
-                        className="w-full bg-slate-100 text-slate-400 text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 cursor-not-allowed border border-slate-200"
+                        onClick={() => {
+                          alert(`คุณได้ลงชื่อต่อคิว (Waitlist) สำหรับ ${asset.name} แล้ว ระบบจะแจ้งเตือนเมื่ออุปกรณ์นี้ว่าง`);
+                        }}
+                        className="w-full bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer border border-slate-200 transition-colors"
                       >
-                        ไม่ว่างให้ยืม
+                        แจ้งเตือนเมื่อว่าง (Waitlist)
                       </button>
                     )}
                   </div>
@@ -286,8 +357,15 @@ export default function AssetsPage() {
               );
             })
           )}
+          </div>
         </section>
       </main>
+
+      <QrScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScan}
+      />
 
       <BottomNav variant="user" />
     </div>

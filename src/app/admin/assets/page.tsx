@@ -25,8 +25,11 @@ import {
   Download,
   QrCode,
   History,
-  Upload
+  Upload,
+  ScanLine
 } from 'lucide-react';
+import { QrScannerModal } from '@/components/qr-scanner';
+import { useRouter } from 'next/navigation';
 
 const statusFilters = [
   { label: 'ทั้งหมด', value: 'all' },
@@ -63,6 +66,8 @@ export default function AdminAssetsPage() {
   const [historyModalAsset, setHistoryModalAsset] = useState<Asset | null>(null);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [importPreviewAssets, setImportPreviewAssets] = useState<any[]>([]);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const router = useRouter();
 
   const filteredAssets = useMemo(() => {
     return assets.filter((asset) => {
@@ -81,7 +86,7 @@ export default function AdminAssetsPage() {
   }, [assets, search, selectedStatus, selectedSubsidiary]);
 
   const handleExportCSV = () => {
-    const header = ['รหัสอุปกรณ์ (Asset Tag)', 'ชื่ออุปกรณ์', 'หมวดหมู่', 'ยี่ห้อ', 'รุ่น', 'Serial Number', 'สถานะ', 'สภาพ', 'จุดจัดเก็บ (Location)', 'บริษัท (Subsidiary)', 'แผนก (Department)', 'วันที่ซื้อ', 'ราคา (บาท)'];
+    const header = ['รหัสอุปกรณ์ (Asset Tag)', 'ชื่ออุปกรณ์', 'หมวดหมู่', 'ยี่ห้อ', 'รุ่น', 'Serial Number', 'สถานะ', 'สภาพ', 'จุดจัดเก็บ (Location)', 'บริษัท (Subsidiary)', 'วันที่ซื้อ', 'ราคา (บาท)'];
     const rows = filteredAssets.map(asset => [
       asset.asset_tag,
       asset.name,
@@ -93,7 +98,6 @@ export default function AdminAssetsPage() {
       asset.condition,
       asset.location || '',
       asset.subsidiary || '',
-      asset.department || 'ส่วนกลาง',
       asset.purchase_date || '',
       asset.purchase_price || ''
     ]);
@@ -113,6 +117,16 @@ export default function AdminAssetsPage() {
     if (!deleteModal) return;
     setAssets((prev) => prev.filter((a) => a.id !== deleteModal.id));
     setDeleteModal(null);
+  };
+
+  const handleScan = (tagId: string) => {
+    setIsScannerOpen(false);
+    const asset = assets.find(a => a.asset_tag.toLowerCase() === tagId.toLowerCase());
+    if (asset) {
+      router.push(`/admin/assets/${asset.id}/edit`);
+    } else {
+      alert('ไม่พบอุปกรณ์ที่ตรงกับรหัสนี้ในระบบ (Asset not found)');
+    }
   };
 
   const simulateCsvUpload = () => {
@@ -280,12 +294,21 @@ export default function AdminAssetsPage() {
             </div>
             <button
               type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="flex items-center gap-1.5 bg-sky-100 hover:bg-sky-200 text-sky-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-all active:scale-[0.98] cursor-pointer shrink-0"
+              title="สแกน QR Code เพื่อจัดการอุปกรณ์"
+            >
+              <ScanLine size={16} />
+              <span className="hidden sm:inline">สแกน QR</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setImportModalOpen(true)}
               className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-all active:scale-[0.98] cursor-pointer shrink-0"
               title="นำเข้าอุปกรณ์จากไฟล์ CSV"
             >
               <Upload size={16} />
-              <span className="hidden sm:inline">นำเข้า CSV</span>
+              <span className="hidden lg:inline">นำเข้า CSV</span>
             </button>
 
             <button
@@ -295,7 +318,7 @@ export default function AdminAssetsPage() {
               title="ส่งออกรายงานเป็นไฟล์ CSV"
             >
               <Download size={16} />
-              <span className="hidden sm:inline">ส่งออก CSV</span>
+              <span className="hidden lg:inline">ส่งออก CSV</span>
             </button>
           </div>
 
@@ -386,8 +409,6 @@ export default function AdminAssetsPage() {
                       <span className="text-sky-600 font-semibold">{asset.asset_tag}</span>
                       <span>&middot;</span>
                       <span>{asset.asset_categories?.name}</span>
-                      <span>&middot;</span>
-                      <span>แผนก: <span className="font-semibold text-slate-500">{asset.department || 'ส่วนกลาง'}</span></span>
                       <span>&middot;</span>
                       <span>สภาพ: {conditionLabels[asset.condition] || asset.condition}</span>
                     </div>
@@ -697,6 +718,12 @@ export default function AdminAssetsPage() {
           </div>
         </ConfirmModal>
       )}
+
+      <QrScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScan}
+      />
 
       <BottomNav variant="admin" />
     </div>

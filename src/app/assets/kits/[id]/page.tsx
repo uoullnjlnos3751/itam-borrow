@@ -3,14 +3,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { mockAssets } from '@/lib/mock-data';
+import { mockAssets, mockAssetKits } from '@/lib/mock-data';
 import { 
   ArrowLeft, CheckCircle2, Calendar, 
-  MapPin, FileText, Send, MonitorSmartphone, Info, PenTool, Eraser
+  MapPin, FileText, Send, Info, PenTool, Eraser, LayoutList
 } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
 
-export default function RequestPage() {
+export default function KitRequestPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const params = useParams();
@@ -29,7 +29,8 @@ export default function RequestPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const asset = mockAssets.find((a) => a.id === params.id);
+  const kit = mockAssetKits.find((k) => k.id === params.id);
+  const kitAssets = kit ? mockAssets.filter(a => kit.asset_ids.includes(a.id)) : [];
 
   const today = new Date().toISOString().split('T')[0];
   const maxDate = new Date();
@@ -76,33 +77,10 @@ export default function RequestPage() {
     return <div className="min-h-screen bg-slate-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-sky-500 border-t-transparent rounded-full" /></div>;
   }
 
-  if (!asset) {
+  if (!kit) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <p className="text-slate-500 font-medium">ไม่พบอุปกรณ์ที่ระบุ</p>
-      </div>
-    );
-  }
-
-  // Cross-subsidiary borrow blocking security check
-  if (user?.role !== 'admin' && asset.subsidiary !== user?.subsidiary) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center font-sans">
-        <div className="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center border border-red-100 shadow-sm mb-4">
-          <Info size={28} />
-        </div>
-        <h2 className="text-lg font-bold text-slate-800 mb-1">
-          ไม่มีสิทธิ์ยืมอุปกรณ์ต่างบริษัท
-        </h2>
-        <p className="text-xs text-slate-500 max-w-sm mb-6 leading-relaxed">
-          คุณสังกัดบริษัท <span className="font-semibold text-slate-700">{user?.subsidiary}</span> แต่ต้องการยืมอุปกรณ์ของบริษัท <span className="font-semibold text-slate-700">{asset.subsidiary}</span> ซึ่งระบบไม่สามารถดำเนินการข้ามบริษัทได้
-        </p>
-        <button
-          onClick={() => router.push('/assets')}
-          className="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold py-2.5 px-6 rounded-xl transition-all cursor-pointer shadow-sm shadow-sky-500/10 active:scale-[0.98]"
-        >
-          กลับหน้าคลังอุปกรณ์
-        </button>
+        <p className="text-slate-500 font-medium">ไม่พบชุดอุปกรณ์ที่ระบุ</p>
       </div>
     );
   }
@@ -113,7 +91,7 @@ export default function RequestPage() {
         <div className="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center mb-6 shadow-sm border border-emerald-100 animate-in zoom-in duration-300">
           <CheckCircle2 className="text-emerald-500" size={48} />
         </div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">ส่งคำขอยืมเรียบร้อยแล้ว</h2>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">ส่งคำขอยืมชุดอุปกรณ์เรียบร้อยแล้ว</h2>
         <p className="text-slate-500 text-sm max-w-md mx-auto mb-6">ระบบบันทึกคำขอของคุณพร้อมลายเซ็นดิจิทัลแล้ว กำลังนำคุณไปยังหน้าประวัติการยืม...</p>
       </div>
     );
@@ -129,10 +107,10 @@ export default function RequestPage() {
               <ArrowLeft size={20} />
             </button>
             <h1 className="text-lg font-bold text-slate-800">
-              {step === 1 ? 'แบบฟอร์มขอยืมอุปกรณ์' : 'ยืนยันเงื่อนไขและลายเซ็น'}
+              {step === 1 ? 'แบบฟอร์มขอยืมชุดอุปกรณ์' : 'ยืนยันเงื่อนไขและลายเซ็น'}
             </h1>
           </div>
-          <div className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100">
+          <div className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
             ขั้นตอน {step}/2
           </div>
         </div>
@@ -152,7 +130,7 @@ export default function RequestPage() {
                   {/* Due date */}
                   <div>
                     <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
-                      <Calendar size={16} className="text-sky-500" />
+                      <Calendar size={16} className="text-indigo-500" />
                       วันที่ต้องการคืน <span className="text-xs text-slate-400 font-normal">(ยืมได้สูงสุด 7 วัน)</span>
                     </label>
                     <input
@@ -161,29 +139,29 @@ export default function RequestPage() {
                       min={today}
                       max={maxDateStr}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-colors text-sm font-medium text-slate-800"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors text-sm font-medium text-slate-800"
                     />
                   </div>
 
                   {/* Location */}
                   <div>
                     <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
-                      <MapPin size={16} className="text-sky-500" />
+                      <MapPin size={16} className="text-indigo-500" />
                       สถานที่ใช้งาน
                     </label>
                     <input
                       type="text"
-                      placeholder="เช่น Head Office, ชั้น 22"
+                      placeholder="เช่น Head Office, ชั้น 22 หรือ บูธนิทรรศการ..."
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-colors text-sm text-slate-800"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors text-sm text-slate-800"
                     />
                   </div>
 
                   {/* Reason */}
                   <div>
                     <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2">
-                      <FileText size={16} className="text-sky-500" />
+                      <FileText size={16} className="text-indigo-500" />
                       เหตุผลการยืม
                     </label>
                     <textarea
@@ -191,7 +169,7 @@ export default function RequestPage() {
                       placeholder="เช่น ใช้สำหรับพรีเซนต์งานที่ลูกค้า วันที่..."
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition-colors text-sm text-slate-800 resize-none"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors text-sm text-slate-800 resize-none"
                     />
                   </div>
                 </div>
@@ -212,7 +190,7 @@ export default function RequestPage() {
                   <div className="mt-0.5">
                     <input 
                       type="checkbox" 
-                      className="w-4 h-4 rounded border-slate-300 text-sky-500 focus:ring-sky-500"
+                      className="w-4 h-4 rounded border-slate-300 text-indigo-500 focus:ring-indigo-500"
                       checked={acceptedTerms}
                       onChange={(e) => setAcceptedTerms(e.target.checked)}
                     />
@@ -225,7 +203,7 @@ export default function RequestPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="flex items-center gap-2 text-sm font-bold text-slate-700">
-                      <PenTool size={16} className="text-sky-500" />
+                      <PenTool size={16} className="text-indigo-500" />
                       ลายเซ็นผู้ยืม (E-Signature)
                     </label>
                     <button 
@@ -253,7 +231,7 @@ export default function RequestPage() {
                 <button
                   onClick={handleNextStep}
                   disabled={!dueDate || !reason}
-                  className="bg-sky-500 text-white text-sm font-bold px-8 py-3.5 rounded-xl hover:bg-sky-600 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md shadow-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-indigo-600 text-white text-sm font-bold px-8 py-3.5 rounded-xl hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   ถัดไป (ยืนยันเงื่อนไข) <ArrowLeft className="rotate-180" size={18} />
                 </button>
@@ -261,7 +239,7 @@ export default function RequestPage() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting || !acceptedTerms}
-                  className="bg-sky-500 text-white text-sm font-bold px-8 py-3.5 rounded-xl hover:bg-sky-600 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md shadow-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-indigo-600 text-white text-sm font-bold px-8 py-3.5 rounded-xl hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? (
                     <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
@@ -273,25 +251,39 @@ export default function RequestPage() {
             </div>
           </div>
 
-          {/* Right Column: Asset Summary */}
+          {/* Right Column: Kit Summary */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm sticky top-24">
-              <h3 className="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">อุปกรณ์ที่เลือก</h3>
+              <h3 className="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">ชุดอุปกรณ์ที่เลือก</h3>
               
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-16 h-16 rounded-2xl bg-sky-50 flex items-center justify-center text-sky-500 shrink-0 border border-sky-100 overflow-hidden">
-                  {asset.image_url ? (
+              <div className="flex flex-col mb-4">
+                <div className="w-full h-32 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden mb-4">
+                  {kit.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={asset.image_url} alt={asset.name} className="w-full h-full object-cover" />
+                    <img src={kit.image_url} alt={kit.name} className="w-full h-full object-cover" />
                   ) : (
-                    <MonitorSmartphone size={32} />
+                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                      <LayoutList size={32} />
+                    </div>
                   )}
                 </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 leading-tight mb-1">{asset.name}</h4>
-                  <p className="text-xs font-medium text-sky-600 bg-sky-50 inline-block px-2 py-0.5 rounded-md mb-1">{asset.asset_tag}</p>
-                  <p className="text-xs text-slate-500">{asset.asset_categories?.name}</p>
+                <h4 className="font-bold text-slate-800 leading-tight mb-1">{kit.name}</h4>
+                <p className="text-xs text-slate-500 leading-relaxed mb-3">{kit.description}</p>
+                <div className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 self-start">
+                  รวม {kit.asset_ids.length} รายการ
                 </div>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <p className="text-xs font-bold text-slate-700">รายการในชุด:</p>
+                <ul className="space-y-2">
+                  {kitAssets.map((asset) => (
+                    <li key={asset.id} className="flex flex-col text-xs bg-slate-50 p-2 rounded-lg border border-slate-100">
+                      <span className="font-semibold text-slate-800">{asset.name}</span>
+                      <span className="text-[10px] text-slate-500">Tag: {asset.asset_tag}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
               <div className="bg-amber-50 border border-amber-100 p-4 rounded-xl flex gap-3 items-start">
@@ -312,7 +304,7 @@ export default function RequestPage() {
           <button
             onClick={handleNextStep}
             disabled={!dueDate || !reason}
-            className="w-full bg-sky-500 text-white text-sm font-bold py-3.5 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-indigo-600 text-white text-sm font-bold py-3.5 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ถัดไป (ยืนยันเงื่อนไข) <ArrowLeft className="rotate-180" size={18} />
           </button>
@@ -320,12 +312,12 @@ export default function RequestPage() {
           <button
             onClick={handleSubmit}
             disabled={submitting || !acceptedTerms}
-            className="w-full bg-sky-500 text-white text-sm font-bold py-3.5 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-indigo-600 text-white text-sm font-bold py-3.5 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? (
               <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
             ) : (
-              <>ยืนยันการยืม <Send size={18} /></>
+              <>ยืนยันการยืมชุดอุปกรณ์ <Send size={18} /></>
             )}
           </button>
         )}

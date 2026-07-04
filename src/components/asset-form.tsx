@@ -52,7 +52,6 @@ export function AssetForm({ mode, asset }: AssetFormProps) {
   const [subsidiary, setSubsidiary] = useState(asset?.subsidiary || 'PS');
   const [notes, setNotes] = useState(asset?.notes || '');
   const [imageUrl, setImageUrl] = useState(asset?.image_url || '');
-  const [department, setDepartment] = useState(asset?.department || 'ส่วนกลาง (General)');
 
   const handleSave = async () => {
     if (!assetTag || !name) return;
@@ -277,22 +276,11 @@ export function AssetForm({ mode, asset }: AssetFormProps) {
           <div className="space-y-4">
             <h2 className="text-xs font-bold text-sky-500 uppercase tracking-wider">ตำแหน่งและเจ้าของ</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">บริษัทในเครือ (เจ้าของ) *</label>
                 <select value={subsidiary || 'PS'} onChange={e => setSubsidiary(e.target.value)} className={inputClass}>
                   {subsidiaryOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">แผนกที่มีสิทธิ์ยืม *</label>
-                <select value={department} onChange={e => setDepartment(e.target.value)} className={inputClass}>
-                  <option value="ส่วนกลาง (General)">ส่วนกลาง (General)</option>
-                  <option value="ไอทีกลาง (IT)">ไอทีกลาง (IT)</option>
-                  <option value="ฝ่ายบุคคล (HR)">ฝ่ายบุคคล (HR)</option>
-                  <option value="ฝ่ายขาย (Sales)">ฝ่ายขาย (Sales)</option>
-                  <option value="ฝ่ายผลิต (Production)">ฝ่ายผลิต (Production)</option>
-                  <option value="ฝ่ายการเงิน (Finance)">ฝ่ายการเงิน (Finance)</option>
                 </select>
               </div>
               <div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { BottomNav } from '@/components/bottom-nav';
@@ -159,7 +160,7 @@ export default function ProfilePage() {
 
         {/* Menu Actions */}
         <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden divide-y divide-slate-100">
-          <button className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors text-left group">
+          <Link href="/profile/settings" className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors text-left group">
             <div className="flex items-center gap-4">
               <div className="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center border border-slate-200 shrink-0">
                 <Bell size={16} />
@@ -167,9 +168,9 @@ export default function ProfilePage() {
               <span className="text-sm font-semibold text-slate-700">การตั้งค่าการแจ้งเตือน</span>
             </div>
             <ChevronRight size={16} className="text-slate-400 group-hover:text-slate-600 transition-colors" />
-          </button>
+          </Link>
 
-          <button className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors text-left group">
+          <Link href="/profile/support" className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors text-left group">
             <div className="flex items-center gap-4">
               <div className="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 flex items-center justify-center border border-slate-200 shrink-0">
                 <HelpCircle size={16} />
@@ -177,7 +178,7 @@ export default function ProfilePage() {
               <span className="text-sm font-semibold text-slate-700">ช่วยเหลือและศูนย์สนับสนุน</span>
             </div>
             <ChevronRight size={16} className="text-slate-400 group-hover:text-slate-600 transition-colors" />
-          </button>
+          </Link>
         </section>
 
         {/* Logout Button */}

@@ -94,7 +94,7 @@ export const mockAssets: Asset[] = [
     brand: 'Apple', model: '16-inch M3 Pro', serial_number: 'C02DR4ABCDEF',
     status: 'available', condition: 'good', purchase_date: '2024-03-15', purchase_price: 89900,
     vendor: 'iStudio', warranty_expiry_date: '2027-03-15', location: 'คลัง IT ชั้น 22',
-    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80', notes: null, is_borrowable: true, department: 'ไอทีกลาง (IT)', deleted_at: null,
+    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80', notes: null, is_borrowable: true, deleted_at: null,
     created_by: 'admin-001', created_at: '2024-03-15T00:00:00Z', updated_at: '2024-03-15T00:00:00Z',
     asset_categories: { id: 'cat-01', name: 'Notebook', icon: 'laptop_mac', is_active: true, created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
   },
@@ -103,7 +103,7 @@ export const mockAssets: Asset[] = [
     brand: 'Epson', model: 'EB-X06', serial_number: 'EPSON-PJ-002',
     status: 'borrowed', condition: 'good', purchase_date: '2023-08-10', purchase_price: 18900,
     vendor: 'Advice', warranty_expiry_date: '2026-08-10', location: 'ห้องประชุมใหญ่ ชั้น 10',
-    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=300&q=80', notes: null, is_borrowable: true, department: 'ส่วนกลาง (General)', deleted_at: null,
+    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=300&q=80', notes: null, is_borrowable: true, deleted_at: null,
     created_by: 'admin-001', created_at: '2023-08-10T00:00:00Z', updated_at: '2024-07-01T00:00:00Z',
     asset_categories: { id: 'cat-05', name: 'Projector', icon: 'videocam', is_active: true, created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
   },
@@ -112,7 +112,7 @@ export const mockAssets: Asset[] = [
     brand: 'Ugreen', model: '9-in-1 Hub', serial_number: 'UG-HUB-003',
     status: 'available', condition: 'good', purchase_date: '2024-04-01', purchase_price: 1990,
     vendor: 'Lazada', warranty_expiry_date: '2025-04-01', location: 'คลัง IT ชั้น 22',
-    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&w=300&q=80', notes: null, is_borrowable: true, department: 'ไอทีกลาง (IT)', deleted_at: null,
+    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&w=300&q=80', notes: null, is_borrowable: true, deleted_at: null,
     created_by: 'admin-001', created_at: '2024-04-01T00:00:00Z', updated_at: '2024-04-01T00:00:00Z',
     asset_categories: { id: 'cat-09', name: 'Adapter/Cable', icon: 'cable', is_active: true, created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
   },
@@ -121,7 +121,7 @@ export const mockAssets: Asset[] = [
     brand: 'Logitech', model: 'MX Master 3S', serial_number: 'LOGI-MX-004',
     status: 'available', condition: 'good', purchase_date: '2024-02-14', purchase_price: 3490,
     vendor: 'JIB', warranty_expiry_date: '2026-02-14', location: 'คลัง IT ชั้น 22',
-    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=300&q=80', notes: null, is_borrowable: true, department: 'ไอทีกลาง (IT)', deleted_at: null,
+    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=300&q=80', notes: null, is_borrowable: true, deleted_at: null,
     created_by: 'admin-001', created_at: '2024-02-14T00:00:00Z', updated_at: '2024-02-14T00:00:00Z',
     asset_categories: { id: 'cat-08', name: 'Peripheral', icon: 'mouse', is_active: true, created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
   },
@@ -130,7 +130,7 @@ export const mockAssets: Asset[] = [
     brand: 'Dell', model: 'U2723QE', serial_number: 'DELL-MON-005',
     status: 'maintenance', condition: 'fair', purchase_date: '2023-06-01', purchase_price: 18900,
     vendor: 'Synnex', warranty_expiry_date: '2026-06-01', location: 'ศูนย์ซ่อม',
-    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=300&q=80', notes: 'ส่งซ่อมจอมีเส้น', is_borrowable: false, department: 'ไอทีกลาง (IT)', deleted_at: null,
+    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=300&q=80', notes: 'ส่งซ่อมจอมีเส้น', is_borrowable: false, deleted_at: null,
     created_by: 'admin-001', created_at: '2023-06-01T00:00:00Z', updated_at: '2024-06-15T00:00:00Z',
     asset_categories: { id: 'cat-03', name: 'Monitor', icon: 'monitor', is_active: true, created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
   },
@@ -139,7 +139,7 @@ export const mockAssets: Asset[] = [
     brand: 'Apple', model: 'iPad Air 5th Gen', serial_number: 'GG7D4ABCDEF1',
     status: 'available', condition: 'good', purchase_date: '2023-11-20', purchase_price: 23900,
     vendor: 'iStudio', warranty_expiry_date: '2025-11-20', location: 'คลัง IT ชั้น 22',
-    subsidiary: 'TRR Corp', image_url: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=300&q=80', notes: 'สำหรับหน่วยงานออกบูธ หรือลงพื้นที่ตรวจงาน', is_borrowable: true, department: 'ส่วนกลาง (General)', deleted_at: null,
+    subsidiary: 'TRR Corp', image_url: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=300&q=80', notes: 'สำหรับหน่วยงานออกบูธ หรือลงพื้นที่ตรวจงาน', is_borrowable: true, deleted_at: null,
     created_by: 'admin-001', created_at: '2023-11-20T00:00:00Z', updated_at: '2023-11-20T00:00:00Z',
     asset_categories: { id: 'cat-07', name: 'Mobile Device', icon: 'smartphone', is_active: true, created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
   },
@@ -148,7 +148,7 @@ export const mockAssets: Asset[] = [
     brand: 'Huawei', model: 'E5576-320', serial_number: 'HW-WF-9988A',
     status: 'available', condition: 'good', purchase_date: '2024-01-10', purchase_price: 1590,
     vendor: 'AIS', warranty_expiry_date: '2025-01-10', location: 'คลัง IT ชั้น 22',
-    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=300&q=80', notes: 'พร้อมซิมเทพ AIS สำหรับออกปฏิบัติงานนอกสถานที่', is_borrowable: true, department: 'ส่วนกลาง (General)', deleted_at: null,
+    subsidiary: 'PS', image_url: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=300&q=80', notes: 'พร้อมซิมเทพ AIS สำหรับออกปฏิบัติงานนอกสถานที่', is_borrowable: true, deleted_at: null,
     created_by: 'admin-001', created_at: '2024-01-10T00:00:00Z', updated_at: '2024-01-10T00:00:00Z',
     asset_categories: { id: 'cat-06', name: 'Network Equipment', icon: 'router', is_active: true, created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
   },
@@ -157,7 +157,7 @@ export const mockAssets: Asset[] = [
     brand: 'Logitech', model: 'R500', serial_number: 'LOGI-PRES-090',
     status: 'available', condition: 'good', purchase_date: '2024-03-01', purchase_price: 1290,
     vendor: 'JIB', warranty_expiry_date: '2025-03-01', location: 'ห้องประชุม ชั้น 22',
-    subsidiary: 'TRR Corp', image_url: 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?auto=format&fit=crop&w=300&q=80', notes: 'พอยเตอร์ยิงเลเซอร์แดง และตัวกดเปลี่ยนสไลด์', is_borrowable: true, department: 'ส่วนกลาง (General)', deleted_at: null,
+    subsidiary: 'TRR Corp', image_url: 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?auto=format&fit=crop&w=300&q=80', notes: 'พอยเตอร์ยิงเลเซอร์แดง และตัวกดเปลี่ยนสไลด์', is_borrowable: true, deleted_at: null,
     created_by: 'admin-001', created_at: '2024-03-01T00:00:00Z', updated_at: '2024-03-01T00:00:00Z',
     asset_categories: { id: 'cat-08', name: 'Peripheral', icon: 'mouse', is_active: true, created_at: '2024-01-01T00:00:00Z', updated_at: '2024-01-01T00:00:00Z' },
   }
@@ -339,5 +339,67 @@ export const mockAssetAuditLogs = [
     changed_by: 'IT Admin (admin-001)',
     change_summary: 'รับคืนอุปกรณ์ Dell UltraSharp 27" ตรวจเช็คสภาพ: ปกติ เรียบร้อย',
     created_at: '2026-07-02T11:20:00Z',
+  }
+];
+
+// ---- Mock Asset Kits ----
+import { AssetKit } from './database.types';
+export const mockAssetKits: AssetKit[] = [
+  {
+    id: 'kit-001',
+    name: 'ชุด WFH (Work From Home Kit)',
+    description: 'ประกอบด้วย Notebook, Monitor และ อะแดปเตอร์ USB-C',
+    image_url: 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=300&q=80',
+    asset_ids: ['asset-001', 'asset-005', 'asset-003'],
+    is_active: true,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
+  },
+  {
+    id: 'kit-002',
+    name: 'ชุดออกบูธ / นิทรรศการ',
+    description: 'ประกอบด้วย iPad และ Pocket Wi-Fi พร้อมใช้งาน',
+    image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=300&q=80',
+    asset_ids: ['asset-006', 'asset-007'],
+    is_active: true,
+    created_at: '2024-02-01T00:00:00Z',
+    updated_at: '2024-02-01T00:00:00Z',
+  },
+  {
+    id: 'kit-003',
+    name: 'ชุดนำเสนองาน (Presenter Kit)',
+    description: 'ประกอบด้วย Projector และ Pointer (Logitech R500)',
+    image_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=300&q=80',
+    asset_ids: ['asset-002', 'asset-008'],
+    is_active: true,
+    created_at: '2024-03-01T00:00:00Z',
+    updated_at: '2024-03-01T00:00:00Z',
+  }
+];
+
+// ---- Mock Waitlist ----
+import { WaitlistEntry } from './database.types';
+export const mockWaitlist: WaitlistEntry[] = [
+  {
+    id: 'wl-001',
+    user_id: 'user-001',
+    asset_id: 'asset-002', // Projector Epson (Currently borrowed)
+    status: 'waiting',
+    notified_at: null,
+    created_at: '2026-07-04T08:00:00Z',
+    updated_at: '2026-07-04T08:00:00Z',
+    users: mockUsers[0],
+    assets: mockAssets[1],
+  },
+  {
+    id: 'wl-002',
+    user_id: 'user-001',
+    asset_id: 'asset-005', // Dell Monitor (Maintenance)
+    status: 'waiting',
+    notified_at: null,
+    created_at: '2026-07-03T10:00:00Z',
+    updated_at: '2026-07-03T10:00:00Z',
+    users: mockUsers[0],
+    assets: mockAssets[4],
   }
 ];

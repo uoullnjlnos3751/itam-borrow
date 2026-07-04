@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { APP_VERSION } from '@/lib/version';
 import { 
   LayoutDashboard, 
   Boxes, 
@@ -13,7 +14,8 @@ import {
   Clock, 
   Laptop, 
   ShieldCheck, 
-  LogOut
+  LogOut,
+  Settings
 } from 'lucide-react';
 
 export function SideNav() {
@@ -33,6 +35,7 @@ export function SideNav() {
     { href: '/admin/assets', icon: Boxes, label: 'จัดการอุปกรณ์' },
     { href: '/admin/history', icon: ClipboardList, label: 'ประวัติทั้งหมด' },
     { href: '/admin/users', icon: Users, label: 'ผู้ใช้งาน' },
+    { href: '/admin/settings', icon: Settings, label: 'ตั้งค่าระบบ' },
     { href: '/profile', icon: User, label: 'โปรไฟล์' },
   ];
 
@@ -103,6 +106,10 @@ export function SideNav() {
           <LogOut size={14} />
           ออกจากระบบ
         </button>
+
+        <div className="text-center text-[10px] text-slate-400 font-medium">
+          v{APP_VERSION}
+        </div>
       </div>
     </aside>
   );

@@ -6,11 +6,11 @@ import { useAuth } from '@/lib/auth-context';
 import { BottomNav } from '@/components/bottom-nav';
 import { FilterPills } from '@/components/filter-pills';
 import { ConfirmModal } from '@/components/confirm-modal';
-import { mockBorrowRequests } from '@/lib/mock-data';
+import { mockBorrowRequests, mockWaitlist } from '@/lib/mock-data';
 import { BorrowRequest } from '@/lib/database.types';
 import { 
   Search, Bell, Hourglass, CheckCircle2, History, Clock, 
-  AlertTriangle, RotateCcw, Info, X, ShieldCheck
+  AlertTriangle, RotateCcw, Info, X, ShieldCheck, ListOrdered
 } from 'lucide-react';
 
 const filterOptions = [
@@ -27,6 +27,8 @@ export default function HistoryPage() {
   const [returnModal, setReturnModal] = useState<BorrowRequest | null>(null);
   const [requests, setRequests] = useState(mockBorrowRequests);
   const [selectedRequest, setSelectedRequest] = useState<BorrowRequest | null>(null);
+  const [activeTab, setActiveTab] = useState<'borrow' | 'waitlist'>('borrow');
+  const [waitlists, setWaitlists] = useState(mockWaitlist);
 
   // Extension states
   const [extendModal, setExtendModal] = useState<BorrowRequest | null>(null);
@@ -164,8 +166,37 @@ export default function HistoryPage() {
 
       <main className="pt-20 lg:pt-6 px-4 lg:px-8 max-w-7xl mx-auto space-y-6">
         
-        {/* Desktop Bento Grid */}
-        <section className="hidden lg:grid grid-cols-3 gap-6 mb-8">
+        {/* Tabs Navigation */}
+        <div className="flex border-b border-slate-200 gap-6">
+          <button
+            onClick={() => setActiveTab('borrow')}
+            className={`pb-3 text-sm font-bold transition-colors relative ${
+              activeTab === 'borrow' ? 'text-sky-600' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            การยืมของฉัน
+            {activeTab === 'borrow' && (
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-500 rounded-t-full" />
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('waitlist')}
+            className={`pb-3 text-sm font-bold transition-colors relative flex items-center gap-2 ${
+              activeTab === 'waitlist' ? 'text-sky-600' : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            การต่อคิว (Waitlist)
+            <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[10px]">{waitlists.length}</span>
+            {activeTab === 'waitlist' && (
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-500 rounded-t-full" />
+            )}
+          </button>
+        </div>
+
+        {activeTab === 'borrow' ? (
+          <>
+            {/* Desktop Bento Grid */}
+            <section className="hidden lg:grid grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:border-amber-300 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <div className="p-2.5 bg-amber-50 rounded-xl text-amber-500">
@@ -402,6 +433,54 @@ export default function HistoryPage() {
             )}
           </div>
         </div>
+        </>
+        ) : (
+          /* Waitlist UI */
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+              <h2 className="font-bold text-slate-800 flex items-center gap-2">
+                <ListOrdered size={18} className="text-sky-500" />
+                คิวของฉัน
+              </h2>
+            </div>
+            
+            <div className="p-5">
+              {waitlists.length === 0 ? (
+                <div className="text-center py-12 text-slate-400 flex flex-col items-center">
+                  <ListOrdered size={48} className="mb-3 opacity-20" />
+                  <p className="font-medium">ไม่มีรายการต่อคิว</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {waitlists.map((wl) => (
+                    <div key={wl.id} className="border border-slate-200 rounded-xl p-4 flex flex-col hover:border-sky-300 transition-colors bg-white">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="font-bold text-slate-800 text-sm line-clamp-1">{wl.assets?.name}</h3>
+                        {wl.status === 'waiting' && <span className="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">กำลังรอคิว</span>}
+                        {wl.status === 'notified' && <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">แจ้งเตือนแล้ว (ว่าง)</span>}
+                      </div>
+                      <p className="text-xs text-slate-500 mb-4">Tag: {wl.assets?.asset_tag}</p>
+                      
+                      <div className="mt-auto flex justify-between items-center pt-3 border-t border-slate-100">
+                        <span className="text-[10px] text-slate-400">ลงชื่อเมื่อ: {formatDate(wl.created_at)}</span>
+                        <button 
+                          className="text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded-md transition-colors"
+                          onClick={() => {
+                            if (confirm('คุณต้องการยกเลิกการต่อคิวนี้หรือไม่?')) {
+                              setWaitlists(prev => prev.filter(item => item.id !== wl.id));
+                            }
+                          }}
+                        >
+                          ยกเลิกคิว
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </main>
 
       <ConfirmModal

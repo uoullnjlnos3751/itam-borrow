@@ -472,9 +472,9 @@ export default function AdminDashboardPage() {
                   <Boxes size={20} />
                   <span className="text-xs font-medium">คลังทรัพย์สิน</span>
                 </button>
-                <button className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center cursor-pointer">
-                  <Shield size={20} />
-                  <span className="text-xs font-medium">จัดการ PM</span>
+                <button onClick={() => router.push('/admin/settings')} className="bg-white/10 hover:bg-white/20 transition-colors p-3 rounded-xl flex flex-col gap-2 items-center text-center cursor-pointer">
+                  <Wrench size={20} />
+                  <span className="text-xs font-medium">ตั้งค่าระบบ</span>
                 </button>
               </div>
             </div>
