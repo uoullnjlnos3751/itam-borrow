@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { BottomNav } from '@/components/bottom-nav';
+import { ConfirmModal } from '@/components/confirm-modal';
 import { mockBorrowRequests } from '@/lib/mock-data';
 import { 
   History, 
@@ -14,7 +15,9 @@ import {
   HelpCircle,
   TrendingUp,
   Inbox,
-  Download
+  Download,
+  Printer,
+  X
 } from 'lucide-react';
 
 const filterOptions = [
@@ -27,6 +30,7 @@ const filterOptions = [
 export default function AdminHistoryPage() {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [printSlip, setPrintSlip] = useState<any | null>(null);
 
   const filteredRequests = useMemo(() => {
     let result = mockBorrowRequests;
@@ -183,12 +187,13 @@ export default function AdminHistoryPage() {
                 <th className="px-6 py-4">ผู้ยืม</th>
                 <th className="px-6 py-4">วันที่ทำรายการ</th>
                 <th className="px-6 py-4 text-center">สถานะ</th>
+                <th className="px-6 py-4 text-center">ใบเสร็จ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredRequests.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-12 text-slate-400">ไม่พบประวัติการทำรายการในระบบ</td>
+                  <td colSpan={6} className="text-center py-12 text-slate-400">ไม่พบประวัติการทำรายการในระบบ</td>
                 </tr>
               ) : (
                 filteredRequests.map((req) => {
@@ -224,6 +229,16 @@ export default function AdminHistoryPage() {
                       </td>
                       <td className="px-6 py-4 text-center">
                         {getStatusBadge(req.status)}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => setPrintSlip(req)}
+                          className="w-8 h-8 rounded-lg inline-flex items-center justify-center text-slate-500 border border-slate-200 hover:bg-slate-50 hover:text-sky-600 transition-colors cursor-pointer"
+                          title="พิมพ์ใบรับมอบ/รับคืน"
+                        >
+                          <Printer size={16} />
+                        </button>
                       </td>
                     </tr>
                   );
@@ -270,8 +285,17 @@ export default function AdminHistoryPage() {
                       <div className="text-xs font-bold text-slate-700 truncate">{req.users?.display_name}</div>
                       <div className="text-[10px] text-slate-400">{req.users?.department || 'ไม่มีข้อมูลแผนก'}</div>
                     </div>
-                    <div className="text-[10px] text-slate-400 font-medium text-right shrink-0">
-                      {formatDate(req.created_at)}
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <div className="text-[10px] text-slate-400 font-medium">
+                        {formatDate(req.created_at)}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setPrintSlip(req)}
+                        className="text-[10px] text-slate-500 hover:text-sky-600 flex items-center gap-1 border border-slate-200 px-2 py-1 rounded-lg hover:bg-slate-50 cursor-pointer transition-all"
+                      >
+                        <Printer size={10} /> ใบเสร็จ
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -280,6 +304,160 @@ export default function AdminHistoryPage() {
           )}
         </section>
       </main>
+
+      {/* Printable Receipt Modal (Feature 5) */}
+      {printSlip && (
+        <ConfirmModal
+          isOpen={!!printSlip}
+          title="ใบส่งมอบ / รับคืนอุปกรณ์ไอทีดิจิทัล"
+          confirmLabel="พิมพ์เอกสาร / บันทึก PDF"
+          confirmVariant="primary"
+          onConfirm={() => {
+            if (typeof window !== 'undefined') {
+              window.print();
+            }
+          }}
+          onCancel={() => setPrintSlip(null)}
+        >
+          <div className="space-y-4">
+            <p className="text-xs text-slate-500 no-print">
+              กดปุ่มด้านล่างเพื่อสั่งพิมพ์หรือบันทึกหน้าเอกสารนี้เป็นไฟล์ PDF ลงเครื่องคอมพิวเตอร์ของคุณ
+            </p>
+            
+            {/* Skeuomorphic Digital Slip Container */}
+            <div 
+              id="print-receipt-slip"
+              className="bg-white border-2 border-dashed border-slate-300 rounded-xl p-6 font-mono text-slate-800 relative shadow-inner"
+            >
+              {/* CSS Print Styles */}
+              <style>{`
+                @media print {
+                  body * {
+                    visibility: hidden !important;
+                  }
+                  #print-receipt-slip, #print-receipt-slip * {
+                    visibility: visible !important;
+                  }
+                  #print-receipt-slip {
+                    position: absolute !important;
+                    left: 0 !important;
+                    top: 0 !important;
+                    width: 100% !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                  }
+                }
+              `}</style>
+
+              {/* Watermark Logo */}
+              <div className="absolute top-4 right-4 opacity-5 pointer-events-none no-print">
+                <FileText size={120} />
+              </div>
+
+              {/* Header */}
+              <div className="text-center border-b border-slate-200 pb-4 mb-4">
+                <h3 className="text-sm font-bold tracking-widest text-slate-700 uppercase">TRR GROUP ITAM SYSTEM</h3>
+                <p className="text-[10px] text-slate-400 mt-0.5">IT Asset Management & Logistics Slip</p>
+                <div className="text-[11px] font-bold text-sky-600 bg-sky-50 border border-sky-100 rounded px-2 py-0.5 inline-block mt-2">
+                  เลขใบงาน: {printSlip.request_no}
+                </div>
+              </div>
+
+              {/* Grid Metadata */}
+              <div className="grid grid-cols-2 gap-y-2.5 gap-x-4 text-xs border-b border-slate-100 pb-4 mb-4">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">ประเภทเอกสาร</span>
+                  <span className="font-bold text-slate-700">
+                    {printSlip.status === 'returned' ? 'ใบรับคืนอุปกรณ์ (Check In Slip)' : 'ใบส่งมอบอุปกรณ์ (Hand Over Slip)'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">สถานะใบงาน</span>
+                  <span className="font-bold text-slate-700">
+                    {printSlip.status === 'returned' ? 'คืนแล้ว (Returned)' : printSlip.status === 'borrowed' ? 'กำลังยืม (Borrowed)' : 'อนุมัติแล้ว (Approved)'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">วันที่ทำรายการ</span>
+                  <span className="font-semibold text-slate-600">{formatDate(printSlip.created_at)}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">กำหนดคืนอุปกรณ์</span>
+                  <span className="font-semibold text-slate-600">
+                    {formatDate(printSlip.due_date || printSlip.requested_due_date)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Borrower Section */}
+              <div className="space-y-1 text-xs border-b border-slate-100 pb-4 mb-4">
+                <span className="text-[10px] font-bold text-slate-400 block uppercase">ข้อมูลผู้ยืม (Borrower Profile)</span>
+                <div className="font-bold text-slate-700">{printSlip.users?.display_name}</div>
+                <div className="text-slate-500 text-[11px]">
+                  แผนก: {printSlip.users?.department || 'IT'} &middot; สังกัดบริษัท: <span className="font-bold text-sky-600">{printSlip.users?.subsidiary || 'PS'}</span>
+                </div>
+                <div className="text-slate-400 text-[10px]">อีเมล: {printSlip.users?.email}</div>
+              </div>
+
+              {/* Asset Section */}
+              <div className="space-y-2 text-xs border-b border-slate-100 pb-4 mb-4">
+                <span className="text-[10px] font-bold text-slate-400 block uppercase font-mono">รายละเอียดพัสดุไอที (Asset Inventory)</span>
+                <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-3 space-y-1.5">
+                  <div className="flex justify-between items-start">
+                    <span className="font-bold text-slate-800 text-[13px]">{printSlip.assets?.name}</span>
+                    <span className="bg-sky-100 text-sky-700 text-[9px] px-1.5 py-0.5 rounded font-bold uppercase shrink-0">
+                      {printSlip.assets?.asset_tag}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-1 text-[11px] text-slate-500">
+                    <div>ยี่ห้อ: {printSlip.assets?.brand || '-'}</div>
+                    <div>รุ่น: {printSlip.assets?.model || '-'}</div>
+                    <div className="col-span-2">Serial No: <span className="font-bold text-slate-700">{printSlip.assets?.serial_number || '-'}</span></div>
+                    <div>สภาพตอนรับมอบ: <span className="font-bold text-slate-700">{printSlip.assets?.condition === 'new' ? 'ใหม่' : 'ดี'}</span></div>
+                    {printSlip.returned_at && (
+                      <div className="col-span-2 text-emerald-600 font-bold border-t border-slate-200/60 pt-1.5 mt-1">
+                        สภาพตอนรับคืน: {printSlip.return_condition_note || 'ปกติ'} (คืนเมื่อ {formatDate(printSlip.returned_at)})
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Reason */}
+              <div className="space-y-1 text-xs border-b border-slate-100 pb-4 mb-5">
+                <span className="text-[10px] font-bold text-slate-400 block uppercase">วัตถุประสงค์การยืม</span>
+                <p className="text-slate-600 italic">"{printSlip.reason || 'ไม่มีระบุ'}"</p>
+              </div>
+
+              {/* Sign-off Fields */}
+              <div className="grid grid-cols-2 gap-4 text-center text-[10px] pt-4">
+                <div className="space-y-10">
+                  <div className="text-slate-400">ลงชื่อผู้ยืม / รับมอบของ</div>
+                  <div className="border-b border-slate-300 w-3/4 mx-auto" />
+                  <div className="text-slate-500">({printSlip.users?.display_name})</div>
+                  <div className="text-slate-400 text-[9px]">วันที่: ____/____/____</div>
+                </div>
+                <div className="space-y-10">
+                  <div className="text-slate-400">ลงชื่อเจ้าหน้าที่ไอที / ผู้ส่งมอบ</div>
+                  <div className="border-b border-slate-300 w-3/4 mx-auto" />
+                  <div className="text-slate-500">(IT Administrator)</div>
+                  <div className="text-slate-400 text-[9px]">วันที่: ____/____/____</div>
+                </div>
+              </div>
+
+              {/* Footer barcode decoration */}
+              <div className="text-center mt-6 pt-4 border-t border-slate-100">
+                <div className="inline-block tracking-widest font-mono text-[9px] text-slate-300 select-none">
+                  ||||| | ||||| | ||| |||| | | ||| | ||| | |||
+                </div>
+                <p className="text-[9px] text-slate-300 mt-1 uppercase">Generated via ITAM System &middot; Secure Handover</p>
+              </div>
+            </div>
+          </div>
+        </ConfirmModal>
+      )}
 
       <BottomNav variant="admin" />
     </div>
