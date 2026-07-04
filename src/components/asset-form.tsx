@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { mockCategories } from '@/lib/mock-data';
 import { Asset, AssetStatus, AssetCondition } from '@/lib/database.types';
-import { ArrowLeft, Save, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Save, CheckCircle2, X } from 'lucide-react';
 
 const statusOptions: { value: AssetStatus; label: string }[] = [
   { value: 'available', label: 'ว่าง (Available)' },
@@ -51,6 +51,8 @@ export function AssetForm({ mode, asset }: AssetFormProps) {
   const [location, setLocation] = useState(asset?.location || '');
   const [subsidiary, setSubsidiary] = useState(asset?.subsidiary || 'PS');
   const [notes, setNotes] = useState(asset?.notes || '');
+  const [imageUrl, setImageUrl] = useState(asset?.image_url || '');
+  const [department, setDepartment] = useState(asset?.department || 'ส่วนกลาง (General)');
 
   const handleSave = async () => {
     if (!assetTag || !name) return;
@@ -135,6 +137,86 @@ export function AssetForm({ mode, asset }: AssetFormProps) {
 
           <hr className="border-slate-100" />
 
+          {/* รูปภาพอุปกรณ์ */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold text-sky-500 uppercase tracking-wider">รูปภาพอุปกรณ์</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="md:col-span-2 space-y-3">
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">ลิงก์รูปภาพ (Image URL)</label>
+                <input
+                  type="text"
+                  placeholder="ป้อน URL ของรูปภาพ เช่น https://images.unsplash.com/..."
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  className={inputClass}
+                />
+                
+                {/* Preset image select buttons */}
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">รูปภาพตัวอย่างด่วน</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80')}
+                      className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 font-semibold cursor-pointer"
+                    >
+                      MacBook/Notebook
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=300&q=80')}
+                      className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 font-semibold cursor-pointer"
+                    >
+                      Monitor/จอภาพ
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=300&q=80')}
+                      className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 font-semibold cursor-pointer"
+                    >
+                      iPad/Tablet
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=300&q=80')}
+                      className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 font-semibold cursor-pointer"
+                    >
+                      Projector
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=300&q=80')}
+                      className="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-[10px] text-slate-600 font-semibold cursor-pointer"
+                    >
+                      Pocket Wi-Fi
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Image Preview Container */}
+              <div className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-xl bg-slate-50 relative overflow-hidden min-h-[120px]">
+                {imageUrl ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imageUrl} alt="Preview" className="w-full h-full max-h-[110px] object-contain rounded-lg" />
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl('')}
+                      className="absolute top-1.5 right-1.5 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-sm cursor-pointer"
+                    >
+                      <X size={12} />
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-[10px] font-semibold text-slate-400 text-center">ไม่มีรูปภาพแสดงผล</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-slate-100" />
+
           {/* Status and conditions */}
           <div className="space-y-4">
             <h2 className="text-xs font-bold text-sky-500 uppercase tracking-wider">สถานะและสภาพอุปกรณ์</h2>
@@ -195,16 +277,27 @@ export function AssetForm({ mode, asset }: AssetFormProps) {
           <div className="space-y-4">
             <h2 className="text-xs font-bold text-sky-500 uppercase tracking-wider">ตำแหน่งและเจ้าของ</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">บริษัทในเครือ (เจ้าของ) *</label>
+                <select value={subsidiary || 'PS'} onChange={e => setSubsidiary(e.target.value)} className={inputClass}>
+                  {subsidiaryOptions.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">แผนกที่มีสิทธิ์ยืม *</label>
+                <select value={department} onChange={e => setDepartment(e.target.value)} className={inputClass}>
+                  <option value="ส่วนกลาง (General)">ส่วนกลาง (General)</option>
+                  <option value="ไอทีกลาง (IT)">ไอทีกลาง (IT)</option>
+                  <option value="ฝ่ายบุคคล (HR)">ฝ่ายบุคคล (HR)</option>
+                  <option value="ฝ่ายขาย (Sales)">ฝ่ายขาย (Sales)</option>
+                  <option value="ฝ่ายผลิต (Production)">ฝ่ายผลิต (Production)</option>
+                  <option value="ฝ่ายการเงิน (Finance)">ฝ่ายการเงิน (Finance)</option>
+                </select>
+              </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">จุดจัดเก็บ (Location)</label>
                 <input type="text" placeholder="เช่น คลัง IT ชั้น 22" value={location} onChange={e => setLocation(e.target.value)} className={inputClass} />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">บริษัทในเครือ (เจ้าของทรัพย์สิน)</label>
-                <select value={subsidiary} onChange={e => setSubsidiary(e.target.value)} className={inputClass}>
-                  {subsidiaryOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
               </div>
             </div>
 

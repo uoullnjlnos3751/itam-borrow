@@ -204,14 +204,19 @@ export default function AdminAssetsPage() {
               >
                 {/* Left section: Icon & Details */}
                 <div className="flex items-center gap-4 min-w-0">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 ${
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 overflow-hidden ${
                     isDamaged(asset)
                       ? 'bg-red-50 text-red-500 border-red-100'
                       : asset.status === 'available'
                       ? 'bg-emerald-50 text-emerald-500 border-emerald-100'
                       : 'bg-slate-100 text-slate-400 border-slate-200'
                   }`}>
-                    {getCategoryIcon(asset.asset_categories?.icon || '')}
+                    {asset.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={asset.image_url} alt={asset.name} className="w-full h-full object-cover" />
+                    ) : (
+                      getCategoryIcon(asset.asset_categories?.icon || '')
+                    )}
                   </div>
 
                   <div className="min-w-0 space-y-1">
@@ -226,6 +231,8 @@ export default function AdminAssetsPage() {
                       <span className="text-sky-600 font-semibold">{asset.asset_tag}</span>
                       <span>&middot;</span>
                       <span>{asset.asset_categories?.name}</span>
+                      <span>&middot;</span>
+                      <span>แผนก: <span className="font-semibold text-slate-500">{asset.department || 'ส่วนกลาง'}</span></span>
                       <span>&middot;</span>
                       <span>สภาพ: {conditionLabels[asset.condition] || asset.condition}</span>
                     </div>

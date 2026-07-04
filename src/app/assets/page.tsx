@@ -221,12 +221,17 @@ export default function AssetsPage() {
                   <div>
                     {/* Card Header: Icon & Status */}
                     <div className="flex justify-between items-start mb-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 transition-colors ${
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center border shrink-0 transition-colors overflow-hidden ${
                         isAvailable 
-                          ? 'bg-sky-50 text-sky-500 border-sky-100 group-hover:bg-sky-500 group-hover:text-white group-hover:border-sky-500' 
+                          ? 'bg-sky-50 text-sky-500 border-sky-100' 
                           : 'bg-slate-100 text-slate-400 border-slate-200'
                       }`}>
-                        {getCategoryIcon(asset.asset_categories?.icon || '')}
+                        {asset.image_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={asset.image_url} alt={asset.name} className="w-full h-full object-cover" />
+                        ) : (
+                          getCategoryIcon(asset.asset_categories?.icon || '')
+                        )}
                       </div>
                       {getStatusBadge(asset.status)}
                     </div>
@@ -246,7 +251,7 @@ export default function AssetsPage() {
                       </div>
                       <p className="text-xs text-slate-500 leading-normal">
                         ยี่ห้อ/รุ่น: {asset.brand || '-'} {asset.model || ''} <br/>
-                        สถานที่: {asset.location || '-'}
+                        จุดเก็บ: {asset.location || '-'} &middot; แผนกยืม: <span className="font-semibold text-slate-600">{asset.department || 'ส่วนกลาง'}</span>
                       </p>
                     </div>
                   </div>

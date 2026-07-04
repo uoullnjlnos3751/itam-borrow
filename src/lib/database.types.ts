@@ -79,6 +79,7 @@ export interface Asset {
   image_url: string | null;
   notes: string | null;
   is_borrowable: boolean;
+  department?: string | null;
   deleted_at: string | null;
   created_by: string | null;
   created_at: string;
