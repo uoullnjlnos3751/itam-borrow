@@ -1,13 +1,16 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Mail, MessageSquare, ShieldCheck, UserPlus, Search, X, Check } from 'lucide-react';
+import { ArrowLeft, Save, Mail, MessageSquare, ShieldCheck, UserPlus, Search, X, Check, Loader2 } from 'lucide-react';
 import { mockUsers } from '@/lib/mock-data';
 import { User } from '@/lib/database.types';
+import { useMsal } from '@azure/msal-react';
+import { graphRequest } from '@/lib/msal-config';
 
 export default function AdminSettingsPage() {
   const router = useRouter();
+  const { instance, accounts } = useMsal();
   
   const [webhookUrl, setWebhookUrl] = useState('');
   const [smtpServer, setSmtpServer] = useState('');
@@ -25,10 +28,14 @@ export default function AdminSettingsPage() {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [isApproverModalOpen, setIsApproverModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // MS Graph API search state
+  const [graphSearchResults, setGraphSearchResults] = useState<User[]>([]);
+  const [isSearchingGraph, setIsSearchingGraph] = useState(false);
 
   const admins = useMemo(() => users.filter(u => u.role === 'admin'), [users]);
   
-  const searchResults = useMemo(() => {
+  const localSearchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.toLowerCase();
     return users.filter(u => 
@@ -37,6 +44,67 @@ export default function AdminSettingsPage() {
     );
   }, [users, searchQuery]);
 
+  // Debounced MS Graph API search
+  useEffect(() => {
+    if (!searchQuery.trim() || searchQuery.length < 3) {
+      setGraphSearchResults([]);
+      setIsSearchingGraph(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      if (accounts.length > 0) {
+        setIsSearchingGraph(true);
+        try {
+          const response = await instance.acquireTokenSilent({
+            ...graphRequest,
+            account: accounts[0]
+          });
+          
+          const q = searchQuery.replace(/'/g, "''"); // escape single quotes for OData
+          const res = await fetch(`https://graph.microsoft.com/v1.0/users?$filter=startswith(displayName,'${q}') or startswith(mail,'${q}')&$select=id,displayName,mail,jobTitle,department,officeLocation&$top=10`, {
+            headers: {
+              Authorization: `Bearer ${response.accessToken}`
+            }
+          });
+          
+          if (res.ok) {
+            const data = await res.json();
+            const graphUsers: User[] = data.value.map((gu: any) => ({
+              id: gu.id, // Using entra_object_id as temporary ID if not in DB
+              entra_object_id: gu.id,
+              email: gu.mail || '',
+              display_name: gu.displayName || 'Unknown',
+              department: gu.department || null,
+              subsidiary: null,
+              job_title: gu.jobTitle || null,
+              work_location: gu.officeLocation || null,
+              role: 'user',
+              is_active: true,
+              last_login_at: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }));
+            
+            // Filter out users who are already admins in our local state
+            const nonAdmins = graphUsers.filter(gu => !admins.find(a => a.entra_object_id === gu.entra_object_id));
+            setGraphSearchResults(nonAdmins);
+          } else {
+            console.error("MS Graph API Error:", await res.text());
+          }
+        } catch (err) {
+          console.error("Error searching MS Graph API:", err);
+        } finally {
+          setIsSearchingGraph(false);
+        }
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, instance, accounts, admins]);
+
+  const displaySearchResults = graphSearchResults.length > 0 ? graphSearchResults : localSearchResults;
+
   const handleSave = async () => {
     setSaving(true);
     await new Promise((r) => setTimeout(r, 800));
@@ -44,9 +112,18 @@ export default function AdminSettingsPage() {
     router.back();
   };
 
-  const handlePromoteToAdmin = (userId: string) => {
-    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: 'admin' } : u));
+  const handlePromoteToAdmin = (selectedUser: User) => {
+    setUsers(prev => {
+      const exists = prev.find(u => u.id === selectedUser.id || u.entra_object_id === selectedUser.entra_object_id);
+      if (exists) {
+        return prev.map(u => u.id === exists.id ? { ...u, role: 'admin' } : u);
+      } else {
+        // User from MS Graph, not in DB yet
+        return [...prev, { ...selectedUser, role: 'admin' }];
+      }
+    });
     setSearchQuery('');
+    setGraphSearchResults([]);
     setIsApproverModalOpen(false);
   };
 
@@ -315,6 +392,7 @@ export default function AdminSettingsPage() {
                 onClick={() => {
                   setIsApproverModalOpen(false);
                   setSearchQuery('');
+                  setGraphSearchResults([]);
                 }}
                 className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
               >
@@ -324,30 +402,43 @@ export default function AdminSettingsPage() {
             
             <div className="p-5 border-b border-slate-100 bg-slate-50">
               <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                {isSearchingGraph ? (
+                  <Loader2 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sky-500 animate-spin" size={18} />
+                ) : (
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                )}
                 <input 
                   type="text" 
-                  placeholder="ค้นหาชื่อ หรืออีเมลพนักงาน..." 
+                  placeholder="ค้นหาชื่อ หรืออีเมลพนักงานในองค์กร..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
                   className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-sky-500 text-sm transition-all shadow-sm"
                 />
               </div>
+              <div className="mt-2 text-[10px] font-semibold text-slate-500 flex items-center gap-1">
+                <ShieldCheck size={12} className="text-emerald-500" />
+                เชื่อมต่อฐานข้อมูล Microsoft Entra ID ขององค์กรแล้ว
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">
               {!searchQuery.trim() ? (
                 <div className="p-8 text-center text-sm text-slate-400">
-                  พิมพ์ชื่อหรืออีเมลเพื่อค้นหาพนักงานที่ต้องการแต่งตั้ง
+                  พิมพ์ชื่อหรืออีเมล 3 ตัวอักษรขึ้นไปเพื่อค้นหา
                 </div>
-              ) : searchResults.length === 0 ? (
+              ) : isSearchingGraph && displaySearchResults.length === 0 ? (
+                <div className="p-8 text-center text-sm text-slate-400 flex flex-col items-center gap-2">
+                  <Loader2 className="animate-spin text-sky-500" size={24} />
+                  กำลังค้นหาจากระบบส่วนกลาง...
+                </div>
+              ) : displaySearchResults.length === 0 ? (
                 <div className="p-8 text-center text-sm text-slate-400">
                   ไม่พบรายชื่อพนักงานที่ค้นหา
                 </div>
               ) : (
                 <div className="space-y-1">
-                  {searchResults.map(user => (
+                  {displaySearchResults.map(user => (
                     <div key={user.id} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold border border-sky-200 shrink-0 overflow-hidden">
@@ -360,11 +451,11 @@ export default function AdminSettingsPage() {
                         </div>
                         <div className="min-w-0">
                           <div className="text-sm font-bold text-slate-800 truncate">{user.display_name}</div>
-                          <div className="text-[10px] text-slate-500 truncate">{user.email} • {user.department}</div>
+                          <div className="text-[10px] text-slate-500 truncate">{user.email} • {user.department || 'ไม่ระบุแผนก'}</div>
                         </div>
                       </div>
                       <button
-                        onClick={() => handlePromoteToAdmin(user.id)}
+                        onClick={() => handlePromoteToAdmin(user)}
                         className="shrink-0 flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer"
                       >
                         <Check size={14} />

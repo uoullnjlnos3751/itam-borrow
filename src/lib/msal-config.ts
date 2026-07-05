@@ -32,3 +32,7 @@ export const msalInstance = typeof window !== 'undefined' ? new PublicClientAppl
 export const loginRequest = {
   scopes: ['openid', 'profile', 'email', 'User.Read'],
 };
+
+export const graphRequest = {
+  scopes: ['User.ReadBasic.All'],
+};
