@@ -96,7 +96,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }).then(res => res.json());
 
             if (graphData.department) department = graphData.department;
-            if (graphData.companyName) subsidiary = graphData.companyName;
+            if (graphData.companyName) {
+              // Map full Azure AD company name to internal short codes
+              const companyName = graphData.companyName.trim();
+              if (companyName.includes('Technologies')) subsidiary = 'TRRT';
+              else if (companyName.includes('Phitsanulok')) subsidiary = 'PS';
+              else if (companyName.includes('Saraburi')) subsidiary = 'SSEC';
+              else if (companyName.includes('Phetchabun')) subsidiary = 'TRRP';
+              else if (companyName.includes('Mahanakorn')) subsidiary = 'TRM';
+              else if (companyName.includes('Lopburi')) subsidiary = 'TRRL';
+              else if (companyName.includes('Sakon')) subsidiary = 'TRRSK';
+              else if (companyName.includes('Wangkanai')) subsidiary = 'TRW';
+              else subsidiary = companyName;
+            }
             if (graphData.jobTitle) jobTitle = graphData.jobTitle;
             if (graphData.officeLocation) workLocation = graphData.officeLocation;
             if (graphData.businessPhones && graphData.businessPhones.length > 0) workPhone = graphData.businessPhones[0];

@@ -8,7 +8,7 @@ export const mockUsers: User[] = [
     email: 'jakkrit@trrgroup.com',
     display_name: 'จักรกฤษณ์ ศิริวัฒน์',
     department: 'ไทยรุ่งเรือง เทคโนโลยี',
-    subsidiary: 'Thai Roong Ruang Technologies Co., Ltd.',
+    subsidiary: 'TRRT',
     job_title: 'เจ้าหน้าที่ IT Support',
     work_location: 'HQ',
     work_phone: '042-162-2222-225',
