@@ -78,6 +78,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           }
 
+          let department = 'IT';
+          let subsidiary = 'TRR';
+          let profileImageUrl = null;
+
+          try {
+            const tokenResponse = await instance.acquireTokenSilent({
+              scopes: ['User.Read'],
+              account: account
+            });
+
+            const graphData = await fetch('https://graph.microsoft.com/v1.0/me?$select=department,companyName', {
+              headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
+            }).then(res => res.json());
+
+            if (graphData.department) department = graphData.department;
+            if (graphData.companyName) subsidiary = graphData.companyName;
+
+            const photoRes = await fetch('https://graph.microsoft.com/v1.0/me/photo/$value', {
+              headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
+            });
+            if (photoRes.ok) {
+              const blob = await photoRes.blob();
+              profileImageUrl = URL.createObjectURL(blob);
+            }
+          } catch (error) {
+            console.error("Error fetching from MS Graph:", error);
+          }
+
           // Create a temporary User object from MSAL account
           setUser({
             id: account.homeAccountId || account.localAccountId,
@@ -85,8 +113,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: account.username,
             display_name: account.name || account.username.split('@')[0],
             role: userRole,
-            department: 'IT',
-            subsidiary: 'TRR',
+            department: department,
+            subsidiary: subsidiary,
+            profile_image_url: profileImageUrl,
             last_login_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
