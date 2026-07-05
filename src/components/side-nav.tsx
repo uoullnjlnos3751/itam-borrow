@@ -96,6 +96,11 @@ export function SideNav() {
           <div className="min-w-0">
             <div className="text-xs font-bold text-slate-800 truncate leading-tight">{user.display_name}</div>
             <div className="text-[10px] text-slate-400 font-medium truncate">{user.email}</div>
+            {(user.job_title || user.work_location) && (
+              <div className="text-[9px] text-slate-500 mt-0.5 truncate">
+                {user.job_title} {user.job_title && user.work_location ? '•' : ''} {user.work_location}
+              </div>
+            )}
           </div>
         </div>
 

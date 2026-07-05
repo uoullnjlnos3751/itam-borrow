@@ -43,6 +43,9 @@ export interface User {
   display_name: string;
   department: string | null;
   subsidiary: string | null;
+  job_title?: string | null;
+  work_location?: string | null;
+  work_phone?: string | null;
   role: UserRole;
   is_active: boolean;
   last_login_at: string | null;

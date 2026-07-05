@@ -80,6 +80,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           let department = 'IT';
           let subsidiary = 'TRR';
+          let jobTitle = null;
+          let workLocation = null;
+          let workPhone = null;
           let profileImageUrl = null;
 
           try {
@@ -88,12 +91,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               account: account
             });
 
-            const graphData = await fetch('https://graph.microsoft.com/v1.0/me?$select=department,companyName', {
+            const graphData = await fetch('https://graph.microsoft.com/v1.0/me?$select=department,companyName,jobTitle,officeLocation,businessPhones', {
               headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
             }).then(res => res.json());
 
             if (graphData.department) department = graphData.department;
             if (graphData.companyName) subsidiary = graphData.companyName;
+            if (graphData.jobTitle) jobTitle = graphData.jobTitle;
+            if (graphData.officeLocation) workLocation = graphData.officeLocation;
+            if (graphData.businessPhones && graphData.businessPhones.length > 0) workPhone = graphData.businessPhones[0];
 
             const photoRes = await fetch('https://graph.microsoft.com/v1.0/me/photo/$value', {
               headers: { Authorization: `Bearer ${tokenResponse.accessToken}` }
@@ -115,6 +121,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             role: userRole,
             department: department,
             subsidiary: subsidiary,
+            job_title: jobTitle,
+            work_location: workLocation,
+            work_phone: workPhone,
             profile_image_url: profileImageUrl,
             last_login_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
